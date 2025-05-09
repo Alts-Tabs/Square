@@ -1,0 +1,14 @@
+
+spring:  
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-344tji-kr.vpc-pub-cdb.ntruss.com:3306/square?serverTimezone=Asia/Seoul
+    username: altstabs
+    password: square!@#123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+
