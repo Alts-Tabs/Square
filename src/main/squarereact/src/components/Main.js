@@ -16,9 +16,9 @@ const Main = () => {
                 <h6 style={{marginTop:'30px', marginLeft:'25px', color:'#79D7BE'}}> 
                     로그아웃 토글 및 날짜 위치
                 </h6>
-                
+
                 {/* Header 우측 */}
-                <img className='headerWhale' src={whale_L} />
+                <img className='headerWhale' src={whale_L} alt='whale_L' />
                 <h6 style={{position:'absolute', right:'125px', marginTop:'30px'}}>
                     <b>용가뤼</b>&nbsp;&nbsp; 원장<i class="bi bi-person-fill"></i>
                 </h6>
