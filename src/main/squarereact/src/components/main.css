@@ -22,34 +22,69 @@
     height: calc(100vh - 110px); /* 헤더 제외 나머지 높이 */
 }
 
+
 /* Navi =============================================================== */
+/* Navi 영역 전체 */
 .navi {
-    width: 348px;
+    position: relative;
+    width: 343px;
     padding-top: 10px;
     background-color: white;
     border-top: 2px solid #EBF0F0;
     overflow-y: auto;
     scrollbar-width: none;
+    transition: width 0.4s ease;
 }
 
+/* ←| 아이콘 위치 설정 */
+.toggleButton {
+  position: absolute;
+  font-size: 18px;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.toggleButton i {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.toggleButton i:hover {
+  opacity: 1;
+}
+
+/* 접힌 상태 */
+.navi.collapsed {
+    width: 80px;
+}
+
+/* 각 Navi 섹션 공통 레이아웃 */
 .naviForm {
     padding-top: 30px;
     padding-left: 45px;
 }
 
-/* Navi1 - 수강생 */
+/* Navi 타이틀 */
 .naviTitle {
     display: inline-block;
     margin-bottom: 30px;
-    font-weight: 800; /* Bold */
+    font-weight: 800;
     font-size: 17px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
 }
 
+/* Navi 메뉴들 */
 .naviContent {
     display: inline-block;
     margin-bottom: 15px;
-    font-weight: 500; /* SemiBold */
+    font-weight: 500;
     font-size: 18px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
 }
 
 .naviContent:hover {
@@ -58,8 +93,13 @@
     font-weight: 800;
 }
 
+.navi.collapsed .naviTitle,
+.navi.collapsed .naviContent {
+    opacity: 0; /* 접힘 상태에서 타이틀 및 컨텐츠 숨김 */
+}
+
 .naviContent:last-of-type {
-    margin-bottom: 20px; /* 마지막 항목에만 마진 20px*/
+    margin-bottom: 20px;
 }
 
 .info:last-of-type {

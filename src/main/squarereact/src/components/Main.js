@@ -1,32 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SquareLogo from '../image/SquareLogo.png';
 import whale_L from '../image/whale_L.png';
-import './mainstyle.css'
+import './main.css'
 
 const Main = () => {
+    const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
-
+    const toggleNav = () => {
+        setIsNavCollapsed(!isNavCollapsed);
+    };
 
 
     return (
         <div>
             <div className='header'>
                 {/* Header 좌측 */}
-                <img src={SquareLogo} alt="SquareLogo" style={{width:'300px'}}/>
+                <img src={SquareLogo} alt="SquareLogo" style={{width:'300px', cursor:'pointer'}}/>
                 <h6 style={{marginTop:'30px', marginLeft:'25px', color:'#79D7BE'}}> 
                     로그아웃 토글 및 날짜 위치
                 </h6>
 
                 {/* Header 우측 */}
                 <img className='headerWhale' src={whale_L} alt='whale_L' />
-                <h6 style={{position:'absolute', right:'125px', marginTop:'30px'}}>
+                <h6 style={{position:'absolute', right:'125px', marginTop:'30px', cursor:'pointerbobㅠ'}}>
                     <b>용가뤼</b>&nbsp;&nbsp; 원장<i class="bi bi-person-fill"></i>
                 </h6>
             </div>
             
             
             <div className='bodyContainer'>
-                <div className='navi'>
+                <div className={`navi ${isNavCollapsed ? 'collapsed' : ''}`}>
+                    {/* Navi 접고 펴기 버튼 - 오른쪽 상단 고정 */}
+                    <div className='toggleButton' onClick={toggleNav}>
+                        <i className={`bi ${isNavCollapsed ? "bi-arrow-bar-right" : "bi-arrow-bar-left"}`}></i>
+                    </div>
+
                     {/* Navi1 - 수강생 =============================================================== */}
                     <div className='students naviForm'>
                         <span className='naviTitle'> 수강생 </span> <br />
