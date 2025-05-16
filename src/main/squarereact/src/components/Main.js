@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SquareLogo from '../image/SquareLogo.png';
 import whale_L from '../image/whale_L.png';
 import './main.css'
+import { Link, Outlet } from 'react-router-dom';
 
 const Main = () => {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
@@ -41,9 +42,14 @@ const Main = () => {
                         <span className='naviContent'> <i class="bi bi-people"></i>&nbsp;&nbsp; 
                             수강생 관리 
                         </span> <br />
-                        <span className='naviContent'> <i class="bi bi-clipboard-check"></i>&nbsp;&nbsp;
-                            출석 관리 
+
+                        <span className='naviContent'>
+                            <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
+                            <Link to="/attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                출석 관리
+                            </Link>
                         </span> <br />
+
                         <span className='naviContent'> <i class="bi bi-pencil"></i>&nbsp;&nbsp;
                             종합 평가 
                         </span>
@@ -100,9 +106,9 @@ const Main = () => {
                     </div>
                 </div>
 
-
+                {/* 본문 컨텐츠 영역 */}
                 <div className='contents'>
-                    여기가 컨텐츠
+                    <Outlet />
                 </div>
             </div>
         </div>

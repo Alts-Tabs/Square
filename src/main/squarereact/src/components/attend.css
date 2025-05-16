@@ -1,0 +1,43 @@
+.attendContainer {
+    display: flex;
+    justify-content: space-between; /* 좌우 양끝 위치 */
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.leftContainer {
+    width: 40%; 
+    height: 100%;
+}
+
+.rightContainer {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 오른쪽 정렬 */
+}
+
+.title {
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #4DA1A9;
+    margin: 5px;
+}
+
+/* 진용님 여기예요↓↓ =================================================== */
+
+/* 오늘의 출석 */
+.todayAttend {
+    height: 100%;
+    background-color: white; /* 이 배경색이 height 높이 전체만큼 채워져 있어야 하는데 안 됩니다ㅠㅠㅠ */
+}
+
+.todayAttend span {
+    font-weight: 700;
+    font-size: 22px;
+    color: #7D8A8A;
+}
+
