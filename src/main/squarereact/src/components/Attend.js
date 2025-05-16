@@ -3,16 +3,16 @@ import './attend.css'
 
 const Attend = () => {
     return (
-        <div>
             <div className='attendContainer'>
                 
                 <div className='leftContainer'>
                     {/* 오늘의 출석 */}
                     <span className='title'> 오늘의 출석 </span>
-                    <div className='todayAttend'>
+                    <div className='todayAttendTitle'>
                         <span> 지금 수업은 </span>
                         <span> (수업 시간표) </span>
-                        <span> 입니다. </span>
+                        <span> 입니다. </span> <br/>
+                        
                     </div>
                 </div>
 
@@ -32,7 +32,6 @@ const Attend = () => {
 
                 
             </div>
-        </div>
     );
 };
 
