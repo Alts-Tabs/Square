@@ -69,8 +69,11 @@ const Main = () => {
                     {/* Navi3 - 수강료 =================================================================== */}
                     <div className='payment naviForm'>
                         <span className='naviTitle'> 수강료 </span> <br />
-                        <span className='naviContent'> <i class="bi bi-credit-card"></i>&nbsp;&nbsp; 
-                            수강료 관리
+                        <span className='naviContent'>
+                            <i class="bi bi-credit-card"></i>&nbsp;&nbsp; 
+                            <Link to="/paymentManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                수강료 관리
+                            </Link>
                         </span> <br />
                         <span className='naviContent'> <i class="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
                             미납 관리
