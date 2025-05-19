@@ -12,6 +12,12 @@ const Main = () => {
         setIsNavCollapsed(!isNavCollapsed);
     };
 
+    // 배포 서버 login 페이지 스타트 - 개발 시에 주석하고 사용해도 됨
+    if(sessionStorage.token == null) {
+        // navi("/login");
+        window.location.href="/login";
+    }
+
     // 오늘 날짜 구하기
     const today = new Date();
     const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
