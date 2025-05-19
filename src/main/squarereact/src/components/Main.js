@@ -2,15 +2,25 @@ import React, { useState } from 'react';
 import SquareLogo from '../image/SquareLogo.png';
 import whale_L from '../image/whale_L.png';
 import './main.css'
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const Main = () => {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+    const navi = useNavigate();
 
     const toggleNav = () => {
         setIsNavCollapsed(!isNavCollapsed);
     };
 
+    // 오늘 날짜 구하기
+    const today = new Date();
+    const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
+
+    // 로그아웃 이벤트
+    const onLogout = () => {
+        sessionStorage.clear();
+        navi("/login");
+    }
 
     return (
         <div>
@@ -18,13 +28,21 @@ const Main = () => {
                 {/* Header 좌측 */}
                 <img src={SquareLogo} alt="SquareLogo" style={{width:'300px', cursor:'pointer'}}/>
                 <h6 style={{marginTop:'30px', marginLeft:'25px', color:'#79D7BE'}}> 
-                    로그아웃 토글 및 날짜 위치
+                    <span style={{cursor:'pointer'}} onClick={onLogout}>로그아웃</span>
+                    &nbsp;&nbsp;{formattedDate}
                 </h6>
 
                 {/* Header 우측 */}
                 <img className='headerWhale' src={whale_L} alt='whale_L' />
                 <h6 style={{position:'absolute', right:'125px', marginTop:'30px', cursor:'pointerbobㅠ'}}>
-                    <b>용가뤼</b>&nbsp;&nbsp; 원장<i class="bi bi-person-fill"></i>
+                    {
+                        sessionStorage.token != null ?
+                        <>
+                            <b>{sessionStorage.getItem("name")}</b>&nbsp;&nbsp; 
+                            {sessionStorage.getItem("role")}
+                            <i class="bi bi-person-fill"></i>
+                        </>:<></>
+                    }
                 </h6>
             </div>
             
