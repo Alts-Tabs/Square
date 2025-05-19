@@ -47,7 +47,7 @@ const LoginPage = () => {
         <div className="qbox">
           <p>아이디와 비밀번호를 잊으셨나요?</p>
           <br />
-          <button type="button" onClick={()=>window.location.href="/join"}>가입하기</button>
+          <button type="button" onClick={()=>navi("/join")}>가입하기</button>
           <button type="button">코드 입력</button>
         </div>
       </div>
