@@ -12,12 +12,6 @@ const Main = () => {
         setIsNavCollapsed(!isNavCollapsed);
     };
 
-    // 배포 서버 login 페이지 스타트 - 개발 시에 주석하고 사용해도 됨
-    if(sessionStorage.token == null) {
-        // navi("/login");
-        window.location.href="/login";
-    }
-
     // 오늘 날짜 구하기
     const today = new Date();
     const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
@@ -34,9 +28,7 @@ const Main = () => {
                 {/* Header 좌측 */}
                 <img src={SquareLogo} alt="SquareLogo" style={{width:'300px', cursor:'pointer'}}/>
                 <h6 style={{marginTop:'30px', marginLeft:'25px', color:'#79D7BE'}}> 
-                    {sessionStorage.token != null && 
-                        <span style={{cursor:'pointer'}} onClick={onLogout}>로그아웃</span>
-                    }
+                    <span style={{cursor:'pointer'}} onClick={onLogout}>로그아웃</span>
                     &nbsp;&nbsp;{formattedDate}
                 </h6>
 
