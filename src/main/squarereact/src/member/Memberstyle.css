@@ -1,0 +1,213 @@
+/* 본문 폰트 */
+@font-face {
+    /* 300 */
+    font-family: 'NanumSquareNeoLight';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-aLt.ttf) format("truetype");
+}
+
+@font-face {
+    /* 400 */
+    font-family: 'NanumSquareNeo';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: 'NanumSquareNeoBold';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-cBd.ttf) format("truetype");
+}
+
+@font-face {
+    /* 700 */
+    font-family: 'NanumSquareNeoExtraBold';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf) format("truetype");
+}
+
+@font-face {
+    /* 800 */
+    font-family: 'NanumSquareNeoHeavy';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.ttf) format("truetype");
+}
+
+@font-face {
+    /* 900 */
+    font-family: 'NanumSquareNeoVariable';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeo-Variable.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeo-Variable.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeo-Variable.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeo-Variable.ttf) format("truetype");
+}
+
+/* 배경 이미지 */
+.backstyle {
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    /* 가운데 정렬 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* 로고 */
+.logo {
+    width: 364px;
+    height: auto;
+}
+
+/* 로그인 디자인 */
+.box {
+    width: 364px;
+    /* height: 307px; */
+    background-color: #FAF9F7;
+    box-shadow: 2px 2px 15px #0000001a;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 25px;
+    font-family: 'NanumSquareNeo', sans-serif;
+    border-radius: 10px;
+}
+
+.inputs {
+    margin-bottom: 10px;
+}
+
+.loginbtn {
+    height: 35px;
+    background-color: #2E5077;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+}
+
+.qbox {
+    text-align: center;
+    align-content: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.qbox p {
+    margin-bottom: 0;
+    color: #7D8A8A;
+    cursor: pointer;
+    font-family: 'NanumSquareNeo', sans-serif;
+}
+.qbox p:hover {
+    color: #2E5077;
+    font-size: 1.05em;
+    font-family: 'NanumSquareNeoBold', sans-serif;
+}
+
+.qbox button {
+    background-color: white;
+    border: 1px solid #7D8A8A;
+    border-radius: 5px;
+    width: 123px;
+    height: 35px;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: 0;
+}
+
+/* 회원가입 디자인 */
+.joinTitle {
+    font-size: 1.8em;
+    font-family: 'NanumSquareNeoExtraBold', sans-serif;
+    color: #4DA1A9;
+    margin-bottom: 0;
+}
+
+.box2 {
+    width: 364px;
+    /* height: 307px; */
+    background-color: #FAF9F7;
+    box-shadow: 2px 2px 15px #0000001a;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.box2 label {
+    width: 95%;
+    margin-top: 10px;
+    font-size: 14px;
+    font-family: 'NanumSquareNeoExtraBold', sans-serif;
+    color: #4DA1A9;
+}
+
+.box2 input {
+    margin: 5px;
+}
+.box2 input::placeholder {
+    font-size: 0.8em;
+    font-family: 'NanumSquareNeo', sans-serif;
+    color: #d9d9d9;
+    margin-left: 5px;
+}
+
+.box2 textarea {
+    font-size: 0.8em;
+    margin: 5px;
+    height: 100px;
+    resize: none;
+}
+.box2 textarea::placeholder {
+    font-family: 'NanumSquareNeo', sans-serif;
+    color: #d9d9d9;
+    padding-top: 35px;
+}
+
+.check {
+    margin: 5px;
+    margin-right: 15px;
+}
+.check .failed {
+    color: red;
+}
+.check button {
+    float: right;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  padding: 20px;
+  width: 500px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: red;
+  cursor: pointer;
+}

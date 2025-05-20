@@ -1,5 +1,4 @@
-
-spring:  
+spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://db-344tji-kr.vpc-pub-cdb.ntruss.com:3306/square?serverTimezone=Asia/Seoul
@@ -12,3 +11,6 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
 
+jwt:
+  expiration_time: 3600000
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
