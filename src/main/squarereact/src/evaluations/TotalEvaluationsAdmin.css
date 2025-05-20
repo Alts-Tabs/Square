@@ -1,0 +1,236 @@
+.evaluationContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* 공통 타이틀 스타일 */
+.evalTitle {
+    flex-shrink: 0; /* 공간이 부족할 때에도 원래 크기 유지 */
+    width: 100%;
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #4DA1A9;
+    margin: 5px;
+}
+/*왼쪽 메뉴*/
+.eval-leftContainer {
+    flex: 3;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* class 선택 영역 */
+.eval-classSelect {
+    overflow-y: auto;
+    flex-shrink: 0;
+    height: 98px;
+    text-align: left;
+    line-height: 61px;
+    margin-bottom: 5px;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+}
+.eval-classSelect>select {
+    margin:30px 0 30px 30px;
+    border-color:#7D8A8A;
+    color:#7D8A8A;
+    font-size:15px; 
+    width:220px;
+    height:38px;
+    border-radius: 10px;
+}
+.eval-classContents {
+    flex-grow: 1;
+    overflow-y: auto;
+    border-radius:  0 0 10px 10px;
+    text-align: center;
+    background-color: white;
+}
+.eval-classContents table td {
+  padding: 10px 20px;
+  vertical-align: middle;
+}
+
+.eval-classContents table .studentName {
+  font-size: 15px;
+  color: #2E5077;
+  font-weight: 500;
+}
+
+/* 커스텀 체크박스 공통 스타일 */
+.custom-checkbox-evalAdmin {
+  display: inline-block;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  height:15px;
+  font-size: 20px;
+  user-select: none;
+}
+.custom-checkbox-evalAdmin input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.custom-checkbox-evalAdmin span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: white;
+  border: 2px solid #79D7BE;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+/* 체크 시 모양 */
+.custom-checkbox-evalAdmin input:checked + span::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 체크된 배경색 */
+.custom-checkbox-evalAdmin input:checked + span {
+  background-color: #79D7BE;
+  border-color: #79D7BE;
+}
+
+/*오른쪽 메뉴-----------------------------------------------------------*/
+.eval-rightContainer {
+    flex: 7;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+}
+
+/*평가 내용 입력 영역*/
+.eval-rightTitle {
+    height: 98px;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    padding-left: 25px;
+}
+.eval-rightTitle>span {
+    display: inline-block;
+}
+.evaluationContent {
+    width: 100%;
+    margin-top: 5px;
+    flex-grow: 1;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.evaluationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.evaluationContent .evaluSelect{
+    width: 150px;
+    height: 35px;
+    margin: 0 15px 15px 0;
+    border-radius: 10px;
+    background-color: #F6F4F0;
+    color: #7D8A8A;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.custom-datepicker-evalAdmin {
+    height: 38px; 
+    font-size: 15px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #7D8A8A;
+    width: 240px;
+    color:#7D8A8A;
+}
+/*평가기간 선택 커스텀*/
+.react-datepicker__input-container input{
+    width: 240px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+/*날짜 선택하면 노출되는 X 버튼*/
+.react-datepicker__close-icon::after {
+  background-color: #79D7BE !important;
+  color: white !important;
+  font-weight: 500;
+}
+/*오늘 날짜*/
+.react-datepicker__day--today { 
+  color: #79D7BE !important;
+}
+/*선택된 날짜*/
+.react-datepicker__day--selected,   
+.react-datepicker__day--in-range,
+.react-datepicker__day:hover:not(.react-datepicker__day--disabled) { 
+   background-color: #79D7BE !important;
+   color: white !important;
+}
+.react-datepicker__day--keyboard-selected, .react-datepicker__month-text--keyboard-selected, .react-datepicker__quarter-text--keyboard-selected, .react-datepicker__year-text--keyboard-selected {
+    background-color:#79D7BE !important;
+    color: white !important;
+}
+
+.evaluationContent .saveEval {
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #79D7BE;
+  border:#79D7BE;
+  color: white;
+  font-weight: 500;
+  font-size: 20px;
+  margin-left: auto;
+}
+.evaluationBody span{
+  margin: 0 25px 25px 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #7D8A8A;
+}
+.evaluationBody input{
+  width: 150px;
+  height: 35px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  background-color: #F6F4F0;
+  border: #F6F4F0;
+}
+.evaluationBody>textarea{
+  width: 100%;
+  height: 250px;
+  margin-top: 15px;
+  font-size: 18px;
+  color: #7D8A8A;
+  background-color: #F6F4F0;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+}
