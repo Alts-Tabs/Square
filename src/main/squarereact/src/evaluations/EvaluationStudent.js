@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './EvaluationStudent.css';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 
 const EvaluationStudent = () => {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    // const [startDate, setStartDate] = useState(null);
+    // const [endDate, setEndDate] = useState(null);
 
     return (
         <div className='evaluationSContainer'>
@@ -34,27 +34,27 @@ const EvaluationStudent = () => {
                         <th>시작</th>
                         <td>
                             <div className="evalS-datepicker-wrapper">
-                                <DatePicker
+                                {/* <DatePicker
                                     selected={startDate}
                                     onChange={(date) => setStartDate(date)}
                                     isClearable
                                     placeholderText="시작일 선택"
                                     dateFormat="yyyy-MM-dd"
                                     className="custom-datepicker-evalParents"
-                                />
+                                /> */}
                             </div>
                         </td>
                         <th>종료</th>
                         <td>
                             <div className="evalS-datepicker-wrapper">
-                                <DatePicker
+                                {/* <DatePicker
                                     selected={endDate}
                                     onChange={(date) => setEndDate(date)}
                                     isClearable
                                     placeholderText="종료일 선택"
                                     dateFormat="yyyy-MM-dd"
                                     className="custom-datepicker-evalParents"
-                                />
+                                /> */}
                                 <button type='button' className='evalS-Searchbtn'>조회</button>
                             </div>
                         </td>

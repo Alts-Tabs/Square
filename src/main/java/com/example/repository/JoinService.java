@@ -14,6 +14,7 @@ public class JoinService {
     private final UsersRepository usersRepository;
     private final AcademiesRepository acaRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final CodeRepository codeRepository;
 
     /**
      * 회원가입 프로세스
@@ -48,13 +49,33 @@ public class JoinService {
      * @param description String
      */
     public void academyProcess(String aca_name, String address, String description) {
+        String code = generateUniqueCode();
+
         AcademiesEntity aca = AcademiesEntity.builder()
                 .aca_name(aca_name)
                 .address(address)
                 .description(description)
+                .code(code)
                 .build();
 
         acaRepository.save(aca);
+    }
+
+    // 랜덤 코드 생성
+    private String generateUniqueCode() {
+        String code;
+        int maxRetry = 10; // 무한루프 방지
+        int attempts = 0;
+
+        do {
+            code = CodeUtil.generateAcademyCode(6);
+            attempts++;
+            if(attempts > maxRetry) {
+                throw new IllegalStateException("중복되지 않는 학원 코드를 생성할 수 없습니다.");
+            }
+        } while(acaRepository.findByCode(code).isPresent());
+
+        return code;
     }
 
 }

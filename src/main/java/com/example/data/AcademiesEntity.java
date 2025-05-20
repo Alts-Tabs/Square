@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "academies")
@@ -33,9 +35,18 @@ public class AcademiesEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 10, nullable = false, unique = true)
+    private String code; // 학원 고유 식별 코드 - 랜덤 난수 생성
+
     @CreationTimestamp
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Timestamp created_at;
 
+    // Cascade 설정
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CodeEntity> codes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<TeachersEntity> teachers = new ArrayList<>();
 }

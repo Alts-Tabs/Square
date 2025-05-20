@@ -12,13 +12,13 @@ function App() {
       <p>PR 테스트</p>
       <TotalEvaluationsAdmin />
     </div>
-    {/*<Router>
-      <Routes>
-        <Route path="/" element={<BoardMainPage username={username} />} />
-        <Route path="/post/:postId" element={<PostDetail username={username} />} />
-        <Route path="/create" element={<PostForm username={username} />} />
-      </Routes>
-    </Router>*/}
+    // <Router>
+    //   <Routes>
+    //     <Route path="/" element={<BoardMainPage username={username} />} />
+    //     <Route path="/post/:postId" element={<PostDetail username={username} />} />
+    //     <Route path="/create" element={<PostForm username={username} />} />
+    //   </Routes>
+    // </Router>
   );
 }
 

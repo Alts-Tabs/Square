@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import './TotalEvaluationsAdmin.css';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css';
 
 const TotalEvaluationsAdmin = () => {
     const [selectStudent, setSelectStudent]=useState('');
     const handleSelectStudent=(name)=> setSelectStudent(name);
 
-    const [dateRange, setDateRange] = useState([null, null]);
-    const [startDate, endDate] = dateRange;
+    // const [dateRange, setDateRange] = useState([null, null]);
+    // const [startDate, endDate] = dateRange;
     
     return (
         <div className='evaluationContainer'>
@@ -65,7 +65,7 @@ const TotalEvaluationsAdmin = () => {
 
                     <div  className='eval-datePickerWrapper'>
                         <i className="bi bi-calendar calendarIcon" style={{fontSize:'22px'}}></i>
-                        <DatePicker width="200px"
+                        {/* <DatePicker width="200px"
                             selectsRange
                             startDate={startDate}
                             endDate={endDate}
@@ -74,7 +74,7 @@ const TotalEvaluationsAdmin = () => {
                             placeholderText="평가 기간 선택"
                             dateFormat="yyyy-MM-dd"
                             className="custom-datepicker-evalAdmin"
-                        />
+                        /> */}
                     </div>
                     <button  type='button' className='saveEval'>저장</button>  
                   </div>
