@@ -1,0 +1,152 @@
+.evaluationSContainer {
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.evalTitle {
+    flex-shrink: 0; /* 공간이 부족할 때에도 원래 크기 유지 */
+    width: 100%;
+    font-size: 30px;
+    font-weight: 700;
+    color: #4DA1A9;
+    margin: 5px;
+}
+/*상단 메뉴*/
+.evalS-topContainer {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.evalS-selectInfo {
+    overflow-y: visible; /* 또는 auto로도 가능 */
+    flex-shrink: 0;
+    min-height: 200px; /* 또는 높이 제거 */
+    text-align: left;
+    line-height: 50px;
+    height: auto;
+    border-radius: 10px 10px 0 0 ;
+    background-color: white;
+    position: relative;
+    display: flex;
+    margin-bottom: 10px;
+}
+.evalS-selectInfo table {
+    width: 100%;
+    height: auto;
+    border-collapse: collapse; /*선 겹침 방지*/
+    border-spacing: 0;
+    border: none !important;
+}
+.evalS-topContainer th, .evalS-topContainer td {
+    border: 2px solid #DFDFDF;
+    vertical-align: middle;
+    height: auto; /* 셀 높이 고정 */
+    border-left: none;  /* 좌측선 제거 */
+    border-top: none;   /* 위쪽선 제거 */
+}
+.evalS-topContainer th{
+    font-size: 23px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.evalS-datepicker-wrapper {
+  display: flex;
+  align-items: center;
+  height: 60%;
+}
+
+/*테이블 내 제일 오른쪽 선 지우기*/
+.evalS-selectInfo td:last-child,
+.evalS-selectInfo th:last-child {
+  border-right: none;
+}
+.evalS-topContainer select {
+    margin-left: 9px;
+    border-color:#79D7BE;
+    border: 1px solid #79D7BE;
+    color:#2E5077;
+    font-weight: 500;
+    font-size:15px; 
+    width:330px;
+    height: 40px;
+    border-radius: 10px;
+}
+.evalS-topContainer .evalS-Searchbtn {
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: white;
+  border:2px solid #79D7BE;
+  color: #79D7BE;
+  font-weight: 500;
+  font-size: 22px;
+  padding-bottom: 5px !important;
+  margin: 10px auto;
+  line-height: 1;
+}
+
+/*평가 목록영역----------------------------------------------------------------*/
+.evalS-listContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: visible; /* 또는 auto로도 가능 */
+    flex-shrink: 0;
+    min-height: 200px; /* 또는 높이 제거 */
+    text-align: left;
+    border-radius: 0 0 10px 10px;
+    background-color: white;
+    padding: 1px;
+}
+.evalS-listTable {
+  border-collapse: separate;
+  background-color: white;
+  text-align: center;
+  overflow: hidden;
+  width: 100%;
+  border-spacing: 0; /* 셀 간격 0으로 붙이기 */
+  border: none;
+}
+/* 내부 셀만 테두리 유지 */
+.evalS-listTable th,
+.evalS-listTable td {
+    border: none; 
+    border: 1px solid #ccc;
+    
+}
+.evalS-listTable th {
+    font-size: 23px;
+    font-weight: 500;
+}
+.evalS-listTable td {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2E5077;
+ 
+}
+/* 마지막 줄과 마지막 열은 테두리 제거해서 둥글게 만들거나 깔끔하게 처리 */
+.evalS-listTable tr:last-child td,
+.evalS-listTable tr:last-child th {
+  border-bottom: none;
+}
+.evalS-listTable td:last-child,
+.evalS-listTable th:last-child {
+  border-right: none;
+}
+/* 위쪽 선 제거 */
+.evalS-listTable thead tr:first-child th {
+  border-top: none;
+}
+
+/* 왼쪽 선 제거 */
+.evalS-listTable tbody tr td:first-child,
+.evalS-listTable thead tr th:first-child {
+  border-left: none;
+}

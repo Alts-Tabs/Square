@@ -1,3 +1,5 @@
+server:
+  port: 8090
 
 spring:  
   datasource:
@@ -11,4 +13,3 @@ spring:
     generate-ddl: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
-

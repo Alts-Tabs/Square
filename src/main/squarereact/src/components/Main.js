@@ -50,8 +50,11 @@ const Main = () => {
                             </Link>
                         </span> <br />
 
-                        <span className='naviContent'> <i class="bi bi-pencil"></i>&nbsp;&nbsp;
-                            종합 평가 
+                        <span className='naviContent'> 
+                            <i class="bi bi-pencil"></i>&nbsp;&nbsp;
+                            <Link to="/evaluationStudent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                종합 평가 
+                            </Link>
                         </span>
                     </div>
 
