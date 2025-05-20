@@ -29,14 +29,16 @@
 .todayAttendTitle {
     overflow-y: auto;
     flex-shrink: 0;
-    height: 65px;
+    overflow: hidden;
+    height: 70px;
     text-align: center;
-    line-height: 61px;
+    line-height: 67px;
     margin-bottom: 5px;
     border-radius: 10px 10px 0 0;
     background-color: white;
 }
 
+/* 지금 수업은 ~입니다. */
 .todayAttendTitle span {
     font-weight: 700;
     font-size: 22px;
@@ -47,10 +49,46 @@
 .todayAttendContent {
     flex-grow: 1;
     overflow-y: auto;
+    padding-top: 45px;
     border-radius:  0 0 10px 10px;
     text-align: center;
     background-color: white;
 }
+
+/* 출석 버튼 */
+.attendButton {
+  width: 161px;
+  height: 65px;
+  margin-top: 20px;
+  margin-bottom: 45px;
+  color: white;
+  font-size: 25px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  background-color: #79D7BE;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* 출석 종료 버튼 */
+.attendButton.end {
+  background-color: white;
+  border: 2px solid #D85858;
+  color: #D85858;
+}
+
+/* 반복 처리 리스트 */
+.studentList {
+    width: 120px;
+    height: 125px;
+    margin: 60px auto; /* 중앙 정렬 */
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid #7D8A8A;
+}
+
+
 
 /* 오른쪽 영역 =============================================== */
 .rightContainer {
@@ -65,23 +103,100 @@
 /* 우리 반 누적 출석률 */
 .stackAttend {
     display: flex;
-    flex-direction: column; /* Flex 컨테이너 내부 정렬 방향 */
+    flex-direction: row; /* Flex 컨테이너 내부 정렬 방향 */
     width: 100%;
     height: 30%;
+    padding: 30px;
     margin-bottom: 20px;
     border-radius: 10px;
     text-align: center;
+    justify-content: center; /* 가로 중앙 정렬 */
+    gap: 50px; /* attendGraph, attendClass 두 간격 */
     background-image: url(../image/stackAttend.png);
     background-repeat: no-repeat;
     background-size: 100% auto;
     background-position: center;
 }
 
+/* 반 누적 출석률 그래프 */
+.attendGraph {
+    width: 25%;
+    height: auto;
+    border: 1px solid black;
+}
+
+/* 우리 반 누적 출석률은 ~%!*/
+.attendClass {
+    display: block;
+    width: 60%;
+    padding-top: 2px;
+}
+
+.attenderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;   
+    height: 70%;
+    margin-top: 20px;
+    gap: 25px;
+    
+}
+
+/* 이번 달 출석왕&분발왕 div */
+.attender {
+    width: 50%;
+    height: auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 2px 13px #7c8a8a40;
+}
+
+.attenderTitle {
+    color: #7D8A8A;
+    font-size: 22px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.attenderName {
+    color: #79D7BE;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+
 /* 지난 출석 */
 .historyAttend {
     width: 100%;
     height: 70%;
+    padding: 30px;
     border-radius: 10px;
     text-align: center;
     background-color: white;
 }
+
+/* 반복 처리 리스트 */
+.historyList {
+    border: 1px solid black;
+    padding: 5px;
+    margin-bottom: 30px;
+}
+
+.historyCount {
+    font-size: 17px;
+}
+
+/* > 상세보기 이동 아이콘 */
+.bi-chevron-right {
+    cursor: pointer;
+    color: #7D8A8A;
+    font-size: 23px;
+    opacity: 0.7;
+}
+
+.bi-chevron-right:hover {
+    opacity: 1;
+}   
