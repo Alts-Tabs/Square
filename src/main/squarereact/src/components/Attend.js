@@ -104,22 +104,24 @@ const Attend = () => {
                     <div className='historyAttend'>
                         {/* 반복 처리 리스트 */}
                         <div className='historyList'>
-                            <span style={{fontSize:'23px', color:'#2E5077', fontWeight:'700', display:'inline-block', marginRight:'20px'}}>
-                                (지난 날짜 25.05.09 금요일 출석)
-                            </span>
+                            <div>
+                                <span style={{fontSize:'23px', color:'#2E5077', fontWeight:'700', display:'inline-block', marginRight:'20px'}}>
+                                    (지난 날짜 25.05.09 금요일 출석)
+                                </span>
 
-                            <span style={{display:'inline-block', marginRight:'10px'}}>
-                                <i class="bi bi-circle-fill" style={{color:'#79D7BE'}}></i> {/* ● 출석 */} 
-                                <span className='historyCount'> (수) </span>
-                            </span>
-                            <span style={{display:'inline-block', marginRight:'10px'}}>
-                                <i class="bi bi-triangle-fill" style={{color:'#FFB83C'}}></i> {/* ▲ 지각 */}
-                                <span className='historyCount'> (수) </span>
-                            </span>
-                            <span style={{display:'inline-block', marginRight:'500px'}}>
-                                <i class="bi bi-x-lg" style={{color:'#D85858'}}></i> {/* X 결석 */}
-                                <span className='historyCount'> (수) </span>
-                            </span>
+                                <span style={{display:'inline-dblock', marginRight:'10px'}}>
+                                    <i class="bi bi-circle-fill" style={{color:'#79D7BE'}}></i> {/* ● 출석 */} 
+                                    <span className='historyCount'> (수) </span>
+                                </span>
+                                <span style={{display:'inline-block', marginRight:'10px'}}>
+                                    <i class="bi bi-triangle-fill" style={{color:'#FFB83C'}}></i> {/* ▲ 지각 */}
+                                    <span className='historyCount'> (수) </span>
+                                </span>
+                                <span style={{display:'inline-block'}}>
+                                    <i class="bi bi-x-lg" style={{color:'#D85858'}}></i> {/* X 결석 */}
+                                    <span className='historyCount'> (수) </span>
+                                </span>
+                            </div>
 
                             {/* > 상세보기 이동 아이콘 (학생&학부모 계정에선 보이지 않는 버튼) */}
                             <Link to="/attend-history">
@@ -128,8 +130,6 @@ const Attend = () => {
                         </div>
                     </div>
                 </div>
-
-
                 
             </div>
     );
