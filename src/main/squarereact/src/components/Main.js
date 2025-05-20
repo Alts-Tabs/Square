@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import SquareLogo from '../image/SquareLogo.png';
 import whale_L from '../image/whale_L.png';
 import './main.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BoardMainPage from './BoardMainPage';
+import PostDetail from './PostDetail';
+import PostForm from './PostForm';
 
 const Main = () => {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
@@ -10,8 +14,8 @@ const Main = () => {
         setIsNavCollapsed(!isNavCollapsed);
     };
 
-
-    return (
+    const username = { name: "user1", role: "parents" };
+    return (        
         <div>
             <div className='header'>
                 {/* Header 좌측 */}
@@ -102,7 +106,13 @@ const Main = () => {
 
 
                 <div className='contents'>
-                    여기가 컨텐츠
+                    <Router>
+                        <Routes>
+                            <Route path="/" element={<BoardMainPage username={username} />} />
+                            <Route path="/post/:postId" element={<PostDetail username={username} />} />
+                            <Route path="/post/create" element={<PostForm username={username} />} />
+                        </Routes>
+                    </Router>
                 </div>
             </div>
         </div>
