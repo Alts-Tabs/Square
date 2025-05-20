@@ -27,7 +27,7 @@
 /* Navi 영역 전체 */
 .navi {
     position: relative;
-    width: 343px;
+    width: 407px;
     padding-top: 10px;
     background-color: white;
     border-top: 2px solid #EBF0F0;
@@ -109,6 +109,6 @@
 
 /* contents =============================================================== */
 .contents {
-    margin: 30px 45px 25px 25px; /* 컨텐츠 margin 모든 페이지 항상 동일! */
+    margin: 30px 45px 45px 25px; /* 컨텐츠 margin 모든 페이지 항상 동일! */
     width: 100%;
 }

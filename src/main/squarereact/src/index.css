@@ -1,7 +1,7 @@
 /* --- 크기 고정 --- */
-html, body {
+html, body, #root {
   /* width 지정 안 해야 Header 고래가 반응형으로 위치함. */
-  height: 100%;
+  height: 100vh;
   background-color: #EBF0F0;
   color: #7D8A8A;
 }
