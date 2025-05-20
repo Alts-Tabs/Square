@@ -11,7 +11,7 @@ const PaymentManagement = () => {
                     <div className='classRead'>
                         <span> 전체 반 </span>
                         <hr></hr>
-                        <table>
+                        <table className='classMenu'>
                             <tr>
                                 <td rowspan="2">
                                     <div className='ellipse'/>
@@ -54,6 +54,17 @@ const PaymentManagement = () => {
                             </tr>
                             <tr>
                                 <td>&nbsp;&nbsp;&nbsp;[과학]</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">
+                                    <div className='ellipse'/>
+                                </td>
+                                <td>&nbsp;&nbsp;&nbsp;강사명 고영희&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                <td>수업료 400,000원</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;&nbsp;[영어]</td>
                                 <td></td>
                             </tr>
                         </table>
