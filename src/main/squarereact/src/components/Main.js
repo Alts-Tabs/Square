@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import SquareLogo from '../image/SquareLogo.png';
 import whale_L from '../image/whale_L.png';
 import './main.css'
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import BoardMainPage from './BoardMainPage';
+// import PostDetail from './PostDetail';
+// import PostForm from './PostForm';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const Main = () => {
@@ -12,6 +16,8 @@ const Main = () => {
         setIsNavCollapsed(!isNavCollapsed);
     };
 
+//     const username = { name: "user1", role: "parents" };
+  
     // 오늘 날짜 구하기
     const today = new Date();
     const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
@@ -129,6 +135,13 @@ const Main = () => {
 
                 {/* 본문 컨텐츠 영역 */}
                 <div className='contents'>
+                       {/* <Router>
+                           <Routes>
+                               <Route path="/" element={<BoardMainPage username={username} />} />
+                               <Route path="/post/:postId" element={<PostDetail username={username} />} />
+                               <Route path="/post/create" element={<PostForm username={username} />} />
+                           </Routes>
+                       </Router> */}
                     <Outlet />
                 </div>
             </div>
