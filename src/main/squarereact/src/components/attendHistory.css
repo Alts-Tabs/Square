@@ -23,7 +23,7 @@
     text-decoration: none;
     color: inherit;
     font-size: 18px;
-    display: flex;
+    display: inline-flex; /* 링크 영역 확장 방지 */
     align-items: center;
     cursor: pointer;
     opacity: 0.7;
@@ -120,11 +120,13 @@ tbody tr td button {
 /* 메모 작성 제목 영역 */
 .memoHeader {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-direction: row; /* Flex 컨테이너 내부 정렬 방향 */
     overflow: hidden;
     width: 100%;
     height: 87px;
-    padding-left: 30px;
+    padding: 0 30px;
     line-height: 78px;
     border-radius: 10px 10px 0 0;
     border-bottom: 2px solid #EBF0F0;
@@ -160,4 +162,14 @@ textarea:focus {
 
 textarea::placeholder {
     color: rgba(125, 138, 138, 0.5);
+}
+
+/* 저장 */
+.memoHeader span:last-child {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.memoHeader span:last-child:hover {
+  opacity: 1;
 }
