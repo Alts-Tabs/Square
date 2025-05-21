@@ -21,6 +21,10 @@ const BoardMainPage = ({ username }) => {
     { id: 13, title: '', author: '', date: '', views: '' },
     { id: 12, title: '', author: '', date: '', views: '' },
     { id: 11, title: '', author: '', date: '', views: '' },
+    { id: 11, title: '', author: '', date: '', views: '' },
+    { id: 11, title: '', author: '', date: '', views: '' },
+    { id: 11, title: '', author: '', date: '', views: '' },
+    { id: 11, title: '', author: '', date: '', views: '' },
   ];
 
   // 자유게시판 데이터
@@ -37,6 +41,11 @@ const BoardMainPage = ({ username }) => {
   const handleWriteClick = () => {
     navigate('/post/create');
   };
+
+  // 게시글 데이터 필터링 함수
+const getFilteredPosts = (posts) => {
+  return posts.filter(post => post.title || post.author || post.date || post.views);
+};
 
   return (
     <div className="boardMainTable">
