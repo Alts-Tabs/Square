@@ -38,6 +38,7 @@ public class UsersEntity {
     @Column(length = 100)
     private String email;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.ROLE_DIRECTOR;
@@ -47,4 +48,10 @@ public class UsersEntity {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Timestamp created_at;
 
+    // 테이블 Cascade 설정
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private TeachersEntity teacher;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private ParentsEntity parent;
 }
