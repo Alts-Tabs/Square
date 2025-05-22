@@ -31,7 +31,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="backstyle" style={{backgroundImage: `url(${bgImg})`}}>
+    <div className="backstyle fade-in" style={{backgroundImage: `url(${bgImg})`}}>
       <img alt="" src={logo} className="logo" />
       <div className="box">
         <form onSubmit={onLoginSubmit}>

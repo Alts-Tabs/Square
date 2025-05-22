@@ -50,8 +50,8 @@ export function activateBubbleCursor(parentElement) {
             rats.appendChild(div);
             Object.assign(div.style, {
                 left: "1px", right: "1px", bottom: "1px", top: "1px",
-                background: "linear-gradient(180deg, #ffffff 60%, #79D7BE 90%)",
-                opacity: 0.65,
+                background: "linear-gradient(180deg, #ffffff 80%, #79D7BE 100%)",
+                opacity: 0.7,
                 filter: "alpha(opacity=50)",
                 borderRadius: "50%"
             });
@@ -75,7 +75,7 @@ export function activateBubbleCursor(parentElement) {
                     bubb[c].width = "15px";
                     bubb[c].height = "15px";
                     bubb[c].visibility = "visible";
-                    bubbs[c] = 3;
+                    bubbs[c] = 8;
                     break;
                 }
             }
@@ -89,7 +89,7 @@ export function activateBubbleCursor(parentElement) {
         bubby[i] -= bubbs[i] / 2 + i % 2;
         bubbx[i] += (i % 5 - 2) / 5;
         if (bubby[i] > sdown && bubbx[i] > sleft && bubbx[i] < sleft + swide + bubbs[i]) {
-            if (Math.random() < bubbs[i] / shigh * 2 && bubbs[i]++ < 8) {
+            if (Math.random() < bubbs[i] / shigh * 2 && bubbs[i]++ < 12) {
                 bubb[i].width = bubbs[i] + "px";
                 bubb[i].height = bubbs[i] + "px";
             }
