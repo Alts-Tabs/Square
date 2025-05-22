@@ -1,0 +1,25 @@
+.root-container {
+  background-color: rgba(121, 215, 190, 0.15);
+  background-image: url('../image/rootBackground.png');
+  background-size: 110% auto;
+  background-position: center;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+
+  animation: waveMotion 3s ease-in-out infinite alternate;
+}
+
+/* 배경 이미지 상하 이동 애니메이션 */
+@keyframes waveMotion {
+  0% {
+    background-position: center;
+  }
+  100% {
+    background-position: center 2px;
+  }
+}

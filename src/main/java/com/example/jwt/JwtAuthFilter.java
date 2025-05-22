@@ -26,11 +26,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
-            System.out.println("분리된 토큰: "+token);
+//            System.out.println("분리된 토큰: "+token);
 
             if(jwtUtil.validateToken(token)) {
                 String username = jwtUtil.getUsername(token);
-                System.out.println("검증된 아이디: "+username);
+//                System.out.println("검증된 아이디: "+username);
 
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username.toString());
 

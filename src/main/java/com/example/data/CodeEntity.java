@@ -29,7 +29,7 @@ public class CodeEntity {
 
     private int people; // 코드 최대 사용자 수
 
-    @Column(length = 10)
+    @Column(length = 30)
     private String role; // 코드로 생성 가능한 계정 권한
 
     private Boolean status; // 코드 사용 여부

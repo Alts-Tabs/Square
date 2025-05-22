@@ -38,6 +38,7 @@
 .evalp-selectInfo table {
     width: 100%;
     height: auto;
+    margin-top: -2px;
     border-collapse: collapse; /*선 겹침 방지*/
     border-spacing: 0;
     border: none !important;
@@ -56,7 +57,7 @@
     text-align: center;
 }
 
-.evalp-datepicker-wrapper {
+.evelP-date {
   display: flex;
   align-items: center;
   height: 60%;
@@ -66,6 +67,7 @@
 .evalp-selectInfo td:last-child,
 .evalp-selectInfo th:last-child {
   border-right: none;
+  margin: -2px;
 }
 .evalp-topContainer select {
     margin-left: 9px;
@@ -88,33 +90,24 @@
   font-weight: 500;
   font-size: 22px;
   padding-bottom: 5px !important;
-  margin: 10px auto;
   line-height: 1;
 }
-/*datepicker 커스텀*/
-.custom-datepicker-evalParents {
-  width: 330px !important;
-  height: 40px;
-  font-size: 15px;
-  color: #2E5077;
-  border: 1px solid #79D7BE;
+.evalp-topContainer .evalP-StartDate,
+.evalp-topContainer .evalP-EndDate {
+  margin-left: 9px;
+  margin-right: 25%;
   border-radius: 10px;
-  padding-left: 10px;
-  box-sizing: border-box;
-  margin-left:10px;
-}
-/*datepicker 플레이스홀더 커스텀*/
-
-.custom-datepicker-evalParents::placeholder {
-    color: #2E5077;
-    font-weight: 500;
-    font-size: 15px;
-    opacity: 1;
+  height: 40px;
+  border: 1px solid #79D7BE;
+  color: #2E5077;
+  font-weight: 500;
+  padding: 10px;
 }
 
 /*평가 목록영역----------------------------------------------------------------*/
 .evalp-listContainer {
     flex: 8;
+    
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -129,6 +122,7 @@
 .evalp-listTable {
   border-collapse: separate;
   background-color: white;
+  margin-top: -2px;
   text-align: center;
   overflow: hidden;
   width: 100%;
@@ -145,17 +139,18 @@
 .evalp-listTable th {
     font-size: 23px;
     font-weight: 500;
+    background-color: white;
+    border-bottom-color: #DFDFDF;
 }
 .evalp-listTable td {
     font-size: 15px;
     font-weight: 500;
     color: #2E5077;
- 
 }
 /* 마지막 줄과 마지막 열은 테두리 제거해서 둥글게 만들거나 깔끔하게 처리 */
 .evalp-listTable tr:last-child td,
 .evalp-listTable tr:last-child th {
-  border-bottom: none;
+  border-bottom: 2px solid #DFDFDF; /*border-bottom: none;*/
 }
 .evalp-listTable td:last-child,
 .evalp-listTable th:last-child {

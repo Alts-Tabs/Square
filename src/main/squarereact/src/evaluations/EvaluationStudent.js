@@ -1,10 +1,7 @@
 import React from 'react';
 import './EvaluationStudent.css';
-// import DatePicker from 'react-datepicker';
 
 const EvaluationStudent = () => {
-    // const [startDate, setStartDate] = useState(null);
-    // const [endDate, setEndDate] = useState(null);
 
     return (
         <div className='evaluationSContainer'>
@@ -33,28 +30,14 @@ const EvaluationStudent = () => {
                     <tr>
                         <th>시작</th>
                         <td>
-                            <div className="evalS-datepicker-wrapper">
-                                {/* <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
-                                    isClearable
-                                    placeholderText="시작일 선택"
-                                    dateFormat="yyyy-MM-dd"
-                                    className="custom-datepicker-evalParents"
-                                /> */}
+                            <div className="evalS-date">
+                                <input type="date" className='evalS-StartDate'/>
                             </div>
                         </td>
                         <th>종료</th>
                         <td>
-                            <div className="evalS-datepicker-wrapper">
-                                {/* <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
-                                    isClearable
-                                    placeholderText="종료일 선택"
-                                    dateFormat="yyyy-MM-dd"
-                                    className="custom-datepicker-evalParents"
-                                /> */}
+                            <div className="evalS-date">
+                                <input type="date" className='evalS-StartDate'/>
                                 <button type='button' className='evalS-Searchbtn'>조회</button>
                             </div>
                         </td>
@@ -63,7 +46,7 @@ const EvaluationStudent = () => {
             </div>
 
             <div className='evalS-listContainer'>
-                <table className='table table-bordered evalS-listTable'>
+                <table className='evalS-listTable'>
                     <thead>
                       <tr>
                         <th>No.</th>
