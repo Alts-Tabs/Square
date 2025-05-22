@@ -1,12 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Main from '../components/Main';
-import Attend from '../components/Attend';
-import AttendHistory from '../components/AttendHistory';
+import { Root, Main } from '../frame';
+import { Attend, AttendHistory } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
 import PaymentManagement from '../components/PaymentManagement';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
-import Root from '../components/Root';
 
 const RouterMain = () => {
     return (

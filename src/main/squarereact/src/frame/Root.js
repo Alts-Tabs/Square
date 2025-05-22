@@ -12,6 +12,7 @@ const Root = () => {
     const rootRef = useRef(null);
     const cleanupBubble = useRef(null);
 
+    // 버블 마우스 커서
     useEffect(() => {
         if (rootRef.current) {
             cleanupBubble.current = activateBubbleCursor(rootRef.current);

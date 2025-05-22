@@ -23,9 +23,3 @@
     background-position: center 2px;
   }
 }
-
-
-.shadow-image {
-  box-shadow: 0 4px 10px rgba(125, 138, 138, 0.15);
-  border-radius: 8px;
-}
