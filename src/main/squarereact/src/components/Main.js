@@ -102,8 +102,11 @@ const Main = () => {
                                 수강료 관리
                             </Link>
                         </span> <br />
-                        <span className='naviContent'> <i class="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
-                            미납 관리
+                        <span className='naviContent'>
+                            <i class="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
+                            <Link to="/nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                미납 관리
+                            </Link>
                         </span> <br />
                     </div>
 
