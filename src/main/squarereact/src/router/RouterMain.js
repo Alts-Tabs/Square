@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Root, Main } from '../frame';
 import { Attend, AttendHistory } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
-import PaymentManagement from '../components/PaymentManagement';
+import { PaymentManagement, NonPayCheck } from '../components/payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 
 const RouterMain = () => {
@@ -16,6 +16,7 @@ const RouterMain = () => {
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
+                    <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
                     <Route path="evaluationAdmin" element={<EvalAdmin/>}/> {/*학원관계자 종합평가 관리 */}
