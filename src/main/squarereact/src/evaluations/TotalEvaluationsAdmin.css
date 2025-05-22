@@ -52,9 +52,29 @@
     text-align: center;
     background-color: white;
 }
+.evalA-StudentList {
+    margin-top: -2px;
+}
+.eval-classContents .evalA-thead th{
+    background-color: white;
+    color: #7D8A8A;
+    border: 1px solid #dfdfdf;
+}
+
 .eval-classContents table td {
   padding: 10px 20px;
   vertical-align: middle;
+  border: 1px solid #dfdfdf;
+}
+/*테이블 내 제일 오른쪽 선 지우기*/
+.eval-classContents td:last-child,
+.eval-classContents th:last-child {
+  border-right: none;
+}
+/* 왼쪽 선 제거 */
+.eval-classContents tbody tr td:first-child,
+.eval-classContents thead th:first-child {
+  border-left: none;
 }
 
 .eval-classContents table .studentName {
@@ -150,64 +170,41 @@
   margin-bottom: 20px;
 }
 .evaluationContent .evaluSelect{
-    width: 150px;
-    height: 35px;
-    margin: 0 15px 15px 0;
+    width: 130px;
+    height: 30px;
+    margin: 0 5px 5px 0;
     border-radius: 10px;
     background-color: #F6F4F0;
     color: #7D8A8A;
     font-weight: 400;
     font-size: 15px;
 }
-
-.custom-datepicker-evalAdmin {
-    height: 38px; 
+.evaluationContent .evalA-StartDate .evalA-start, 
+.evaluationContent .evalA-endDate .evalA-end {
     font-size: 15px;
-    padding: 5px 10px;
+    margin-bottom: 15px;
+}
+.evaluationContent .evalA-Date {
+    width: 130px;
+    height: 30px;
     border-radius: 10px;
+    background-color: #F6F4F0;
+    color: #7D8A8A;
     border: 1px solid #7D8A8A;
-    width: 240px;
-    color:#7D8A8A;
-}
-/*평가기간 선택 커스텀*/
-.react-datepicker__input-container input{
-    width: 240px;
-    border-radius: 10px;
-    font-weight: 500;
-}
-
-/*날짜 선택하면 노출되는 X 버튼*/
-.react-datepicker__close-icon::after {
-  background-color: #79D7BE !important;
-  color: white !important;
-  font-weight: 500;
-}
-/*오늘 날짜*/
-.react-datepicker__day--today { 
-  color: #79D7BE !important;
-}
-/*선택된 날짜*/
-.react-datepicker__day--selected,   
-.react-datepicker__day--in-range,
-.react-datepicker__day:hover:not(.react-datepicker__day--disabled) { 
-   background-color: #79D7BE !important;
-   color: white !important;
-}
-.react-datepicker__day--keyboard-selected, .react-datepicker__month-text--keyboard-selected, .react-datepicker__quarter-text--keyboard-selected, .react-datepicker__year-text--keyboard-selected {
-    background-color:#79D7BE !important;
-    color: white !important;
+    padding: 5px;
 }
 
 .evaluationContent .saveEval {
   width: 120px;
-  height: 40px;
+  height: 35px;
   border-radius: 10px;
-  background-color: #79D7BE;
-  border:#79D7BE;
-  color: white;
+  background-color: white;
+  border:2px solid #79D7BE;
+  color: #79D7BE;
   font-weight: 500;
   font-size: 20px;
   margin-left: auto;
+  margin-bottom: 15px;
 }
 .evaluationBody span{
   margin: 0 25px 25px 0;

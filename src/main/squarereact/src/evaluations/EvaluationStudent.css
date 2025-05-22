@@ -25,9 +25,9 @@
 .evalS-selectInfo {
     overflow-y: visible; /* 또는 auto로도 가능 */
     flex-shrink: 0;
-    min-height: 200px; /* 또는 높이 제거 */
+    min-height: 120px; /* 또는 높이 제거 */
     text-align: left;
-    line-height: 50px;
+    line-height: normal;
     height: auto;
     border-radius: 10px 10px 0 0 ;
     background-color: white;
@@ -37,15 +37,16 @@
 }
 .evalS-selectInfo table {
     width: 100%;
-    height: auto;
+    margin-top: -2px;
     border-collapse: collapse; /*선 겹침 방지*/
-    border-spacing: 0;
+    /*border-spacing: 0;height: auto;*/
     border: none !important;
 }
 .evalS-topContainer th, .evalS-topContainer td {
     border: 2px solid #DFDFDF;
     vertical-align: middle;
-    height: auto; /* 셀 높이 고정 */
+    padding: 6px 10px;
+    height: 40px; /* 셀 높이 고정 */
     border-left: none;  /* 좌측선 제거 */
     border-top: none;   /* 위쪽선 제거 */
 }
@@ -55,7 +56,7 @@
     text-align: center;
 }
 
-.evalS-datepicker-wrapper {
+.evelS-date {
   display: flex;
   align-items: center;
   height: 60%;
@@ -74,7 +75,7 @@
     font-weight: 500;
     font-size:15px; 
     width:330px;
-    height: 40px;
+    height: 35px;
     border-radius: 10px;
 }
 .evalS-topContainer .evalS-Searchbtn {
@@ -87,13 +88,23 @@
   font-weight: 500;
   font-size: 22px;
   padding-bottom: 5px !important;
-  margin: 10px auto;
-  line-height: 1;
+  line-height: 0.5;
+}
+.evalS-topContainer .evalS-StartDate,
+.evalS-topContainer .evalS-EndDate {
+  margin-left: 9px;
+  margin-right: 25%;
+  border-radius: 10px;
+  height: 35px;
+  border: 1px solid #79D7BE;
+  color: #2E5077;
+  font-weight: 500;
+  padding: 10px;
 }
 
 /*평가 목록영역----------------------------------------------------------------*/
 .evalS-listContainer {
-    flex: 1;
+    flex: 8;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -106,6 +117,7 @@
     padding: 1px;
 }
 .evalS-listTable {
+  margin-top: -2px;
   border-collapse: separate;
   background-color: white;
   text-align: center;
@@ -119,6 +131,7 @@
 .evalS-listTable td {
     border: none; 
     border: 1px solid #ccc;
+    background-color: white;
     
 }
 .evalS-listTable th {
@@ -134,7 +147,7 @@
 /* 마지막 줄과 마지막 열은 테두리 제거해서 둥글게 만들거나 깔끔하게 처리 */
 .evalS-listTable tr:last-child td,
 .evalS-listTable tr:last-child th {
-  border-bottom: none;
+  border-bottom: 2px solid #dfdfdf; /*border-bottom: none;*/
 }
 .evalS-listTable td:last-child,
 .evalS-listTable th:last-child {
