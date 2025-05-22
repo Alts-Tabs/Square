@@ -1,12 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Main from '../components/Main';
-import Attend from '../components/Attend';
-import AttendHistory from '../components/AttendHistory';
+import { Root, Main } from '../frame';
+import { Attend, AttendHistory } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
 import PaymentManagement from '../components/PaymentManagement';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
-import Root from '../components/Root';
 
 const RouterMain = () => {
     return (
@@ -16,7 +14,7 @@ const RouterMain = () => {
 
                 <Route path="/main" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
-                    <Route path="attend-history" element={<AttendHistory />} />
+                    <Route path="attend/attend-history" element={<AttendHistory />} />
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 

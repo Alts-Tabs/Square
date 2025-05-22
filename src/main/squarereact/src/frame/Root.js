@@ -12,6 +12,7 @@ const Root = () => {
     const rootRef = useRef(null);
     const cleanupBubble = useRef(null);
 
+    // 버블 마우스 커서
     useEffect(() => {
         if (rootRef.current) {
             cleanupBubble.current = activateBubbleCursor(rootRef.current);
@@ -24,10 +25,7 @@ const Root = () => {
     return (
         <div
             ref={rootRef} // 이 div에 버블 커서 적용
-            className="root-container"
-            style={{
-                backgroundImage: `url(${rootBackground})`,
-            }}
+            className="root-container fade-in"
         >
             <img src={whale_R} alt="whale_R" style={{width:'7%'}}/>  {/* 고래 */}
 

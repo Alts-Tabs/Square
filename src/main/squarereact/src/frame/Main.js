@@ -32,9 +32,9 @@ const Main = () => {
         <div>
             <div className='header'>
                 {/* Header 좌측 */}
-                <img src={SquareLogo} alt="SquareLogo" style={{width:'300px', cursor:'pointer'}}/>
+                <img src={SquareLogo} alt="SquareLogo" style={{width:'300px', cursor:'pointer'}} onClick={() => navi('/main')} />
                 <h6 style={{marginTop:'30px', marginLeft:'25px', color:'#79D7BE'}}> 
-                    <span style={{cursor:'pointer'}} onClick={onLogout}>로그아웃</span>
+                    <span style={{cursor:'pointer'}} onClick={onLogout}> 로그아웃 </span>
                     &nbsp;&nbsp;{formattedDate}
                 </h6>
 

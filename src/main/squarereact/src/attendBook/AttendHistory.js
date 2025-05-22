@@ -39,7 +39,7 @@ const AttendHistory = () => {
 
                 {/* 이전으로 돌아가기 */}
                 <div className='attendbookHeader'>
-                <Link to="/attend">
+                <Link to="/main/attend">
                     <i className="bi bi-chevron-left"></i>
                     <span>이전</span>
                 </Link>

@@ -177,7 +177,7 @@ const Attend = () => {
                         </div>
 
                         <Link
-                            to="/attend-history"
+                            to="attend-history"
                             state={{
                             date: attend.dateOnly,
                             present: attend.present,
