@@ -1,0 +1,28 @@
+.root-container {
+  background-color: rgba(121, 215, 190, 0.15);
+  background-size: 110% auto;
+  background-position: center;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+
+  animation: waveMotion 3s ease-in-out infinite alternate;
+}
+
+@keyframes waveMotion {
+  0% {
+    background-position: center;
+  }
+  100% {
+    background-position: center 2px;
+  }
+}
+
+.shadow-image {
+  box-shadow: 0 4px 10px rgba(125, 138, 138, 0.15);
+  border-radius: 8px;
+}

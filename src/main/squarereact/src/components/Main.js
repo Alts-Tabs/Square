@@ -69,14 +69,14 @@ const Main = () => {
 
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
-                            <Link to="/attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to="attend" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 출석 관리
                             </Link>
                         </span> <br />
 
                         <span className='naviContent'> 
                             <i class="bi bi-pencil"></i>&nbsp;&nbsp;
-                            <Link to="/evaluationStudent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to="evaluationStudent" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 종합 평가 
                             </Link>
                         </span>
@@ -98,7 +98,7 @@ const Main = () => {
                         <span className='naviTitle'> 수강료 </span> <br />
                         <span className='naviContent'>
                             <i class="bi bi-credit-card"></i>&nbsp;&nbsp; 
-                            <Link to="/paymentManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to="paymentManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 수강료 관리
                             </Link>
                         </span> <br />

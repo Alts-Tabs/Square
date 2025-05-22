@@ -6,14 +6,17 @@ import AttendHistory from '../components/AttendHistory';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
 import PaymentManagement from '../components/PaymentManagement';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
+import Root from '../components/Root';
 
 const RouterMain = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Main />}> {/* Header & Navi 레이아웃 */}
+                <Route path='/' element={<Root />} />
+
+                <Route path="/main" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
-                    <Route path="/attend-history" element={<AttendHistory />} />
+                    <Route path="attend-history" element={<AttendHistory />} />
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
