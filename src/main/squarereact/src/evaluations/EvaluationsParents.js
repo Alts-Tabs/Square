@@ -1,9 +1,7 @@
-// import React, { useState } from 'react';
+import React from 'react';
 import './EvaluationsParents.css';
-// import DatePicker from 'react-datepicker';
 const EvaluationsParents = () => {
-    // const [startDate, setStartDate] = useState(null);
-    // const [endDate, setEndDate] = useState(null);
+
 
     return (
         <div className='evaluationpContainer'>
@@ -42,30 +40,16 @@ const EvaluationsParents = () => {
                         <tr>
                             <th>시작</th>
                             <td>
-                                <div className="evalp-datepicker-wrapper">
-                                {/* <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
-                                    isClearable
-                                    placeholderText="시작일 선택"
-                                    dateFormat="yyyy-MM-dd"
-                                    className="custom-datepicker-evalParents"
-                                /> */}
-                                </div>
+                                
+                                    <input type="date" className='evalP-StartDate'/>
+                                
                             </td>
                             <th>종료</th>
                             <td>
-                                <div className="evalp-datepicker-wrapper">
-                                {/* <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
-                                    isClearable
-                                    placeholderText="종료일 선택"
-                                    dateFormat="yyyy-MM-dd"
-                                    className="custom-datepicker-evalParents"
-                                /> */}
-                                <button type='button' className='evalP-Searchbtn'>조회</button>
-                                </div>
+                                
+                                    <input type="date" className='evalP-EndDate'/>
+                                    <button type='button' className='evalP-Searchbtn'>조회</button>
+                                
                             </td>
                         </tr>
                     </table>
@@ -73,7 +57,7 @@ const EvaluationsParents = () => {
 
             </div>
             <div className='evalp-listContainer'>
-                <table className='table table-bordered evalp-listTable'>
+                <table className='evalp-listTable'>
                     <thead>
                       <tr>
                         <th>No.</th>
