@@ -138,7 +138,7 @@ const JoinPage = () => {
           </label><br />
           <label>
             개인 정보<br />
-            <input type='tel' placeholder='010-xxxx-xxxx'
+            <input type='tel' placeholder='010XXXXYYYY'
              className='form-control' required
              value={phone}
              onChange={(e) => setPhone(e.target.value)} />

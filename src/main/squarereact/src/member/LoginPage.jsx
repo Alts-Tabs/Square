@@ -25,7 +25,7 @@ const LoginPage = () => {
         sessionStorage.name = res.data.name;
         sessionStorage.role = res.data.role;
         alert("로그인");
-        navi("/");
+        navi("/main");
       }
     });
   }
@@ -48,7 +48,7 @@ const LoginPage = () => {
           <p>아이디와 비밀번호를 잊으셨나요?</p>
           <br />
           <button type="button" onClick={()=>navi("/join")}>가입하기</button>
-          <button type="button">코드 입력</button>
+          <button type="button" onClick={()=>navi("/subcode")}>코드 입력</button>
         </div>
       </div>
     </div>
