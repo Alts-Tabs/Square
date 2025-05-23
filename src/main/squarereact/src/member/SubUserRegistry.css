@@ -87,7 +87,7 @@
     cursor: pointer;
 }
 
-.radiobox label {
+.subRadioBox label {
     margin-right: 20px;
     color: #2E5077;
 }
@@ -101,4 +101,10 @@
     border-radius: 5px;
     border: none;
     width: 250px;
+}
+
+.subCodeFail {
+    font-family: 'NanumSquareNeoBold', sans-serif;
+    color: red;
+    text-align: center;
 }

@@ -41,6 +41,8 @@ const SubCode = () => {
 
   // 코드 버튼 이벤트
   const clickBtn = () => {
+    setWarns();
+
     if(subcode.trim() === "") {
       setWarn1(true);
       return;
@@ -53,8 +55,8 @@ const SubCode = () => {
 
       setRole(res.data.role);
       setAcademy_id(res.data.academy_id);
-      // alert(res.data.role);
-      // alert(res.data.academy_id);
+      setUsername(res.data.username);
+      // alert(res.data.username);
     }).catch(err => {
       if(err.response && err.response.status === 404) {
         setWarn2(true);
@@ -64,12 +66,7 @@ const SubCode = () => {
     });
   }
 
-  // 아이디 공백 자동 제거
-  const handleUsername = (e) => {
-    const raw = e.target.value;
-    const trimmed = raw.replace(/\s/g, ''); // 모든 공백 제거
-    setUsername(trimmed);
-  }
+  // 패스워드 공백 자동 제거
   const handlePassword = (e) => {
     const raw = e.target.value;
     const trimmed = raw.replace(/\s/g, ''); // 모든 공백 제거
@@ -148,8 +145,8 @@ const SubCode = () => {
              value={name} onChange={(e)=>setName(e.target.value)} />
             <label>계정 정보</label>
             <input type="text" placeholder="아이디"
-             className="form-control inputs" required
-             value={username} onChange={handleUsername} />
+             className="form-control inputs" readOnly
+             value={username} />
             
             <input type="password" placeholder="비밀번호"
              className="form-control inputs" required

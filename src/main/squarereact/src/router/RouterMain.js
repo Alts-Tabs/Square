@@ -12,7 +12,7 @@ const RouterMain = () => {
             <Routes>
                 <Route path='/' element={<Root />} />
 
-                <Route path="/main" element={<Main />}> {/* Header & Navi 레이아웃 */}
+                <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
