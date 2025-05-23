@@ -3,6 +3,17 @@ import "./SubUserRegistry.css";
 import axios from "axios";
 
 const SubUserRegistry = () => {
+  // 경고문
+  const [warn1, setWarn1] = useState(false);
+  const [warn2, setWarn2] = useState(false);
+  const [warn3, setWarn3] = useState(false);
+  // 경고문 초기화
+  const setWarns = () => {
+    setWarn1(false);
+    setWarn2(false);
+    setWarn3(false);
+  }
+
   // code 폼 값
   const [code, setCode] = useState('');
   const [role, setRole] = useState('ROLE_TEACHER');
@@ -42,6 +53,7 @@ const SubUserRegistry = () => {
   // 서브계정 폼 이벤트
   const onSubFormEvent = (e) => {
     e.preventDefault();
+    setWarns();
     
     const token = sessionStorage.getItem("token");
 
@@ -51,21 +63,21 @@ const SubUserRegistry = () => {
       data: {subcode, people, role, endday, username, code},
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
-      if(res.data === "UserFail") {
-        alert("어떻게 왔냐..");
-        return;
-      }
-
-      if(res.data === "codeFail") {
-        alert("코드가 맞지 않습니다.");
-        return;
-      }
-
       setCode('');
       setSubcode('');
       setPeople(1);
     }).catch(err => {
-      alert('인증 오류');
+      if(err.response && err.response.status === 400) {
+        setWarn1(true);
+        return;
+      }
+
+      if(err.response && err.response.status === 404) {
+        setWarn2(true);
+        return;
+      } 
+
+      setWarn3(true);
     });
   }
 
@@ -84,11 +96,14 @@ const SubUserRegistry = () => {
               <input type="text" className="form-control"
                style={{width:"40%"}} required
                value={code} onChange={(e) => setCode(e.target.value)} />
+              {warn1 && <p className="subCodeFail">누구인가?</p>}
+              {warn2 && <p className="subCodeFail">코드가 맞지 않습니다.</p>}
+              {warn3 && <p className="subCodeFail">서버 오류...</p>}
             </div>
 
             <div className="subgroup">
               <span>접근 권한</span>
-              <div className="radiobox" onChange={(e) => setRole(e.target.value)}>
+              <div className="subRadioBox" onChange={(e) => setRole(e.target.value)}>
                 <label>
                   <input type="radio" name="subcode"
                    value="ROLE_TEACHER"
@@ -120,7 +135,7 @@ const SubUserRegistry = () => {
 
             <div className="subgroup">
               <span>코드 기한</span>
-              <i class="bi bi-calendar4" onClick={handleIconClick}></i>
+              <i className="bi bi-calendar4" onClick={handleIconClick}></i>
               <input type="datetime-local" defaultValue={date}
                style={{display:"none"}}
                ref={dateInputRef}

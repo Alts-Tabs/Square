@@ -35,6 +35,9 @@ public class AcademiesEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String address;
 
+    @Column(nullable = false, length = 10)
+    private String aca_prefix; // 학원 접두사
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

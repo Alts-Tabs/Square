@@ -18,6 +18,7 @@ const JoinPage = () => {
 
   const [address, setAddress] = useState('');
   const [aca_name, setAca_name] = useState('');
+  const [aca_prefix, setAca_prefix] = useState('');
   const [description, setDescription] = useState('');
 
   const [warning, setWarning] = useState(false);
@@ -45,7 +46,7 @@ const JoinPage = () => {
     }
     
     axios.post("/public/join",
-      {username, password, name, phone, email, aca_name, address, description}
+      {username, password, name, phone, email, aca_name, address, aca_prefix, description}
     ).then(res => {
       if(res.data === 'success') {
         navi("/login");
@@ -56,9 +57,9 @@ const JoinPage = () => {
 
   // 전체 유효성 검사
   const onInvalidCheck = () => {
-    setWarning(true);
     btnIdCheck();
     checkPWD();
+    setWarning(true);
   }
 
   // 아이디 유효성 검사
@@ -160,6 +161,13 @@ const JoinPage = () => {
              className='form-control' required
              value={aca_name}
              onChange={(e) => setAca_name(e.target.value)} />
+            
+            <input type='text' placeholder='식별 별칭(중복 방지를 위해 뒷자리에 숫자가 붙습니다)'
+             className='form-control' required
+             style={{fontSize:'0.9em'}}
+             value={aca_prefix}
+             onChange={(e) => setAca_prefix(e.target.value)} />
+            
             <textarea className='form-control'
              placeholder='학원 설명'
              value={description}
