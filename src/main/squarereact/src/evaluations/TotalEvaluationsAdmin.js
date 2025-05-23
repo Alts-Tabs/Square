@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
 import './TotalEvaluationsAdmin.css';
-// import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
 
 const TotalEvaluationsAdmin = () => {
     const [selectStudent, setSelectStudent]=useState('');
     const handleSelectStudent=(name)=> setSelectStudent(name);
-
-    // const [dateRange, setDateRange] = useState([null, null]);
-    // const [startDate, endDate] = dateRange;
     
     return (
         <div className='evaluationContainer'>
@@ -22,8 +17,8 @@ const TotalEvaluationsAdmin = () => {
                 </div>
 
                 <div className='eval-classContents'>
-                    <table style={{margin:'30px 0 30px 30px'}}>
-                        <thead>
+                    <table className='evalA-StudentList'>
+                        <thead className='evalA-thead'>
                             <th style={{width:'100px',fontSize:'20px'}}>선택</th>
                             <th style={{fontSize:'20px',width:'200px'}}>학생명</th>
                         </thead>
@@ -63,18 +58,13 @@ const TotalEvaluationsAdmin = () => {
                         <option>평가 종류 선택</option>
                     </select>
 
-                    <div  className='eval-datePickerWrapper'>
-                        <i className="bi bi-calendar calendarIcon" style={{fontSize:'22px'}}></i>
-                        {/* <DatePicker width="200px"
-                            selectsRange
-                            startDate={startDate}
-                            endDate={endDate}
-                            onChange={(update) => setDateRange(update)}
-                            isClearable
-                            placeholderText="평가 기간 선택"
-                            dateFormat="yyyy-MM-dd"
-                            className="custom-datepicker-evalAdmin"
-                        /> */}
+                    <div  className='evalA-StartDate'>
+                        <label className='evalA-start'>시작 날짜</label> &nbsp;
+                        <input type='date' className='evalA-Date'/>
+                    </div>&nbsp;
+                    <div className='evalA-endDate'>
+                        <label className='evalA-end'>종료 날짜</label> &nbsp;
+                        <input type='date' className='evalA-Date'/>
                     </div>
                     <button  type='button' className='saveEval'>저장</button>  
                   </div>

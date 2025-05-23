@@ -40,7 +40,7 @@ public class UsersController {
         String roles = "ROLE_DIRECTOR"; // 원장 계정
 
         joinService.joinProcess(dto, roles);
-        joinService.academyProcess(dto.getAca_name(), dto.getAddress(), dto.getDescription()); // 학원 정보 등록
+        joinService.academyProcess(dto); // 학원 정보 등록
         return "success";
     }
 

@@ -1,0 +1,78 @@
+.nonPayCheckContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.nonPayTitle {
+    flex-shrink: 0; /* 공간이 부족할 때에도 원래 크기 유지 */
+    width: 100%;
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #4DA1A9;
+    margin: 5px;
+}
+
+/*상단 메뉴*/
+.nonPay-topContainer {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.nonPay-selectInfo {
+    overflow-y: visible; /* 또는 auto로도 가능 */
+    flex-shrink: 0;
+    text-align: left;
+    line-height: 50px;
+    height: auto;
+    border-radius: 10px 10px 0 0 ;
+    background-color: white;
+    position: relative;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.nonPay-topContainer select {
+    margin-left: 9px;
+    border-color:#79D7BE;
+    border: 1px solid #79D7BE;
+    color:#2E5077;
+    font-weight: 500;
+    font-size:15px; 
+    width:330px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.nonPay-listContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: visible; /* 또는 auto로도 가능 */
+    flex-shrink: 0;
+    min-height: 200px; /* 또는 높이 제거 */
+    text-align: left;
+    border-radius: 0 0 10px 10px;
+    background-color: white;
+    padding: 1px;
+}
+
+.classRead {
+    height: 100%;
+    background-color: white; 
+    border-radius: 10px;
+}
+
+.ellipse {
+    background-color: #d9d9d9;
+    border-radius: 34px;
+    height: 68px;
+    width: 68px;
+}
