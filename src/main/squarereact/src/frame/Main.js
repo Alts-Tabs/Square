@@ -84,13 +84,17 @@ const Main = () => {
 
                     {/* Navi2 - 소통 ================================================================ */}
                     <div className='communication naviForm'>
-                        <span className='naviTitle'> 소통 </span> <br />
-                        <span className='naviContent'> <i class="bi bi-megaphone"></i>&nbsp;&nbsp; 
+                    <span className='naviTitle'>소통</span> <br />
+                    <span className='naviContent'>
+                        <i className="bi bi-megaphone"></i>
+                        <Link to="board" style={{ textDecoration: 'none', color: 'inherit' }}>
                             학원 게시판
-                        </span> <br />
-                        <span className='naviContent'> <i class="bi bi-question-circle"></i>&nbsp;&nbsp;
-                            상담 신청 및 Q&A
-                        </span> <br />
+                        </Link>
+                    </span> <br />
+                    <span className='naviContent'>
+                        <i className="bi bi-question-circle"></i><Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        상담 신청 및 Q&A</Link>
+                    </span> <br />
                     </div>
 
                     {/* Navi3 - 수강료 =================================================================== */}
@@ -140,14 +144,7 @@ const Main = () => {
                 </div>
 
                 {/* 본문 컨텐츠 영역 */}
-                <div className='contents'>
-                       {/* <Router>
-                           <Routes>
-                               <Route path="/" element={<BoardMainPage username={username} />} />
-                               <Route path="/post/:postId" element={<PostDetail username={username} />} />
-                               <Route path="/post/create" element={<PostForm username={username} />} />
-                           </Routes>
-                       </Router> */}
+                <div className='contents'>                       
                     <Outlet />
                 </div>
             </div>
