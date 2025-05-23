@@ -1,18 +1,15 @@
 import React, { useRef, useState } from 'react';
-import './PostForm.css';
+import './BoardMainPostForm.css';
 
 const PostForm = () => {
   const [category, setCategory] = useState('공지사항');
   const [division, setDivision] = useState('구분');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [file, setFile] = useState(null);
   const [isMemberOnly, setIsMemberOnly] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
   const [isSecret, setIsSecret] = useState(false);
 
-  const photoInputRef = useRef(null);
-  const videoInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const handleSubmit = (e) => {
@@ -47,10 +44,7 @@ const PostForm = () => {
   const handleRemoveFile = (index) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };  
-
-  const handleCancel = () => alert('취소되었습니다.');
-
-
+  
   return (
     <div className="board-wrap">
       <div className="board-header">

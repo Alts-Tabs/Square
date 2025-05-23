@@ -92,7 +92,8 @@ const Main = () => {
                         </Link>
                     </span> <br />
                     <span className='naviContent'>
-                        <i className="bi bi-question-circle"></i>상담 신청 및 Q&A
+                        <i className="bi bi-question-circle"></i><Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        상담 신청 및 Q&A</Link>
                     </span> <br />
                     </div>
 
