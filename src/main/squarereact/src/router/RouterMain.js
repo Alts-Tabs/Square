@@ -1,15 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Root, Main } from '../frame';
-import { Attend, AttendHistory } from '../attendBook';
+import { Attend, AttendHistory, AttendStu } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
 import { PaymentManagement, NonPayCheck } from '../components/payment';
-import { Attend, AttendStu, AttendHistory } from '../attendBook';
-import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
-import PaymentManagement from '../components/PaymentManagement';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
+import AttendParent from '../attendBook/AttendParent';
 
 const RouterMain = () => {
     return (
@@ -21,6 +19,8 @@ const RouterMain = () => {
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
                     <Route path="attend-stu" element={<AttendStu />} /> {/* (임시) 학생 로그인 경로 */}
+                    <Route path="attend-parent" element={<AttendParent />} /> {/* (임시) 학부모 로그인 경로 */}
+
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}

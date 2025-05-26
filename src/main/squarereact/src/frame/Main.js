@@ -200,10 +200,18 @@ const Main = () => {
 
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
-                            <Link to="attend" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                출석 관리
-                            </Link>
-                        </span> <br />
+                            {
+                                sessionStorage.getItem("role") === "student" ? (
+                                    <Link to="/main/attend-stu" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        출석 관리
+                                    </Link>
+                                ) : (
+                                    <Link to="/main/attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        출석 관리
+                                    </Link>
+                                )
+                            }
+                    </span> <br />
 
                         <span className='naviContent'> 
                             <i className="bi bi-pencil"></i>&nbsp;&nbsp;
