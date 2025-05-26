@@ -201,17 +201,25 @@ const Main = () => {
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
                             {
-                                sessionStorage.getItem("role") === "student" ? (
-                                    <Link to="/main/attend-stu" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                userInfo.role === "학생" ? ( // 학생 로그인
+                                    <Link to="attend-stu" style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
-                                ) : (
-                                    <Link to="/main/attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                ) : userInfo.role === "학부모" ? ( // 학부모 로그인
+                                    <Link to="attend-parent" style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
+                                ) : userInfo.role ? ( // 원장, 강사 로그인
+                                    <Link to="attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        출석 관리
+                                    </Link>
+                                ) : ( // userInfo.role이 아직 로드되지 않았을 경우
+                                    <span style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        출석 관리 (정보 로딩 중...)
+                                    </span>
                                 )
                             }
-                    </span> <br />
+                        </span> <br />
 
                         <span className='naviContent'> 
                             <i className="bi bi-pencil"></i>&nbsp;&nbsp;
@@ -225,13 +233,13 @@ const Main = () => {
                     <div className='communication naviForm'>
                     <span className='naviTitle'>소통</span> <br />
                     <span className='naviContent'>
-                        <i className="bi bi-megaphone"></i>
+                        <i className="bi bi-megaphone"></i>&nbsp;&nbsp;
                         <Link to="board" style={{ textDecoration: 'none', color: 'inherit' }}>
                             학원 게시판
                         </Link>
                     </span> <br />
                     <span className='naviContent'>
-                        <i className="bi bi-question-circle"></i>
+                        <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
                         <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
                             상담 신청 및 Q&A
                         </Link>
@@ -276,7 +284,9 @@ const Main = () => {
                             학원 설정
                         </span> <br />
                         <span className='naviContent'> <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
-                            클래스 관리
+                            <Link to="class-setting" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                클래스 관리
+                            </Link>
                         </span> <br />
                         <span className='naviContent'> <i className="bi bi-person-check"></i>&nbsp;&nbsp;
                             멤버 관리

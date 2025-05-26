@@ -8,6 +8,7 @@ import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
 import AttendParent from '../attendBook/AttendParent';
+import ClassSetting from '../settings/ClassSetting';
 
 const RouterMain = () => {
     return (
@@ -18,8 +19,8 @@ const RouterMain = () => {
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
-                    <Route path="attend-stu" element={<AttendStu />} /> {/* (임시) 학생 로그인 경로 */}
-                    <Route path="attend-parent" element={<AttendParent />} /> {/* (임시) 학부모 로그인 경로 */}
+                    <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 로그인 경로 */}
+                    <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 로그인 경로 */}
 
                     <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
@@ -37,6 +38,9 @@ const RouterMain = () => {
                     <Route path="post/qna/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
+
+                    <Route path="class-setting" element={<ClassSetting />} /> {/* 클래스 관리 */}
+
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
