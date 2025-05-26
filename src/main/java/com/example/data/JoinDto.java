@@ -11,6 +11,7 @@ public class JoinDto {
     private String email;
     private String aca_name;
     private String address;
+    private String aca_prefix; // 접두사
     private String description;
 //    private String role;
 }

@@ -1,3 +1,13 @@
+/* 페이드인 효과 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 /* 본문 폰트 */
 @font-face {
     /* 300 */
@@ -210,4 +220,46 @@
   font-size: 20px;
   color: red;
   cursor: pointer;
+}
+
+/* SubCode 부분 */
+.subcodebox {
+    width: 364px;
+    height: 307px;
+    background-color: #FAF9F7;
+    box-shadow: 2px 2px 15px #0000001a;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 40px 25px 40px 25px;
+    font-family: 'NanumSquareNeo', sans-serif;
+    border-radius: 10px;
+}
+.subcodebox input {
+    height: 100px;
+    text-align: center;
+    letter-spacing: 15px;
+}
+.subCodeFail {
+    margin-top: 10px;
+    color: red;
+    text-align: center;
+}
+
+/* Sub계정(강사, 부모) 설정 */
+.subjoinbox {
+    width: 364px;
+    /* height: 307px; */
+    background-color: #FAF9F7;
+    box-shadow: 2px 2px 15px #0000001a;
+    display: inline-flex;
+    flex-direction: column;
+    padding: 25px;
+    font-family: 'NanumSquareNeo', sans-serif;
+    border-radius: 10px;
+}
+.subjoinbox form {
+    margin-top: 25px;
+}
+.subjoinbox input {
+    margin: 0 0 10px 0;
 }

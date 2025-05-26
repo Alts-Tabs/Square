@@ -24,14 +24,14 @@ const LoginPage = () => {
         sessionStorage.username = res.data.username;
         sessionStorage.name = res.data.name;
         sessionStorage.role = res.data.role;
-        alert("로그인");
-        navi("/");
+        // alert("로그인");
+        navi("/main");
       }
     });
   }
 
   return (
-    <div className="backstyle" style={{backgroundImage: `url(${bgImg})`}}>
+    <div className="backstyle fade-in" style={{backgroundImage: `url(${bgImg})`}}>
       <img alt="" src={logo} className="logo" />
       <div className="box">
         <form onSubmit={onLoginSubmit}>
@@ -48,7 +48,7 @@ const LoginPage = () => {
           <p>아이디와 비밀번호를 잊으셨나요?</p>
           <br />
           <button type="button" onClick={()=>navi("/join")}>가입하기</button>
-          <button type="button">코드 입력</button>
+          <button type="button" onClick={()=>navi("/subcode")}>코드 입력</button>
         </div>
       </div>
     </div>

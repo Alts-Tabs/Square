@@ -26,11 +26,17 @@ public class AcademiesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int academy_id;
 
+    @Column(nullable = false, length = 50)
+    private String username;
+
     @Column(nullable = false, length = 100)
     private String aca_name;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String address;
+
+    @Column(nullable = false, length = 10)
+    private String aca_prefix; // 학원 접두사
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -44,9 +50,15 @@ public class AcademiesEntity {
     private Timestamp created_at;
 
     // Cascade 설정
+    @Builder.Default
     @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CodeEntity> codes = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TeachersEntity> teachers = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ParentsEntity> parents = new ArrayList<>();
 }
