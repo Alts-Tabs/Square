@@ -6,7 +6,8 @@
     height: 110px;
     padding: 25px 27px  25px 45px;
     background-color: white;
-    overflow: hidden;
+    /* overflow: hidden; - 영향 없음 */
+    overflow: visible;
 }
 
 .headerWhale {
@@ -15,6 +16,45 @@
     width: 56px;
     margin-top: 5px;
 }
+
+/* 헤더 리스트 */
+.headerList {
+    position: absolute;
+    top: 70px;
+    right: 50px; /* 드롭다운 위치 조정 */
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    min-width: 140px; /* 너비 설정 */
+    font-size: 0.8em;
+    padding: 10px 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.headerList hr {
+    display: block;
+    width: 100%;
+    margin: 3px;
+}
+.headerLink, .headerSpan {
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+    transition: color 0.3s ease, font-size 0.3s ease, font-weight 0.3s ease;
+}
+.headerLink:hover, .headerSpan:hover {
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #79D7BE;
+}
+
 
 /* Navi, Contents Wrapper */
 .bodyContainer {

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Root, Main } from '../frame';
 import { Attend, AttendHistory } from '../attendBook';
-import { JoinPage, LoginPage, SubUserRegistry } from '../member';
+import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
 import { PaymentManagement, NonPayCheck } from '../components/payment';
 import { Attend, AttendStu, AttendHistory } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
@@ -39,7 +39,7 @@ const RouterMain = () => {
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/join" element={<JoinPage />} />
+                    <Route path="/join" element={<JoinPage />} />                                               
             </Routes>
         </BrowserRouter>
     );
