@@ -3,6 +3,9 @@ package com.example.user.controller;
 import com.example.security.CustomUserDetails;
 import com.example.user.dto.JoinDto;
 import com.example.jwt.JwtUtil;
+import com.example.user.entity.AcademiesEntity;
+import com.example.user.entity.UsersEntity;
+import com.example.user.jpa.AcademiesRepository;
 import com.example.user.service.JoinService;
 import com.example.user.service.LoginService;
 import com.example.user.jpa.UsersRepository;
@@ -25,6 +28,7 @@ import java.util.Map;
 public class UsersController {
     private final JoinService joinService;
     private final UsersRepository usersRepository;
+    private final AcademiesRepository acaRepository;
     private final LoginService loginService;
     private final JwtUtil jwtUtil;
 
@@ -112,11 +116,20 @@ public class UsersController {
             default -> "비회원";
         };
 
+        String name = userDetails.getName();
+        String username = userDetails.getUsername();
+
+        // 학원 고유 값 보내기
+        UsersEntity user = usersRepository.findByUsername(username);
+        AcademiesEntity aca = acaRepository.findByUser(user);
+
         Map<String, Object> data = new HashMap<>();
         data.put("message", "Info OK!");
+        data.put("userId", userDetails.getUserId());
         data.put("name", userDetails.getName());
         data.put("username", userDetails.getUsername());
         data.put("role", role);
+        data.put("acaId", aca.getAcademy_id());
 
         return ResponseEntity.ok(data);
     }

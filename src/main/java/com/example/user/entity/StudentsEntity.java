@@ -1,10 +1,14 @@
 package com.example.user.entity;
 
+import com.example.classes.entity.ClassUsersEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -38,4 +42,9 @@ public class StudentsEntity {
 
     @Column(length = 50)
     private String room;
+
+    // 내가 속한 클래스(반) 조회를 위함
+    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<ClassUsersEntity> classUsers = new ArrayList<>();
 }
