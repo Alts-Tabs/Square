@@ -58,11 +58,11 @@ const AttendParent = () => {
                         <div className='stackAttend'>
                             {/* 원형 그래프 */}
                             <div className='attendGraph'>
-                                그래프 자리
+                                그래프 자리                 
                             </div>
     
                             {/* 반 누적 % */}
-                            <div className='attendClass'>
+                            <div className='attendClass'>  
                                 <span style={{fontSize:'25px', color:'#2E5077', fontWeight:'700'}}> 우리 반 누적 출석률은 </span> &nbsp;        
                                 <span style={{fontSize:'25px', color:'#79D7BE', fontWeight:'800'}}> (수치)% </span> &nbsp;                               
                                 <span style={{fontSize:'25px', color:'#2E5077', fontWeight:'700'}}> ! </span>
