@@ -39,7 +39,8 @@ const RouterMain = () => {
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/join" element={<JoinPage />} />                                               
+                    <Route path="/join" element={<JoinPage />} />
+                    <Route path="/subcode" element={<SubCode />} />
             </Routes>
         </BrowserRouter>
     );
