@@ -1,7 +1,8 @@
-package com.example.repository;
+package com.example.user.service;
 
-import com.example.data.UsersEntity;
+import com.example.user.entity.UsersEntity;
 import com.example.jwt.JwtUtil;
+import com.example.user.jpa.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

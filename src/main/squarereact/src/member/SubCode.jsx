@@ -26,10 +26,6 @@ const SubCode = () => {
 
   const [visible, setVisible] = useState(false); // 회원가입 폼
 
-  // 유효성 검사 - true 가입
-  const [idCheck, setIdCheck] = useState(false);
-  const [pwdCheck, setPwdCheck] = useState(false);
-
   const navi = useNavigate();
 
   // 경고문 초기화
@@ -73,49 +69,61 @@ const SubCode = () => {
     setPassword(trimmed);
   }
 
-  // 유효성 검사
-  const validationEvent = () => {
-    // 아이디
-    let url = "/public/idCheck?username="+username;
-    axios.get(url).then(res => {
-      if(res.data === 'fail') {
-        setIdCheck(false);
+  // 유효성 검사 - 비동기 함수로 변경
+  const validationEvent = async () => {
+    let idOk = false;
+    let pwdOk = false;
+    
+    setWarns(); // 경고문 초기화
+
+    try {
+      const url = `/public/idCheck?username=${username}`;
+      const res = await axios.get(url);
+
+      if(res.status === 200 && res.data.available) {
+        idOk = true;
+      }
+    } catch(err) {
+      if(err.response && err.reponse.status === 409) {
+        // 아이디 중복
         setWarn1(true);
       } else {
-        setIdCheck(true);
+        setWarn3(true);
       }
-    });
+    }
 
     // 패스워드
     if(password.trim() === '' || pwdChk.trim() === '') {
-      setPwdChk(true);
       setWarn2(true);
+    } else if(password !== pwdChk) {
+      setWarn2(true);
+    } else {
+      pwdOk = true;
     }
 
-    if(password === pwdChk) {
-      setPwdCheck(true);
-      setWarn2(true);
-    }
+    return idOk && pwdOk;
   }
 
   // 서브계정 회원가입 폼 이벤트
-  const onSubJoinEvent = (e) => {
+  const onSubJoinEvent = async (e) => {
     e.preventDefault();
-    setWarns();
-    validationEvent();
+    const isValid = await validationEvent(); // 비동기 유효성 검사
 
-    if(!idCheck || !pwdCheck) {
+    if(!isValid) {
       return;
     }
 
-    axios.post("/public/subJoin", 
-      {subcode, role, academy_id, name, username, password,
-         phone, email, subject}
-    ).then(res => {
+    try {
+      await axios.post("/public/subJoin", {
+        subcode, role, academy_id, name, username, password,
+        phone, email, subject
+      });
+
       navi("/login");
-    }).catch(err => {
+    } catch(err) {
       setWarn3(true);
-    });
+    }
+
   }
 
   return (
@@ -177,9 +185,13 @@ const SubCode = () => {
               role === "ROLE_PARENT" &&
               <></>
             }
+            {
+              role === "ROLE_STUDENTS" &&
+              <></>
+            }
             <button type="submit" className="loginbtn">회원 가입</button>
           </form>
-          {warn1 && <span className="subCodeFail">존재하는 아이디입니다.</span>}
+          {warn1 && <span className="subCodeFail">코드를 다시 입력해주세요.</span>}
           {warn2 && <span className="subCodeFail">비밀번호가 다릅니다.</span>}
           {warn3 && <span className="subCodeFail">서버 오류...</span>}
         </div>

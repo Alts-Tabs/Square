@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,15 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "parents")
+@Table(name = "teachers")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParentsEntity {
+public class TeachersEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int parent_id;
+    private int teacher_id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -24,4 +24,7 @@ public class ParentsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id", nullable = false)
     private AcademiesEntity academy;
+
+    @Column(length = 50)
+    private String subject;
 }
