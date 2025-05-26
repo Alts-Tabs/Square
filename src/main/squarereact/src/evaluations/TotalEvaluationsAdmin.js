@@ -1,10 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './TotalEvaluationsAdmin.css';
+import axios from 'axios';
 
 const TotalEvaluationsAdmin = () => {
     const [selectStudent, setSelectStudent]=useState('');
     const handleSelectStudent=(name)=> setSelectStudent(name);
-    
+    const [subject,setSubject]=useState([]);
+    //const token=localStorage.getItem('token');
+    const [student, setStudent]=useState([]);
+    const [checkStudent,setCheckStudent]=useState([]);
+
+    useEffect(()=>{
+        //로그인한 userId에 해당하는 과목 가져오기
+        // axios.get(`/public/user`,{withCredentials:true})
+        // .then(respose=>{
+        //     const userId=respose.data.userId;
+        //     return axios.get(`/teachers/subject?userId=${userId}`);
+        // })
+        // .then(respose=>{
+        //     setSubject(respose.data);
+        // })
+        // .catch(error=>console.error(error));
+
+        //학생 목록 가져오기 임시로 전체 학생 목록 가져오기
+        axios.get(`/studentList`,{withCredentials:true})
+            .then(respose=>{
+                setStudent(respose.data);
+            })
+            .catch(error=>console.error(error));
+        
+    },[]);
+
+    //학생 목록 체크박스 이벤트
+    const toggleStudentSelection=(stuId,stuName)=>{
+        setCheckStudent(prev=>({
+            ...prev,
+            [stuId]:!prev[stuId]
+        }));
+        //선택된 학생 이름 업데이트
+        setSelectStudent(prev=>(prev===stuName?'':stuName));
+    };
+
     return (
         <div className='evaluationContainer'>
             <div className='eval-leftContainer'>
@@ -19,22 +55,29 @@ const TotalEvaluationsAdmin = () => {
                 <div className='eval-classContents'>
                     <table className='evalA-StudentList'>
                         <thead className='evalA-thead'>
+                          <tr>
                             <th style={{width:'100px',fontSize:'20px'}}>선택</th>
                             <th style={{fontSize:'20px',width:'200px'}}>학생명</th>
+                          </tr>
                         </thead>
-                        <tbody >
+                        <tbody>
                             {/**여기에 각 반별 목록을 출력할 예정 아래에 있는건 임시*/}
-                            <tr>
+                            {student.map((stu) => (
+                            <tr key={stu.studentId}>
                                 <td >
                                     <label className="custom-checkbox-evalAdmin">
-                                            <input type="checkbox" style={{display:'none'}}/>
+                                            <input type="checkbox" style={{display:'none'}}
+                                            checked={checkStudent[stu.studentId] || false}
+                                            onChange={() => toggleStudentSelection(stu.studentId, stu.name)}/>
                                             <span></span>
                                     </label>
                                 </td>
                                 <td className='studentName'
-                                    onClick={()=>handleSelectStudent('aaaa')}
-                                    style={{cursor:'pointer'}}>aaaa</td>
+                                    onClick={()=>toggleStudentSelection(stu.studentId, stu.name)}
+                                    style={{cursor:'pointer'}}> {stu.name}
+                                </td>
                             </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -52,10 +95,15 @@ const TotalEvaluationsAdmin = () => {
                   <div className='evaluationHeader'>
                     <select className='evaluSelect'>
                         <option>과목 선택</option>
+                        {Array.isArray(subject) && subject.map((subj, index) => (
+                            <option key={index}>{subj}</option>
+                        ))}
                     </select>
 
                     <select className='evaluSelect'>
                         <option>평가 종류 선택</option>
+                        <option value={'WEEKLY'}>주간평가</option>
+                        <option value={'MONTHLY'}>월 평가</option>
                     </select>
 
                     <div  className='evalA-StartDate'>
