@@ -135,7 +135,7 @@
 
 /* 생성 버튼 */
 .createClassBody button {
-    margin-top: 90px;
+    /* margin-top: 60px; */
     width: 66px;
     height: 45px;
     color: rgba(121, 215, 190, 0.7);

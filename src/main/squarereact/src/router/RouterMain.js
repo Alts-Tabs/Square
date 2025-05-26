@@ -39,7 +39,7 @@ const RouterMain = () => {
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
 
-                    <Route path="class-setting" element={<ClassSetting />} /> {/* 클래스 관리 */}
+                    <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
 
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
