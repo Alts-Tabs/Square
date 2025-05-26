@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,8 +26,9 @@ public class AcademiesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int academy_id;
 
-    @Column(nullable = false, length = 50)
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UsersEntity user; // 학원 주인(원장)
 
     @Column(nullable = false, length = 100)
     private String aca_name;
@@ -61,4 +62,8 @@ public class AcademiesEntity {
     @Builder.Default
     @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ParentsEntity> parents = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<StudentsEntity> students = new ArrayList<>();
 }

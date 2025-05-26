@@ -1,4 +1,4 @@
-package com.example.repository;
+package com.example.user.service;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;

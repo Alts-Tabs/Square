@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,16 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "teachers")
+@Table(name = "parents")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeachersEntity {
+public class ParentsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int teacher_id;
+    private int parent_id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -25,6 +28,8 @@ public class TeachersEntity {
     @JoinColumn(name = "academy_id", nullable = false)
     private AcademiesEntity academy;
 
-    @Column(length = 50)
-    private String subject;
+    // 학생과의 관계
+    @Builder.Default
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<StudentsEntity> students = new ArrayList<>();
 }

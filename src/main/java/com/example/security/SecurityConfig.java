@@ -2,7 +2,6 @@ package com.example.security;
 
 import com.example.jwt.JwtAuthFilter;
 import com.example.jwt.JwtUtil;
-import com.example.repository.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

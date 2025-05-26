@@ -1,6 +1,6 @@
-package com.example.repository;
+package com.example.security;
 
-import com.example.data.UsersEntity;
+import com.example.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,5 +35,13 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return usersEntity.getUsername();
+    }
+
+    public String getName() {
+        return usersEntity.getName();
+    }
+
+    public String getRole() {
+        return usersEntity.getRole().toString();
     }
 }

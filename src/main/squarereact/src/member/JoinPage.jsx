@@ -5,6 +5,7 @@ import "./Memberstyle.css";
 import DaumPostcodeEmbed from 'react-daum-postcode';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../ui/Modal';
 
 const JoinPage = () => {
   const [openPostCode, setOpenPostCode] = useState(false);
@@ -28,8 +29,9 @@ const JoinPage = () => {
   const navi = useNavigate();
 
   // 회원가입 이벤트
-  const onJoinSubmit = (e) => {
+  const onJoinSubmit = async (e) => {
     e.preventDefault();
+
     if(!idCheck) {
       alert("아이디 체크를 먼저 해주세요.");
       return;
@@ -40,56 +42,71 @@ const JoinPage = () => {
       return;
     }
 
-    if(address === '') {
+    if(address.trim() === '') {
       alert("주소를 꼭 입력해주세요");
       return;
     }
-    
-    axios.post("/public/join",
-      {username, password, name, phone, email, aca_name, address, aca_prefix, description}
-    ).then(res => {
-      if(res.data === 'success') {
+
+    try {
+      const res = await axios.post("/public/join",
+        {username, password, name, phone, email, aca_name,
+           address, aca_prefix, description}
+      );
+
+      if(res.status === 201) {
         navi("/login");
       }
-    });
+    } catch(err) {
+      if(err.response && err.response.status === 400) {
+        alert("Invalid Input value");
+      } else {
+        alert("회원가입 중 오류...");
+        console.error(err);
+      }
+    }
   }
 
-
   // 전체 유효성 검사
-  const onInvalidCheck = () => {
-    btnIdCheck();
-    checkPWD();
+  const onInvalidCheck = async () => {
+    await btnIdCheck();
+    await checkPWD();
     setWarning(true);
   }
 
   // 아이디 유효성 검사
-  const btnIdCheck = () => {
+  const btnIdCheck = async () => {
     if(username.trim() === '') {
       setIdCheck(false);
       return;
     }
 
-    let url = "/public/idCheck?username="+username;
-    axios.get(url).then(res => {
-      if(res.data === 'fail') {
-        alert("존재하는 아이디");
-        setIdCheck(false);
-      } else {
-        // alert("성공적!");
+    try {
+      const url = `/public/idCheck?username=${username}`;
+      const res = await axios.get(url);
+
+      if(res.status === 200 && res.data.available) {
         setIdCheck(true);
       }
-    });
+    } catch(err) {
+      if(err.response && err.reponse.status === 409) {
+        // 아이디 중복
+        setIdCheck(false);
+      } else {
+        alert("서버 오류...");
+      }
+    }
   }
 
   // 비밀번호 확인
-  const checkPWD = () => {
+  const checkPWD = async () => {
     if(password.trim() === '' || pwdChk.trim() === '') {
       return;
     }
 
     if(password === pwdChk) {
       setPwdCheck(true);
-      return;
+    } else {
+      setPwdCheck(false);
     }
   }
 
@@ -109,7 +126,7 @@ const JoinPage = () => {
 
   return (
     <div className="backstyle" style={{backgroundImage: `url(${bgImg})`}}>
-      <img alt="" src={logo} className="logo" />
+      <img alt="" src={logo} className="logo" onClick={() => navi("/login")} />
       <p className='joinTitle'>회원가입</p>
       <div className='box2'>
         <form onSubmit={onJoinSubmit}>
@@ -188,19 +205,13 @@ const JoinPage = () => {
         </form>
       </div>
       {/* 모달 구현 */}
-      {
-        openPostCode && (
-         <div className='modal-overlay'>
-          <div className='modal-content'>
-            <i class="bi bi-x modal-close"
-             onClick={() => setOpenPostCode(false)}></i><br />
-            <DaumPostcodeEmbed onComplete={handle.selectAddress}
-             autoClose={false}
-             defaultQuery='강남대로 94길 20' />
-          </div>
-         </div> 
-        )
-      }
+      {openPostCode && (
+        <Modal onClose={() => setOpenPostCode(false)}>
+          <DaumPostcodeEmbed onComplete={handle.selectAddress}
+           autoClose={false}
+           defaultQuery='강남대로 94길 20' />
+        </Modal>
+      )}
     </div>
   );
 };
