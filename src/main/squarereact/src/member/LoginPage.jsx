@@ -12,22 +12,22 @@ const LoginPage = () => {
   const navi = useNavigate();
 
   // 로그인 이벤트
-  const onLoginSubmit = (e) => {
+  const onLoginSubmit = async (e) => {
     e.preventDefault();
 
-    let url = "/public/login?username="+username+"&password="+password;
-    axios.get(url).then(res => {
-      if(res.data.token == null) {
-        alert("Invalid Data!");
-      } else {
-        sessionStorage.token = res.data.token;
-        sessionStorage.username = res.data.username;
-        sessionStorage.name = res.data.name;
-        sessionStorage.role = res.data.role;
-        // alert("로그인");
-        navi("/main");
-      }
-    });
+    const url = `/public/login?username=${username}&password=${password}`;
+
+    try {
+      const res = await axios.get(url, {withCredentials: true});
+
+      const { username, name, role } = res.data;
+      sessionStorage.username = username;
+      sessionStorage.name = name;
+      sessionStorage.role = role;
+      navi("/main");
+    } catch(err) {
+      alert("Login Failed: 아이디 또는 비밀번호를 확인");
+    }
   }
 
   return (

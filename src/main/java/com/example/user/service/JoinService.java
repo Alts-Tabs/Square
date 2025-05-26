@@ -1,12 +1,17 @@
-package com.example.repository;
+package com.example.user.service;
 
-import com.example.data.*;
+import com.example.user.dto.JoinDto;
+import com.example.user.dto.SubJoinDto;
+import com.example.user.entity.*;
+import com.example.user.jpa.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,12 +22,14 @@ public class JoinService {
     private final TeachersRepository teachersRepository;
     private final ParentsRepository parentsRepository;
     private final CodeRepository codeRepository;
+    private final StudentsRepository stuRepository;
 
     /**
-     * 회원가입 프로세스
+     * 원장계정 회원가입 프로세스 - 유저 정보 & 학원
      * @param dto JoinDto
      * @param roles String
      */
+    @Transactional
     public void joinProcess(JoinDto dto, String roles) {
         UsersEntity user = UsersEntity.builder()
                 .username(dto.getUsername())
@@ -33,14 +40,9 @@ public class JoinService {
                 .role(conversionTypeRole(roles))
                 .build();
 
-        usersRepository.save(user);
-    }
+        UsersEntity newUser = usersRepository.save(user);
 
-    /**
-     * 학원 정보 등록 프로세스
-     * @param dto JoinDto
-     */
-    public void academyProcess(JoinDto dto) {
+        // 학원 정보 등록
         String code = generateUniqueCode();
 
         String description = dto.getDescription();
@@ -48,11 +50,11 @@ public class JoinService {
 
         AcademiesEntity aca = AcademiesEntity.builder()
                 .aca_name(dto.getAca_name())
+                .user(newUser)
                 .address(dto.getAddress())
                 .aca_prefix(prefix)
                 .description(description)
                 .code(code)
-                .username(dto.getUsername())
                 .build();
 
         acaRepository.save(aca);
@@ -83,7 +85,7 @@ public class JoinService {
     }
 
     /**
-     * 서브 계정(강사 & 부모) 회원가입 프로세스
+     * 서브 계정(강사 & 부모 & 학생) 회원가입 프로세스
      * @param dto SubJoinDto
      */
     public void subJoinProcess(SubJoinDto dto) {
@@ -102,7 +104,12 @@ public class JoinService {
         UsersEntity user = usersRepository.findByUsername(dto.getUsername());
         AcademiesEntity aca = acaRepository.getReferenceById(dto.getAcademy_id());
 
-        CodeEntity code = codeRepository.findBySubcode(dto.getSubcode());
+        Optional<CodeEntity> codeOpt = codeRepository.findBySubcode(dto.getSubcode());
+        if(codeOpt.isEmpty()) { // 서브 코드가 빈 경우 다시 삭제
+            usersRepository.delete(user);
+        }
+
+        CodeEntity code = codeOpt.get();
 
         if(roles.equals("ROLE_TEACHER")) {
             TeachersEntity teacher = TeachersEntity.builder()
@@ -127,6 +134,28 @@ public class JoinService {
             // 코드 상태 갱신
             codeStatus(code);
         }
+
+        if(roles.equals("ROLE_STUDENT")) {
+            UsersEntity createdUser = code.getCreatedBy(); // 코드 생성자 얻기
+            Optional<ParentsEntity> parentOpt = parentsRepository.findByUserWithAcademy(createdUser);
+
+            if(parentOpt.isEmpty()) {
+                usersRepository.delete(user);
+                return;
+            }
+            ParentsEntity par = parentOpt.get();
+
+            StudentsEntity students = StudentsEntity.builder()
+                    .user(user)
+                    .parent(par)
+                    .academy(aca)
+                    .build();
+
+            stuRepository.save(students);
+
+            codeStatus(code);
+        }
+
     }
 
     /**
@@ -143,12 +172,33 @@ public class JoinService {
         String role = switch (info.getRole()) {
             case "ROLE_TEACHER" -> "tea";
             case "ROLE_PARENT" -> "par";
+            case "ROLE_STUDENT" -> "stu";
             default -> throw new IllegalArgumentException("지원하지 않는 권한입니다: " + info.getRole());
         };
 
         // 이후 생성된 username 반환
         String prefix = acaPrefix + "-" + role + "-";
         return parsingUserPrefix(prefix);
+    }
+
+    /**
+     * 7자리 랜덤 서브 코드 생성
+     * @return stuCode
+     */
+    public String generateStuCode() {
+        String stuCode;
+        int maxRetry = 10; // 무한루프 방지
+        int attempts = 0;
+
+        do {
+            stuCode = CodeUtil.generateAcademyCode(7);
+            attempts++;
+            if(attempts > maxRetry) {
+                throw new IllegalStateException("중복되지 않는 학원 코드를 생성할 수 없습니다.");
+            }
+        } while(codeRepository.findBySubcode(stuCode).isPresent());
+
+        return stuCode;
     }
 
     // 계정 아이디 설정

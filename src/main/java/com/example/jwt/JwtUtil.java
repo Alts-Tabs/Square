@@ -1,6 +1,6 @@
 package com.example.jwt;
 
-import com.example.data.UsersEntity;
+import com.example.user.entity.UsersEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

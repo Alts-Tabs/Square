@@ -1,0 +1,26 @@
+.leftContainer3 {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+}
+
+/* 지금 수업은 ~입니다 */
+.todayAttendTitle3 {
+    overflow-y: auto;
+    flex-shrink: 0;
+    overflow: hidden;
+    min-height: 280px;
+    text-align: center;
+    line-height: 255px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+/* 오늘의 출석 회색 텍스트 */
+.todayAttendTitle3 span {
+    font-weight: 700;
+    font-size: 22px;
+    color: #7D8A8A;
+}

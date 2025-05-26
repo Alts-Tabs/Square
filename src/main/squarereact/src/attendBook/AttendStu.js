@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './attend.css';
+import './attendStu.css';
 import { Link } from 'react-router-dom';
+import { isEditable } from '@testing-library/user-event/dist/utils';
 
-const Attend = () => {
+const AttendStu = () => {
     // 당일 출석 날짜 출력
     const getTodayDate = () => {
         const today = new Date();
@@ -12,26 +14,7 @@ const Attend = () => {
         return `${year}.${month}.${date} 출석`;
     };
 
-    // 출석 숫자 랜덤 발생 & 삭제 
-    const [attending, setAttending] = useState(false);
-    const [attendanceEnded, setAttendanceEnded] = useState(false); 
-    const [randomNumber, setRandomNumber] = useState(null);   
-
-    const handleAttendanceClick = () => {
-    if (!attending) {
-        // 출석 시작 시
-        const random = Math.floor(100 + Math.random() * 900);
-        setRandomNumber(random);
-        setAttending(true);
-    } else {
-        // 출석 종료 시
-        setAttending(false);
-        setRandomNumber(null);      // 숫자 제거
-        setAttendanceEnded(true);   // 버튼 제거
-    }
-    };
-
-    // 지난 출석 날짜 출력 (임시) ================================================
+    // (임시) 지난 출석 날짜 출력 (임시) ================================================
     const attendList = [
         {
             dateText: '25.05.09 금요일 출석',
@@ -49,7 +32,10 @@ const Attend = () => {
         }
     ];
 
+    // (임시) 입력 활성화 여부 상태 (임시) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    const [isEditable, setIsEditable] = useState(false);
 
+    
     return (
             <div className='attendContainer'>
                 
@@ -72,42 +58,28 @@ const Attend = () => {
                         </span>
                         <br />
 
-                        {/* 3자리 랜덤 숫자 출력 */}
-                        {randomNumber && (
-                            <div style={{
-                            fontSize: '60px',
-                            fontWeight: 'bold',
-                            color: '#2E5077',
-                            }}>
-                            {randomNumber}
-                            </div>
-                        )}
+                        {/* 학생 View 출석 대기 중 입력란 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+                        {/* <input
+                            className='waitAttend'
+                            type="text"
+                            placeholder="출석 대기 중"
+                            disabled={!isEditable} // !면 입력 불가
+                        /> */}
+                        {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
 
-                        {/* 출석 시작 & 출석 종료 버튼 */}
-                        {!attendanceEnded ? (
-                            <button
-                                onClick={handleAttendanceClick}
-                                className={`attendButton ${attending ? 'end' : ''}`}
-                            >
-                                {attending ? '출석 종료' : '출석 시작'}
-                            </button>
-                            ) : (
-                            <div
-                                style={{
-                                fontSize: '50px',
-                                fontWeight: '700',
-                                color: 'rgba(125,138,138,0.5)',
-                                marginTop: '20px',
-                                marginBottom: '45px',
-                                height: '65px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                }}
-                            >
-                                출석 종료
-                            </div>
-                        )}
+                        {/* 학생 View 출석 진행 중 입력란 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+                        <input
+                            className='nowAttend'
+                            type="text"
+                            placeholder="출석 진행 중"
+                            disabled={isEditable} 
+                        />
+                        <br />
+                        <span style={{fontSize:"17px", display:"inline-block", marginBottom:"25px"}}>
+                            화면에 보이는 숫자를 입력한 후 Enter를 눌러주세요.
+                        </span>
+                        {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+                       
                         <hr />
                         
                         {/* 반복 처리 리스트 */}
@@ -176,17 +148,6 @@ const Attend = () => {
                             </span>
                         </div>
 
-                        <Link
-                            to="attend-history"
-                            state={{
-                            date: attend.dateOnly,
-                            present: attend.present,
-                            late: attend.late,
-                            absent: attend.absent
-                            }}
-                        >
-        <i className="bi bi-chevron-right"></i>
-      </Link>
     </div>
   ))}
                     </div>
@@ -196,4 +157,4 @@ const Attend = () => {
     );
 };  
 
-export default Attend;
+export default AttendStu;

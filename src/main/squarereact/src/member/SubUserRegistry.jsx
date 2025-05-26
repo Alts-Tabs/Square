@@ -54,14 +54,12 @@ const SubUserRegistry = () => {
   const onSubFormEvent = (e) => {
     e.preventDefault();
     setWarns();
-    
-    const token = sessionStorage.getItem("token");
 
     axios({
       method: 'post',
       url: '/dir/inputCode',
       data: {subcode, people, role, endday, username, code},
-      headers: { Authorization: `Bearer ${token}` }
+      withCredentials: true // 쿠키로 JWT 토큰 이동
     }).then(res => {
       setCode('');
       setSubcode('');

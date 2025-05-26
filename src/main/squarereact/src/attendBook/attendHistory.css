@@ -89,11 +89,11 @@ tbody td {
 }
 
 tbody td:first-child {
-    border-left: none; /* 가장자리 선 제거 */
+    border-left: none; /* 왼쪽 가장자리 선 제거 */
 }
 
-tbody tr:first-child td {
-    border-top: none;
+tbody td:last-child {
+    border-right: none; /* 오른쪽 가장자리 선 제거 */
 }
 
 tbody tr td button {

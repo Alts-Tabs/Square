@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,4 +35,9 @@ public class CodeEntity {
     private Boolean status; // 코드 사용 여부
 
     private LocalDateTime endday; // 코드 사용 기한
+
+    // 코드 등록자 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UsersEntity createdBy;
 }
