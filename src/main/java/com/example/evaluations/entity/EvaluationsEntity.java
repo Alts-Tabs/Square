@@ -1,7 +1,8 @@
-package com.example.data;
+package com.example.evaluations.entity;
 
 import java.sql.Timestamp;
 
+import com.example.user.entity.TeachersEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

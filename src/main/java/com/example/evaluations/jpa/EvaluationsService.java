@@ -1,9 +1,11 @@
-package com.example.repository;
+package com.example.evaluations.jpa;
 
-import com.example.data.EvaluationPeriod;
-import com.example.data.EvaluationsDto;
-import com.example.data.EvaluationsEntity;
-import com.example.data.TeachersEntity;
+import com.example.evaluations.entity.EvaluationPeriod;
+import com.example.evaluations.entity.EvaluationsDto;
+import com.example.evaluations.entity.EvaluationsEntity;
+
+import com.example.user.entity.TeachersEntity;
+import com.example.user.jpa.TeachersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class EvaluationsService {
     /**
      * 평가 등록 프로세스
      */
-    public void inserEvaluation(EvaluationsDto dto,String periods){
+    public void insertEvaluation(EvaluationsDto dto,String periods){
         EvaluationPeriod period;
 
         try {

@@ -1,8 +1,8 @@
-package com.example.repository;
+package com.example.evaluations.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.data.EvaluationsEntity;
+import com.example.evaluations.entity.EvaluationsEntity;
 
 import java.util.List;
 
