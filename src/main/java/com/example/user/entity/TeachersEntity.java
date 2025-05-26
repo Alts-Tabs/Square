@@ -1,10 +1,14 @@
 package com.example.user.entity;
 
+import com.example.classes.entity.ClassesEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "teachers")
@@ -27,4 +31,8 @@ public class TeachersEntity {
 
     @Column(length = 50)
     private String subject;
+
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<ClassesEntity> classes = new ArrayList<>(); // 내가 맡은 클래스 목록 조회
 }

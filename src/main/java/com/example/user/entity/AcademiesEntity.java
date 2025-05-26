@@ -1,5 +1,6 @@
 package com.example.user.entity;
 
+import com.example.classes.entity.ClassesEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -66,4 +67,8 @@ public class AcademiesEntity {
     @Builder.Default
     @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudentsEntity> students = new ArrayList<>();
+
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<ClassesEntity> classes = new ArrayList<>(); // 해당 학원의 모든 클래스 목록 조회를 위함
 }
