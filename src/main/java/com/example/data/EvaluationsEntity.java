@@ -24,7 +24,7 @@ public class EvaluationsEntity {
 	
 	//StudentEntity랑 추후 연결 예정
 	//@ManyToOne(fetch = FetchType.LAZY)
-	private int student_id;
+	private int studentId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="teacher_id",nullable = false)
