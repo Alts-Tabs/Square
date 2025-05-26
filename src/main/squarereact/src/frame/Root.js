@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './root.css';
-import rootBackground from '../image/rootBackground.png';
+// import rootBackground from '../image/rootBackground.png';
 import whale_R from '../image/whale_R.png';
 import SquareLogo from '../image/SquareLogo.png';
 import AltsTabs from '../image/AltsTabs.png';

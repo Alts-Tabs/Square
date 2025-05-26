@@ -10,6 +10,9 @@ spring:
     generate-ddl: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 jwt:
   expiration_time: 3600000

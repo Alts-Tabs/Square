@@ -25,16 +25,22 @@ public class SubUserController {
 
     // 학원 코드 검증
     @PostMapping("/dir/inputCode")
-    public String codeCheck(@RequestBody CodeDto dto) {
+    public ResponseEntity<Map<String, Object>> codeCheck(@RequestBody CodeDto dto) {
         AcademiesEntity aca = acaRepository.findByUsername(dto.getUsername());
+        Map<String, Object> data = new HashMap<>();
+
         if(aca == null) {
-            return "UserFail";
+            data.put("message", "UserFail");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST) // 400
+                    .body(data);
         }
 
         String code = dto.getCode();
         // 코드가 다르면 실패
         if(!code.equals(aca.getCode())) {
-            return "codeFail";
+            data.put("message", "codeFail");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404
+                    .body(data);
         }
 
         CodeEntity subCode = CodeEntity.builder()
@@ -47,8 +53,8 @@ public class SubUserController {
                 .build();
 
         codeRepository.save(subCode);
-
-        return "success";
+        data.put("message", "success");
+        return ResponseEntity.ok(data);
     }
 
     // 서브 코드 확인
@@ -72,6 +78,7 @@ public class SubUserController {
 
         data.put("role", info.getRole());
         data.put("academy_id", info.getAcademy().getAcademy_id());
+        data.put("username", joinService.generateUsernames(info));
 
         return ResponseEntity.ok(data);
     }

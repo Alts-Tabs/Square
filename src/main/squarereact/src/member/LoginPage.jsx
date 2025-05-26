@@ -24,7 +24,7 @@ const LoginPage = () => {
         sessionStorage.username = res.data.username;
         sessionStorage.name = res.data.name;
         sessionStorage.role = res.data.role;
-        alert("로그인");
+        // alert("로그인");
         navi("/main");
       }
     });

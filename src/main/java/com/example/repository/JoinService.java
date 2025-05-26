@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,20 +38,21 @@ public class JoinService {
 
     /**
      * 학원 정보 등록 프로세스
-     * @param aca_name String
-     * @param address String
-     * @param description String
-     * @param username String
+     * @param dto JoinDto
      */
-    public void academyProcess(String aca_name, String address, String description, String username) {
+    public void academyProcess(JoinDto dto) {
         String code = generateUniqueCode();
 
+        String description = dto.getDescription();
+        String prefix = generateAcaPrefix(dto.getAca_prefix());
+
         AcademiesEntity aca = AcademiesEntity.builder()
-                .aca_name(aca_name)
-                .address(address)
+                .aca_name(dto.getAca_name())
+                .address(dto.getAddress())
+                .aca_prefix(prefix)
                 .description(description)
                 .code(code)
-                .username(username)
+                .username(dto.getUsername())
                 .build();
 
         acaRepository.save(aca);
@@ -125,6 +127,73 @@ public class JoinService {
             // 코드 상태 갱신
             codeStatus(code);
         }
+    }
+
+    /**
+     * 서브코드에 따른 아이디 생성(학원접두사-권한-숫자)
+     * @param info CodeEntity
+     * @return username String
+     */
+    public String generateUsernames(CodeEntity info) {
+        // info를 토대로 연관된 학원 정보(AcademiesEntity) 가져오기
+        AcademiesEntity aca = info.getAcademy();
+
+        // 접두사를 추출 이후 info의 권한에 따라 '-권한-' 붙이기
+        String acaPrefix = aca.getAca_prefix();
+        String role = switch (info.getRole()) {
+            case "ROLE_TEACHER" -> "tea";
+            case "ROLE_PARENT" -> "par";
+            default -> throw new IllegalArgumentException("지원하지 않는 권한입니다: " + info.getRole());
+        };
+
+        // 이후 생성된 username 반환
+        String prefix = acaPrefix + "-" + role + "-";
+        return parsingUserPrefix(prefix);
+    }
+
+    // 계정 아이디 설정
+    private String parsingUserPrefix(String prefix) {
+        // UsersEntity 에서 해당 접두사로 시작하는 아이디 리스트 가져오기
+        List<String> existingUsernames = usersRepository.findUsernamesStartingWith(prefix);
+
+        // 무조건 마지막으로 끝난 숫자보다 1 많게 username에 붙이기
+        int max = 0;
+        for(String username : existingUsernames) {
+            try {
+                String numberPart = username.substring(prefix.length());
+                int num = Integer.parseInt(numberPart);
+                if (num > max) {
+                    max = num;
+                }
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                // 예외 처리
+            }
+        }
+
+        return prefix + (max + 1);
+    }
+
+
+    // 학원 접두사 설정
+    private String generateAcaPrefix(String basePrefix) {
+        // basePrefix(bit) 입력하면 bit1 출력
+        List<String> existingPrefixes = acaRepository.findAllByPrefix(basePrefix);
+
+        int max = -1;
+        for(String prefix : existingPrefixes) {
+            try {
+                String numPart = prefix.substring(basePrefix.length()); // 접두사 부분만 제거
+                int idx = Integer.parseInt(numPart);
+                if(idx > max) {
+                    max = idx;
+                }
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                // 예외 처리
+            }
+        }
+
+        // 최댓값 보다 큰 다음 접두사 출력
+        return basePrefix + (max + 1);
     }
 
     // 유저 권한 타입 변환
