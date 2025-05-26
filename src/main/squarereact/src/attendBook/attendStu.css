@@ -1,0 +1,48 @@
+/* 학생 출석 대기 중 입력란 ============================== */
+.waitAttend {
+    width: 161px;
+    height: 65px;
+    margin-top: 20px;
+    margin-bottom: 45px;
+    border: 2px solid rgba(125, 138, 138, 0.5);
+    border-radius: 10px;
+    color: #7D8A8A;
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.waitAttend::placeholder {
+    color: rgba(125, 138, 138, 0.5);
+}
+
+/* 출석 번호 입력란 선택 시 */
+.waitAttend:focus {
+    outline: none;
+    color: #7D8A8A;
+    border: 2px solid rgba(125, 138, 138, 1);
+}
+
+/* 학생 출석 진행 중 입력란 =============================== */
+.nowAttend {
+    width: 161px;
+    height: 65px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    border: 2px solid rgba(121, 215, 190, 0.5);
+    border-radius: 10px;
+    color: #79D7BE;
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.nowAttend::placeholder {
+    color: rgba(121, 215, 190, 0.5);
+}
+
+.nowAttend:focus {
+    outline: none;
+    color: #79D7BE;
+    border: 2px solid rgba(121, 215, 190, 1);
+}
