@@ -1,5 +1,6 @@
 package com.example.payment.entity;
 
+import com.example.classes.entity.ClassesEntity;
 import com.example.user.entity.AcademiesEntity;
 import com.example.user.entity.ParentsEntity;
 import com.example.user.entity.StudentsEntity;
@@ -11,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="classes")
+@Table(name="payments")
 @Builder
 @Data
 @NoArgsConstructor
@@ -27,9 +28,9 @@ public class PaymentEntity {
     private AcademiesEntity academy;
 
     //ClassEntity 만들면 연결할 생각
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "class_id", nullable = false)
-    //private ClassEntity class;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id", nullable = false)
+    private ClassesEntity classes;
 
     @Column(length = 100)
     private String duration_month;
