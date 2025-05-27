@@ -7,6 +7,8 @@ import { PaymentManagement, NonPayCheck } from '../components/payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
+import ChatbotPage from '../ChatBot/ChatbotPage';
+
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
@@ -46,10 +48,11 @@ const RouterMain = () => {
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
 
-
                     {/* 학원 정보 ================================================================================== */}
                     <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
 
+                    {/* 챗봇 ================================================================================== */}
+                    <Route path="chat" element={<ChatbotPage/>}></Route>
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />

@@ -100,7 +100,7 @@ const BoardMainPage = ({ username }) => {
               <tr key={post.id || idx}>
                 <td data-label="번호" >{post.id || ''}</td>
                 <td data-label="제목" > 
-                  {post.title ? <Link to={`/board/${post.id}`}>{post.title}</Link> : ''}
+                  {post.title ? <Link to={`../board/${post.id}`}>{post.title}</Link> : ''}
                 </td>
                 <td data-label="작성자">{post.author || ''}</td>
                 <td data-label="작성일">{post.date || ''}</td>
