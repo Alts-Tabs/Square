@@ -19,13 +19,13 @@ const Main = () => {
     const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
 
     // 로그인 시 받은 사용자 정보 상태
-    const [userInfo, setUserInfo] = useState({name: '', role: '', username: ''});
+    const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: ''});
     useEffect(() => {
         // 페이지 로드 시 사용자 정보 요청
         axios.get("/public/user", {withCredentials: true})
             .then(res => {
-                const {name, role, username} = res.data;
-                setUserInfo({name, role, username});
+                const {name, role, username, acaId, userId} = res.data;
+                setUserInfo({name, role, username, acaId, userId});
             }).catch(() => { // 인증 실패 - 로그인 페이지로..
                 navi("/login");
             });
@@ -75,7 +75,7 @@ const Main = () => {
     const itemToRender = roleItems[role] || [];
     /* dropdown 이벤트 끝 */
 
-    // 자녀 코드 이벤트
+    // 학생 코드 이벤트
     const [people, setPeople] = useState(1);
     const [code, setCode] = useState("");
     const stuCodeEvent = async () => {
@@ -152,7 +152,7 @@ const Main = () => {
                 </div>
                 }
             </div>
-            {/* 자녀 등록 모달 */}
+            {/* 학생 등록 모달 */}
             {openModal &&(
             <Modal onClose={() => setOpenModal(false)}>
                 <div style={{width:'50%'}}>
@@ -269,7 +269,7 @@ const Main = () => {
                         <span className='naviTitle'> 수강료 </span> <br />
                         <span className='naviContent'>
                             <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
-                            <Link to="paymentManagement" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to={`paymentManagement/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 수강료 관리
                             </Link>
                         </span> <br />
@@ -302,7 +302,7 @@ const Main = () => {
                             학원 설정
                         </span> <br />
                         <span className='naviContent'> <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
-                            <Link to="class-setting" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to={`class-setting/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 클래스 관리
                             </Link>
                         </span> <br />
