@@ -31,7 +31,7 @@ const RouterMain = () => {
                     <Route path="evaluationStudent" element={<EvalStudent/>}/> {/*학생 종합평가 관리 */}
 
                     {/* 수강료 ===================================================================================== */}
-                    <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
+                    <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
@@ -46,8 +46,10 @@ const RouterMain = () => {
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
 
+
                     {/* 학원 정보 ================================================================================== */}
                     <Route path="class-setting" element={<ClassSetting />} /> {/* 클래스 관리 */}
+                    <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
 
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
