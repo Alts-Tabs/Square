@@ -47,6 +47,7 @@ public class EvaluationsEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	@Builder.Default
 	private EvaluationPeriod period=EvaluationPeriod.WEEKLY;
 
 	@CreationTimestamp

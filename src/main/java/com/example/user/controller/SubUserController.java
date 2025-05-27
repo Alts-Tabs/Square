@@ -89,7 +89,7 @@ public class SubUserController {
         }
 
         data.put("role", info.getRole());
-        data.put("academy_id", info.getAcademy().getAcademy_id());
+        data.put("academy_id", info.getAcademy().getAcademyId());
         data.put("username", joinService.generateUsernames(info));
 
         return ResponseEntity.ok(data);

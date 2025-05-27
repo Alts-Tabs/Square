@@ -129,7 +129,7 @@ public class UsersController {
         data.put("name", userDetails.getName());
         data.put("username", userDetails.getUsername());
         data.put("role", role);
-        data.put("acaId", aca.getAcademy_id());
+        data.put("acaId", aca.getAcademyId());
 
         return ResponseEntity.ok(data);
     }

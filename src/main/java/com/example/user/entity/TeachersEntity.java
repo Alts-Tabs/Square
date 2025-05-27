@@ -19,7 +19,8 @@ import java.util.List;
 public class TeachersEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int teacher_id;
+    @Column(name = "teacher_id")
+    private int teacherId;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -8,6 +8,8 @@ const ClassSetting = () => {
     const {acaId} = useParams();
     const [teachers, setTeachers] = useState([]);
     const [classes, setClasses] = useState([]);
+    // 필터링 추가
+    const [filteredTeacherId, setFilteredTeacherId] = useState('');
 
     // 클래스 목록 함수
     const fetchClassList = useCallback(() => {
@@ -20,7 +22,7 @@ const ClassSetting = () => {
     const [name, setName] = useState('');
     const [capacity, setCapacity] = useState('30');
     const [teacherId, setTeacherId] = useState('');
-    
+
     useEffect(() => {
         if(!acaId) {
             return;
@@ -38,6 +40,18 @@ const ClassSetting = () => {
         fetchClassList();
 
     }, [acaId, fetchClassList]);
+
+    // 삭제 함수 추가
+    const handleDeleteClass = (classId) => {
+        if(!window.confirm("정말 이 클래스를 삭제하시겠습니까?")) {
+            return;
+        }
+
+        axios.delete(`/dir/${classId}/delete`, {withCredentials: true})
+            .then(() => {
+                setClasses(prev => prev.filter(cls => cls.id !== classId));
+            }).catch(err => alert("클래스 삭제 실패", err));
+    }
 
     // 담당자 선택 이벤트
     const [selectedTeacherName, setSelectedTeacherName] = useState('');
@@ -90,16 +104,24 @@ const ClassSetting = () => {
                         클래스 목록
                     </span>
 
-                    <select className='classFilter'>
-                        <option> 클래스 필터 </option>
-                        <option> 클래스 A </option>
+                    <select className='classFilter' value={filteredTeacherId}
+                     onChange={(e) => setFilteredTeacherId(e.target.value)}>
+                        <option value=''> 클래스 필터 </option>
+                        {teachers.map((teacher) => (
+                            <option key={teacher.teacherId} value={teacher.teacherId}>
+                                {teacher.teacherName} ({teacher.subject})
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 <div className='listBody'>
                     {/* 이하 반복되는 클래스 리스트 ======================================== */}
-                    {classes.map(cls => (
-                    <div className='listContent'>
+                    {classes.filter(cls => {
+                        if(!filteredTeacherId) return true;
+                        return cls.teacherId === parseInt(filteredTeacherId, 10);
+                    }).map(cls => (
+                    <div className='listContent' key={cls.id}>
                         <div className='classPhoto'></div> {/* 여기에 이미지 업로드 */}
                         <div className='classInfo'>
                             <span style={{ fontSize: '22px', color: '#2E5077', fontWeight: '700' }}>
@@ -114,7 +136,7 @@ const ClassSetting = () => {
                         </div>
 
                         <div className='classDelete'> {/* 삭제 버튼 */}
-                            <button> 삭제 </button>
+                            <button onClick={() => handleDeleteClass(cls.id)}> 삭제 </button>
                         </div>
                     </div>
                     ))}

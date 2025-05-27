@@ -18,7 +18,8 @@ import java.util.List;
 public class ParentsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int parent_id;
+    @Column(name = "parent_id")
+    private int parentId;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
