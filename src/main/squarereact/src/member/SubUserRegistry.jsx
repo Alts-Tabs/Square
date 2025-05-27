@@ -133,16 +133,18 @@ const SubUserRegistry = () => {
 
             <div className="subgroup">
               <span>코드 기한</span>
-              <i className="bi bi-calendar4" onClick={handleIconClick}></i>
-              <input type="datetime-local" defaultValue={date}
-               style={{display:"none"}}
-               ref={dateInputRef}
-               onChange={handleDateChange} />
+              <div className="calendar-wrapper">
+                <i className="bi bi-calendar4" onClick={handleIconClick}></i>
+                <input type="datetime-local" defaultValue={date}
+                style={{display:"none"}}
+                ref={dateInputRef}
+                onChange={handleDateChange} />
 
-              <input type="text" className="form-control"
-               style={{width:"30%"}} placeholder="연도.연월.연일 시간"
-               value={formatDay}
-               readOnly /> 
+                <input type="text" className="form-control"
+                style={{width:"30%"}} placeholder="연도.연월.연일 시간"
+                value={formatDay}
+                readOnly /> 
+            </div>
             </div>
             <button type="submit" className="codebtn">코드 등록</button>
           </form>

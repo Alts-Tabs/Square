@@ -64,4 +64,9 @@ public class UsersEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudentsEntity> students = new ArrayList<>();
+
+    public Integer resolveAcademyId() {
+        // 소속 학원 알아내는 헬퍼 함수 - JWT에 필요
+        return UserAcademyResolver.getAcademyId(this);
+    }
 }
