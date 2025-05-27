@@ -194,26 +194,21 @@ const Main = () => {
                     {/* Navi1 - 수강생 =============================================================== */}
                     <div className='students naviForm'>
                         <span className='naviTitle'> 수강생 </span> <br />
-
-                        <span className='naviContent'>
-                            <i className="bi bi-people"></i>&nbsp;&nbsp;
-                            {/* [수강생 관리] - 학생, 학부모 외 접근 가능 */}
-                            {
-                                userInfo.role !== "학생" && userInfo.role !== "학부모" ? (
-                                <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    수강생 관리
-                                </Link>
-                                ) : userInfo.role ? (
-                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
-                                    수강생 관리
-                                </span>
-                                ) : (
-                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
-                                    수강생 관리
-                                </span>
-                                )
-                            }
-                        </span> <br />
+                        {/* [수강생 관리] - 학생 & 학부모 외 모두 접근 가능 */}
+                        {
+                            userInfo.role !== "학생" && userInfo.role !== "학부모" && (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-people"></i>&nbsp;&nbsp;
+                                        <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            수강생 관리
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            )
+                        }
+                        
 
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
@@ -274,26 +269,20 @@ const Main = () => {
                             </Link>
                         </span> <br />
 
-
-                        <span className='naviContent'>
-                        <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
-                        {/* [미납 관리] - 학생, 학부모 외 모두 접근 가능 */}
+                        {/* [미납 관리] - 학생 & 학부모 외 모두 접근 가능 */}
                         {
                             userInfo.role !== "학생" && userInfo.role !== "학부모" ? (
-                                <Link to="nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    미납 관리
-                                </Link>
-                            ) : userInfo.role ? (
-                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
-                                    미납 관리
-                                </span>
-                            ) : (
-                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
-                                    미납 관리
-                                </span>
-                            )
+                                <>
+                                    <span className='naviContent'>
+                                    <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
+                                    <Link to="nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        미납 관리
+                                    </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : null
                         }
-                        </span><br />
 
                     </div>
 
@@ -308,21 +297,20 @@ const Main = () => {
                             학원 캘린더
                         </span> <br />
 
-                        <span className='naviContent'>
-                            <i className="bi bi-collection"></i>&nbsp;&nbsp;
-                            {/* [자료실] - 학부모 외 모두 접근 가능 */}
-                            {
-                                userInfo.role && userInfo.role !== "학부모" ? (
-                                    <Link to="" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {/* [자료실] - 학부모 외 모두 접근 가능 */}
+                        {
+                            userInfo.role && userInfo.role !== "학부모" ? (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-collection"></i>&nbsp;&nbsp;
+                                        <Link to="" style={{ textDecoration: 'none', color: 'inherit' }}>
                                         자료실
-                                    </Link>
-                                ) : (
-                                    <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
-                                        자료실
+                                        </Link>
                                     </span>
-                                )
-                            }
-                        </span> <br />
+                                    <br />
+                                </>
+                            ) : null
+                        }
                     </div>
 
                     {/* Navi5 - 학원 정보 (관리자 & 원장만 접근 가능) ==================================================== */}
