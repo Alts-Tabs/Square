@@ -19,7 +19,7 @@ const RouterMain = () => {
 
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     {/* 수강생 ===================================================================================== */}
-                    <Route path="students-manage" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
+                    <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
                     <Route path="attend" element={<Attend />} /> {/* 출석 관리 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
@@ -48,7 +48,6 @@ const RouterMain = () => {
 
 
                     {/* 학원 정보 ================================================================================== */}
-                    <Route path="class-setting" element={<ClassSetting />} /> {/* 클래스 관리 */}
                     <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
 
                 </Route>
