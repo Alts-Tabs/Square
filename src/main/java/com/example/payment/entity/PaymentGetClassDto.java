@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PaymentDto {
+public class PaymentGetClassDto {
     private int id;
     private String name; //과목명
     private int tuition; //수업료
