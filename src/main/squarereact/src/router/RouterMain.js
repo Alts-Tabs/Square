@@ -22,7 +22,7 @@ const RouterMain = () => {
                     <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 로그인 경로 */}
                     <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 로그인 경로 */}
 
-                    <Route path="paymentManagement" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
+                    <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
