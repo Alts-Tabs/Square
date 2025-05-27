@@ -19,7 +19,8 @@ import java.util.List;
 public class StudentsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int student_id;
+    @Column(name = "student_id")
+    private int studentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id", nullable = false)
