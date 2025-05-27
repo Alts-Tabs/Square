@@ -7,7 +7,7 @@
     box-sizing: border-box;
 }
 
-/* 공통 타이틀 스타일 */
+/* 공통 타이틀 span 스타일 */
 .attendTitle {
     flex-shrink: 0; /* 공간이 부족할 때에도 원래 크기 유지 */
     display: inline-block;

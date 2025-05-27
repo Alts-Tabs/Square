@@ -1,0 +1,192 @@
+.studentsManageWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* Header =========================================== */
+/* + 수강생 추가 버튼 */
+.bi-plus-lg {
+    color: #79D7BE;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.bi-plus-lg:hover {
+    transform: rotate(90deg);
+}
+
+/* 모달 디자인 ============================================ */
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    width: 100%;
+    margin-bottom: 45px;
+}
+
+.formRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.modalInput {
+    flex: 1;
+    height: 38px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 18px;
+    color: rgba(125, 138, 138, 1);
+    background-color: #F6F4F0;
+    border: 1px solid rgba(125, 138, 138, 0.3);
+}
+
+/* 수강생 추가 버튼 */
+.modalAddBtn {
+    width: 66px;
+    height: 45px;
+    color: rgba(121, 215, 190, 0.7);
+    font-size: 20px;
+    font-weight: 500;
+    border: 2px solid rgba(121, 215, 190, 0.7);
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.modalAddBtn:hover {
+    color: white;
+    background-color: #79D7BE;
+}
+/* ======================================================== */
+
+
+/* 학생 검색창 */
+.searchStudents {
+    width: 14%;
+    height: 42px;
+    padding: 10px;
+    margin-left: 30px;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color: #F6F4F0;
+    color: rgba(125, 138, 138, 1);
+    border: 1px solid rgba(125, 138, 138, 0.3);
+}
+
+.searchStudents::placeholder {
+    color: rgba(125, 138, 138, 0.6);
+}
+
+/* 돋보기 검색 아이콘 */
+.bi-search {
+    color: rgba(125, 138, 138, 0.3);
+    font-size: 29px;
+    cursor: pointer;
+}
+
+.bi-search:hover {
+    color: rgba(125, 138, 138, 0.5);
+}
+
+/* Body ============================================ */
+.studentsManageBody {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    white-space: nowrap; 
+
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    border-radius:  0 0 10px 10px;
+    background-color: white;
+    scrollbar-width: none;
+}
+
+/* 여기부터 반복 리스트 카드 */
+.studentCard {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가로 중앙 정렬 */
+    position: relative;
+    width: 23%;
+    height: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(125, 138, 138, 0.2);
+}
+
+/* X 삭제 아이콘 설정 */
+.studentCard .bi-x-lg {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 23px;
+    color: rgba(125, 138, 138, 0.8);
+    cursor: pointer;
+}
+
+.studentCard .bi-x-lg:hover {
+    color: #D85858;
+}
+
+/* 학생 프로필 이미지 */
+.studentPhoto {
+    width: 150px;
+    height: 150px;
+    margin-top: 50px;
+    background-color: lightgray;
+    border-radius: 50%;
+}
+
+/* 학생명, Role, 등록일자 Div */
+.nameBox {
+    margin-top: 50px; 
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가로 중앙 정렬 */
+    text-align: center;
+}
+
+.studentName {
+    color: #4DA1A9;
+    font-weight: 700;
+    font-size: 33px;
+}
+
+.grayText {
+    font-size: 18px;
+}
+
+.nameBox hr {
+    width: 11%;
+    margin-top: 30px;
+    border: 1px solid #7D8A8A;
+}
+
+/* 클래스, 담당 강사, 수강 과목 */
+.detailBox {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 22px;
+    width: 100%;
+    height: 45%;
+}
+
+.grayText2 {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+}
+
+.label {
+    display: inline-block;
+    width: 140px; /* 라벨 넓이 고정 */
+}

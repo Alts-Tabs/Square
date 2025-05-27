@@ -194,12 +194,30 @@ const Main = () => {
                     {/* Navi1 - 수강생 =============================================================== */}
                     <div className='students naviForm'>
                         <span className='naviTitle'> 수강생 </span> <br />
-                        <span className='naviContent'> <i className="bi bi-people"></i>&nbsp;&nbsp;
-                            수강생 관리 
+
+                        <span className='naviContent'>
+                            <i className="bi bi-people"></i>&nbsp;&nbsp;
+                            {/* 원장, 강사만 [수강생 관리] 탭 입장 가능 */}
+                            {
+                                userInfo.role === "원장" || userInfo.role === "강사" ? (
+                                <Link to="students-manage" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    수강생 관리
+                                </Link>
+                                ) : userInfo.role ? (
+                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
+                                    수강생 관리 (권한 없음)
+                                </span>
+                                ) : (
+                                <span style={{ textDecoration: 'none', color: 'inherit', opacity: 0.6 }}>
+                                    수강생 관리 (정보 로딩 중...)
+                                </span>
+                                )
+                            }
                         </span> <br />
 
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
+                            {/* Role에 따라 [출석 관리]는 각각 다른 페이지 로드 */}
                             {
                                 userInfo.role === "학생" ? ( // 학생 로그인
                                     <Link to="attend-stu" style={{ textDecoration: 'none', color: 'inherit' }}>
