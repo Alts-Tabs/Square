@@ -4,6 +4,7 @@ import com.example.security.CustomUserDetails;
 import com.example.user.dto.JoinDto;
 import com.example.jwt.JwtUtil;
 import com.example.user.entity.AcademiesEntity;
+import com.example.user.entity.UserAcademyResolver;
 import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.AcademiesRepository;
 import com.example.user.service.JoinService;
@@ -121,7 +122,7 @@ public class UsersController {
 
         // 학원 고유 값 보내기
         UsersEntity user = usersRepository.findByUsername(username);
-        AcademiesEntity aca = acaRepository.findByUser(user);
+        Integer academyId = UserAcademyResolver.getAcademyId(user);
 
         Map<String, Object> data = new HashMap<>();
         data.put("message", "Info OK!");
@@ -129,7 +130,7 @@ public class UsersController {
         data.put("name", userDetails.getName());
         data.put("username", userDetails.getUsername());
         data.put("role", role);
-        data.put("acaId", aca.getAcademy_id());
+        data.put("acaId", academyId);
 
         return ResponseEntity.ok(data);
     }

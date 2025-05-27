@@ -51,17 +51,16 @@ public class ClassesController {
 
         // DTO로 변환
         ClassResponse response = ClassResponse.builder()
-                .id(saved.getClass_id())
+                .id(saved.getClassId())
                 .name(saved.getName()) // 학원명
                 .capacity(saved.getCapacity())
-                .teacherId(teacher.getTeacher_id())
+                .teacherId(teacher.getTeacherId())
                 .teacherName(teacher.getUser().getName()) // 강사명
                 .build();
 
-        URI location = URI.create("/createClass/" + saved.getClass_id()); // 생성된 자원 명확히하기
+        URI location = URI.create("/createClass/" + saved.getClassId()); // 생성된 자원 명확히하기
         return ResponseEntity.created(location).body(response);
     }
-
 
     // 학원 내 모든 클래스 정보 불러오기
     @GetMapping("/dir/{academyId}/classes")
@@ -70,15 +69,24 @@ public class ClassesController {
 
         List<ClassResponse> response = classes.stream()
                 .map(c -> ClassResponse.builder()
-                        .id(c.getClass_id())
+                        .id(c.getClassId())
                         .name(c.getName())
                         .capacity(c.getCapacity())
-                        .teacherId(c.getTeacher().getTeacher_id())
+                        .teacherId(c.getTeacher().getTeacherId())
                         .teacherName(c.getTeacher().getUser().getName())
                         .tuition(c.getTuition() != null ? c.getTuition() : 0)
                         .build()).toList();
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/dir/{classId}/delete")
+    public ResponseEntity<?> deleteClassesByClassId(@PathVariable int classId) {
+        if(!classesRepository.existsById(classId)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        classesRepository.deleteById(classId);
+        return ResponseEntity.ok().build();
+    }
 
 }

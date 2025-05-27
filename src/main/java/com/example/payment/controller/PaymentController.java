@@ -26,10 +26,10 @@ public class PaymentController {
 
         List<ClassResponse> response = classes.stream()
                 .map(c -> ClassResponse.builder()
-                        .id(c.getClass_id())
+                        .id(c.getClassId())
                         .name(c.getName())
                         .capacity(c.getCapacity())
-                        .teacherId(c.getTeacher().getTeacher_id())
+                        .teacherId(c.getTeacher().getTeacherId())
                         .teacherName(c.getTeacher().getUser().getName())
                         .tuition(c.getTuition() != null ? c.getTuition() : 0)
                         .build()).toList();

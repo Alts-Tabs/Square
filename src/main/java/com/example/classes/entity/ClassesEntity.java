@@ -20,7 +20,8 @@ import java.util.List;
 public class ClassesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int class_id;
+    @Column(name = "class_id")
+    private int classId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id")

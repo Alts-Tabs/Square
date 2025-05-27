@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface PaymentGetClassRepository extends JpaRepository<PaymentEntity, Integer> {
     //ClassesRepository와 유사하나 수업료가 추가되어야 함
-    @Query("select tuition from ClassesEntity c where c.academy.academy_id = :academyId")
+    @Query("select tuition from ClassesEntity c where c.academy.academyId = :academyId")
     List<PaymentEntity> findByAcademyId(@Param("academyId") Integer academyId);
-    }
+}

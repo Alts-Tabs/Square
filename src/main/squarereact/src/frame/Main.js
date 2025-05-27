@@ -194,12 +194,25 @@ const Main = () => {
                     {/* Navi1 - 수강생 =============================================================== */}
                     <div className='students naviForm'>
                         <span className='naviTitle'> 수강생 </span> <br />
-                        <span className='naviContent'> <i className="bi bi-people"></i>&nbsp;&nbsp;
-                            수강생 관리 
-                        </span> <br />
+                        {/* [수강생 관리] - 학생 & 학부모 외 모두 접근 가능 */}
+                        {
+                            userInfo.role !== "학생" && userInfo.role !== "학부모" && (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-people"></i>&nbsp;&nbsp;
+                                        <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            수강생 관리
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            )
+                        }
+                        
 
                         <span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
+                            {/* [출석 관리] - Role에 따라 각각 다른 페이지 로드 */}
                             {
                                 userInfo.role === "학생" ? ( // 학생 로그인
                                     <Link to="attend-stu" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -215,7 +228,7 @@ const Main = () => {
                                     </Link>
                                 ) : ( // userInfo.role이 아직 로드되지 않았을 경우
                                     <span style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        출석 관리 (정보 로딩 중...)
+                                        출석 관리
                                     </span>
                                 )
                             }
@@ -231,19 +244,19 @@ const Main = () => {
 
                     {/* Navi2 - 소통 ================================================================ */}
                     <div className='communication naviForm'>
-                    <span className='naviTitle'>소통</span> <br />
-                    <span className='naviContent'>
-                        <i className="bi bi-megaphone"></i>&nbsp;&nbsp;
-                        <Link to="board" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            학원 게시판
-                        </Link>
-                    </span> <br />
-                    <span className='naviContent'>
-                        <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
-                        <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            상담 신청 및 Q&A
-                        </Link>
-                    </span> <br />
+                        <span className='naviTitle'>소통</span> <br />
+                        <span className='naviContent'>
+                            <i className="bi bi-megaphone"></i>&nbsp;&nbsp;
+                            <Link to="board" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                학원 게시판
+                            </Link>
+                        </span> <br />
+                        <span className='naviContent'>
+                            <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
+                            <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                상담 신청 및 Q&A
+                            </Link>
+                        </span> <br />
                     </div>
 
                     {/* Navi3 - 수강료 =================================================================== */}
@@ -255,12 +268,22 @@ const Main = () => {
                                 수강료 관리
                             </Link>
                         </span> <br />
-                        <span className='naviContent'>
-                            <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
-                            <Link to="nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                미납 관리
-                            </Link>
-                        </span> <br />
+
+                        {/* [미납 관리] - 학생 & 학부모 외 모두 접근 가능 */}
+                        {
+                            userInfo.role !== "학생" && userInfo.role !== "학부모" ? (
+                                <>
+                                    <span className='naviContent'>
+                                    <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
+                                    <Link to="nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        미납 관리
+                                    </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : null
+                        }
+
                     </div>
 
                     {/*  Navi4 - 학습 관리 =========================================================== */}
@@ -269,28 +292,61 @@ const Main = () => {
                         <span className='naviContent'> <i className="bi bi-clock-history"></i>&nbsp;&nbsp;
                             시간표 설정
                         </span> <br />
+
                         <span className='naviContent'> <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
                             학원 캘린더
                         </span> <br />
-                        <span className='naviContent'> <i className="bi bi-collection"></i>&nbsp;&nbsp;
-                            자료실
-                        </span> <br />
+
+                        {/* [자료실] - 학부모 외 모두 접근 가능 */}
+                        {
+                            userInfo.role && userInfo.role !== "학부모" ? (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-collection"></i>&nbsp;&nbsp;
+                                        <Link to="" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        자료실
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : null
+                        }
                     </div>
 
-                    {/* Navi5 - 학원 정보 ================================================================ */}
-                    <div className='info naviForm'>
-                        <span className='naviTitle'> 학원 정보 </span> <br />
-                        <span className='naviContent'> <i className="bi bi-gear"></i>&nbsp;&nbsp;
-                            학원 설정
-                        </span> <br />
-                        <span className='naviContent'> <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
-                            <Link to={`class-setting/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                클래스 관리
-                            </Link>
-                        </span> <br />
-                        <span className='naviContent'> <i className="bi bi-person-check"></i>&nbsp;&nbsp;
-                            멤버 관리
-                        </span> <br />
+                    {/* Navi5 - 학원 정보 (관리자 & 원장만 접근 가능) ==================================================== */}
+                    {
+                        (userInfo.role === "관리자" || userInfo.role === "원장") && (
+                            <div className='info naviForm'>
+                                <span className='naviTitle'> 학원 정보 </span> <br />
+
+                                <span className='naviContent'>
+                                    <i className="bi bi-gear"></i>&nbsp;&nbsp;
+                                    학원 설정
+                                </span> <br />
+
+                                <span className='naviContent'>
+                                    <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
+                                    <Link to={`class-setting/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        클래스 관리
+                                    </Link>
+                                </span> <br />
+
+                                <span className='naviContent'>
+                                    <i className="bi bi-person-check"></i>&nbsp;&nbsp;
+                                    멤버 관리
+                                </span> <br />
+                            </div>
+                        )
+                    }
+
+                    {/* Navi6 - 챗봇 ============================================================================= */}
+                    <div className='chatbot naviForm'>
+                        <span className='naviTitle'> 챗봇 </span> <br />
+
+                        <span className='naviContent'>
+                            <i class="bi bi-chat"></i>&nbsp;&nbsp;
+                            챗봇
+                        </span>
                     </div>
                 </div>
 
