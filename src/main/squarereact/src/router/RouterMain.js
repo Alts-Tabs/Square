@@ -9,6 +9,7 @@ import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
+import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 
 const RouterMain = () => {
     return (
@@ -17,19 +18,25 @@ const RouterMain = () => {
                 <Route path='/' element={<Root />} />
 
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
-                    <Route path="attend" element={<Attend />} /> {/* attend 경로 */}
-                    <Route path="attend/attend-history" element={<AttendHistory />} />
-                    <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 로그인 경로 */}
-                    <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 로그인 경로 */}
+                    {/* 수강생 ===================================================================================== */}
+                    <Route path="students-manage" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
-                    <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
-                    <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
-                    <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
+                    <Route path="attend" element={<Attend />} /> {/* 출석 관리 */}
+                    <Route path="attend/attend-history" element={<AttendHistory />} />
+                    <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
+                    <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 출석 관리 경로 */}
 
                     <Route path="evaluationAdmin" element={<EvalAdmin/>}/> {/*학원관계자 종합평가 관리 */}
                     <Route path="evaluationParents" element={<EvalParents/>}/> {/*학부모 종합평가 관리 */}
                     <Route path="evaluationStudent" element={<EvalStudent/>}/> {/*학생 종합평가 관리 */}
 
+                    {/* 수강료 ===================================================================================== */}
+                    <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
+                    <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
+                    <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
+
+
+                    {/* 소통 ======================================================================================= */}
                     <Route path="board" element={<BoardMainPage/>} />
                     <Route path="board/:postId" element={<BoardMainPostDetail/>} />
                     <Route path="post/boardcreate" element={<BoardMainPostForm/>} />
@@ -39,6 +46,9 @@ const RouterMain = () => {
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
 
+
+                    {/* 학원 정보 ================================================================================== */}
+                    <Route path="class-setting" element={<ClassSetting />} /> {/* 클래스 관리 */}
                     <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
 
                 </Route>

@@ -178,7 +178,7 @@ const ClassSetting = () => {
                             </option>
                         ))}
                     </select>
-                    <br /><br />
+                    <br /><br />     
 
                     {/* 생성 버튼 */}
                     <button onClick={handleCreateClass}> 생성 </button>
