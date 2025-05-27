@@ -200,7 +200,7 @@ const Main = () => {
                             {/* [수강생 관리] - 학생, 학부모 외 접근 가능 */}
                             {
                                 userInfo.role !== "학생" && userInfo.role !== "학부모" ? (
-                                <Link to="students-manage" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     수강생 관리
                                 </Link>
                                 ) : userInfo.role ? (
@@ -274,7 +274,7 @@ const Main = () => {
                             </Link>
                         </span> <br />
 
-                        
+
                         <span className='naviContent'>
                         <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
                         {/* [미납 관리] - 학생, 학부모 외 모두 접근 가능 */}
@@ -294,7 +294,7 @@ const Main = () => {
                             )
                         }
                         </span><br />
- 
+
                     </div>
 
                     {/*  Navi4 - 학습 관리 =========================================================== */}
