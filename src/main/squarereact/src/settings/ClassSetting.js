@@ -71,7 +71,7 @@ const ClassSetting = () => {
                         <option> 담당자 선택 </option>
                         <option> 클래스 A 담당자 </option>
                     </select>
-                    <br /><br />
+                    <br /><br />     
 
                     {/* 생성 버튼 */}
                     <button> 생성 </button>
