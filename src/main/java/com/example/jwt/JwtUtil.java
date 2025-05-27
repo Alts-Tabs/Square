@@ -47,6 +47,7 @@ public class JwtUtil {
 
 //        System.out.println(user.getName());
         claims.put("name", user.getName());
+        claims.put("academyId", user.resolveAcademyId());
 
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(expireTime);

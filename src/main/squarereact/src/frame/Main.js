@@ -200,7 +200,7 @@ const Main = () => {
                             {/* 원장, 강사만 [수강생 관리] 탭 입장 가능 */}
                             {
                                 userInfo.role === "원장" || userInfo.role === "강사" ? (
-                                <Link to="students-manage" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     수강생 관리
                                 </Link>
                                 ) : userInfo.role ? (
