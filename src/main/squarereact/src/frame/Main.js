@@ -225,13 +225,13 @@ const Main = () => {
                     <div className='communication naviForm'>
                     <span className='naviTitle'>소통</span> <br />
                     <span className='naviContent'>
-                        <i className="bi bi-megaphone"></i>
+                        <i className="bi bi-megaphone"></i>&nbsp;&nbsp;
                         <Link to="board" style={{ textDecoration: 'none', color: 'inherit' }}>
                             학원 게시판
                         </Link>
                     </span> <br />
                     <span className='naviContent'>
-                        <i className="bi bi-question-circle"></i>
+                        <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
                         <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
                             상담 신청 및 Q&A
                         </Link>
@@ -281,6 +281,16 @@ const Main = () => {
                         <span className='naviContent'> <i className="bi bi-person-check"></i>&nbsp;&nbsp;
                             멤버 관리
                         </span> <br />
+                    </div>
+
+                    {/* Navi6 - 챗봇 ================================================================ */}
+                    <div className='info naviForm'>
+                        <span className='naviTitle'> AI 챗봇 </span> <br />
+                        <span className='naviContent'> <i class="bi bi-chat"></i>&nbsp;&nbsp;
+                            <Link to="chat" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            AI 챗봇
+                            </Link>
+                        </span> <br />                        
                     </div>
                 </div>
 

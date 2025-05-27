@@ -7,6 +7,8 @@ import { PaymentManagement, NonPayCheck } from '../components/payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
+import ChatbotPage from '../ChatBot/ChatbotPage';
+
 import AttendParent from '../attendBook/AttendParent';
 
 const RouterMain = () => {
@@ -37,6 +39,8 @@ const RouterMain = () => {
                     <Route path="post/qna/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
+                    
+                    <Route path="chat" element={<ChatbotPage/>}></Route>
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />

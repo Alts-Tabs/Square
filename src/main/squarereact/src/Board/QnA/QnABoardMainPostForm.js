@@ -226,7 +226,7 @@ const PostForm = ({ username }) => {
             </label>
           </div>
           <div className="form-buttons">
-            <button type="button" className="btn cancel" onClick={() => navigate('/qnaboard')}>
+            <button type="button" className="btn cancel" onClick={() => navigate('../qnaboard')}>
               취소
             </button>
             <button type="submit" className="btn submit">
