@@ -28,7 +28,7 @@ const PaymentManagement = () => {
     const handleUpdateTuition = async () => {
     if (!selectedClass) return;
     try {
-        await axios.patch(
+        await axios.post(
             `/dir/${selectedClass.id}/payment/UpdateTuition`,
             { tuition }, // 보낼 데이터
             { withCredentials: true } //CORS 문제 해결
