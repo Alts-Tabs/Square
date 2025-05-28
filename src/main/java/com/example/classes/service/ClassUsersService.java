@@ -1,5 +1,6 @@
 package com.example.classes.service;
 
+import com.example.classes.dto.RegisterResultDto;
 import com.example.classes.entity.ClassUsersEntity;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,38 +28,55 @@ public class ClassUsersService {
      * 학생 계정 클래스에 등록하는 로직
      * @param classId int
      * @param studentIds List<Integer>
+     * @return result RegisterResultDto
      */
     @Transactional
-    public void registerStudentToClass(int classId, List<Integer> studentIds) {
+    public RegisterResultDto registerStudentToClass(int classId, List<Integer> studentIds) {
         ClassesEntity classEntity = classesRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Class Not Found"));
 
         int currentEnrollment = classEntity.getClassUsers().size(); // 현재 등록 인원 수
         int availableSpots = classEntity.getCapacity() - currentEnrollment; // 남은 정원 수
 
+        RegisterResultDto result = new RegisterResultDto();
+
+        // 정원 초과
         if(studentIds.size() > availableSpots) {
-            throw new IllegalStateException("정원 초과, 남은 자리: " + availableSpots);
+            result.addError(null, "capacity", "정원 초과, 남은 자리: " + availableSpots);
+            return result;
         }
 
         List<StudentsEntity> students = studentsRepository.findAllById(studentIds);
 
-        if(students.size() != studentIds.size()) {
-            throw new IllegalArgumentException("일치하지 않은 학생 ID 존재");
+        Set<Integer> foundStudentIds = students.stream()
+                .map(StudentsEntity :: getStudentId)
+                .collect(Collectors.toSet());
+
+        // 존재하지 않은 ID
+        for(Integer id : foundStudentIds) {
+            if(!foundStudentIds.contains(id)) {
+                result.addError(id, "Invalid ID", "해당 ID의 학생이 존재하지 않습니다.");
+            }
         }
 
         List<ClassUsersEntity> newEnrollments = new ArrayList<>(); // 새로 등록할 학생 목록
 
         for(StudentsEntity student : students) {
-            // 학원 일치 검사
+            int studentId = student.getStudentId();
+            String name = student.getUser().getName();
+
+            // 학원 불일치
             if(classEntity.getAcademy().getAcademyId() != student.getAcademy().getAcademyId()) {
-                throw new IllegalArgumentException("학생 [" +student.getUser().getName()+"]은 다른 학원 소속입니다.");
+                result.addError(studentId, "wrong_academy", "학생 [" +name+"]은 다른 학원 소속입니다.");
+                continue;
             }
 
-            // 중복 검사
+            // 중복 검사 - 이미 등록
             boolean alreadyEnrolled = classUsersRepository.existsByClassEntityAndStudent(classEntity, student);
 
             if(alreadyEnrolled) {
-                throw new IllegalStateException("학생 [" +student.getUser().getName()+"]은 이미 클래스에 속했습니다.");
+                result.addError(studentId, "Already_Class", "학생 [" +name+"]은 이미 클래스에 속했습니다.");
+                continue;
             }
 
             // 등록 정보 생성
@@ -69,13 +89,15 @@ public class ClassUsersService {
         }
 
         // 저장
-        classUsersRepository.saveAll(newEnrollments);
-
-        // 양방향 관계 반영
-        classEntity.getClassUsers().addAll(newEnrollments);
-        for(ClassUsersEntity cu : newEnrollments) {
-            cu.getStudent().getClassUsers().add(cu);
+        if(result.getErrors().isEmpty()) {
+            classUsersRepository.saveAll(newEnrollments);
+            // 양방향 관계 반영
+            classEntity.getClassUsers().addAll(newEnrollments);
+            for(ClassUsersEntity cu : newEnrollments) {
+                cu.getStudent().getClassUsers().add(cu);
+            }
         }
+        return result;
     }
 
     /**

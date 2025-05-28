@@ -1,5 +1,6 @@
 package com.example.classes.controller;
 
+import com.example.classes.dto.RegisterResultDto;
 import com.example.classes.service.ClassUsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,13 @@ public class ClassUsersController {
     @PostMapping("/th/{classId}/register")
     public ResponseEntity<?> registerStudents(@PathVariable int classId,
                                               @RequestBody List<Integer> studentIds) {
-        classUsersService.registerStudentToClass(classId, studentIds);
-        return ResponseEntity.ok().build();
+        RegisterResultDto result = classUsersService.registerStudentToClass(classId, studentIds);
+
+        if(!result.getErrors().isEmpty()) {
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     // 학생 목록 제거 - 복수
