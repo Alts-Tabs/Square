@@ -19,7 +19,11 @@ public class PaymentService {
     public void updateTuition(int classId, int tuition) {
         ClassesEntity cls = classesRepository.findById(classId)
                 .orElseThrow(() -> new EntityNotFoundException("Class not found"));
+        
+        //값 변경
         cls.setTuition(tuition);
+        
+        //update: save() 호출
         classesRepository.save(cls);
     }
 }

@@ -38,10 +38,11 @@ public class PaymentController {
     }
 
     //수업료 수정하는 부분
-    @PatchMapping("/dir/{classId}/payment/UpdateTuiton")
-    public ResponseEntity<ClassesEntity> updateTuiton(@PathVariable int classId,
+    @PostMapping("/dir/{classId}/payment/UpdateTuiton")
+    public ResponseEntity<ClassResponse> updateTuiton(@PathVariable int classId,
                                                       @RequestBody Map<String, Object> payload) {
         int tuition = Integer.parseInt(payload.get("tuition").toString());
+
         paymentService.updateTuition(classId, tuition);
         return ResponseEntity.ok().build();
     }
