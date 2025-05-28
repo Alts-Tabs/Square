@@ -33,7 +33,7 @@ const ClassStudentsManage = () => {
   const fetchClassList = () => {
     if(!acaId) return;
 
-    axios.get(`/dir/${acaId}/classes`, {withCredentials: true})
+    axios.get(`/th/${acaId}/classes`, {withCredentials: true})
     .then(res => {setClasses(res.data)})
     .catch(err => {alert('클래스 목록 호출 실패')});
   }
