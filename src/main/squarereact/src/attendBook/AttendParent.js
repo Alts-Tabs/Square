@@ -51,6 +51,11 @@ const AttendParent = () => {
                             </span>
                             <span> 입니다. </span> <br/>
                         </div>
+
+                        {/* 해당 자녀의 누적 출석률 */}
+                        <div className='mystackAttend'>
+                            여기다 뭐 넣냐 
+                        </div>
                     </div>
     
     

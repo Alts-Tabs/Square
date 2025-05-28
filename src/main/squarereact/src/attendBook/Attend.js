@@ -108,13 +108,21 @@ const Attend = () => {
                                 출석 종료
                             </div>
                         )}
-                        <hr />
+                        <hr style={{marginBottom:'35px'}}/>
                         
-                        {/* 반복 처리 리스트 */}
-                        <div className='studentList'>
-                            (프로필 이미지)
-                            <hr style={{border:'1px solid #7D8A8A'}}/>
-                            <span className='attenderTitle'> (학생명) </span>
+                        <div className='listWrapper'>
+                            {/* 반복 출력 리스트 ================================*/}
+                            <div className='studentList'>
+                                (프로필 이미지)
+                                <hr style={{border:'1px solid #7D8A8A'}}/>
+                                <span className='attenderTitle'> (학생명) </span>
+                            </div>
+                            {/* ================================================ */}
+                            <div className='studentList'>
+                                (프로필 이미지)
+                                <hr style={{border:'1px solid #7D8A8A'}}/>
+                                <span className='attenderTitle'> (학생명) </span>
+                            </div>
                         </div>
                     </div>
                 </div>

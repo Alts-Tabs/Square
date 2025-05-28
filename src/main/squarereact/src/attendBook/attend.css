@@ -78,11 +78,18 @@
     color: #D85858;
 }
 
+.listWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
 /* 반복 처리 리스트 */
 .studentList {
     width: 120px;
     height: 125px;
-    margin: 60px auto; /* 중앙 정렬 */
+    margin: 20px;
     text-align: center;
     border-radius: 10px;
     border: 1px solid #7D8A8A;
