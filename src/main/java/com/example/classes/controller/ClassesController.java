@@ -79,6 +79,7 @@ public class ClassesController {
         return ResponseEntity.ok(response);
     }
 
+    // 학원 내 클래스 삭제
     @DeleteMapping("/dir/{classId}/delete")
     public ResponseEntity<?> deleteClassesByClassId(@PathVariable int classId) {
         if(!classesRepository.existsById(classId)) {
