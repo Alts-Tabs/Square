@@ -3,10 +3,6 @@ package com.example.user.controller;
 import com.example.user.dto.StudentDto;
 import com.example.user.service.StudentsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +15,8 @@ public class AcademyController {
     private final StudentsService studentsService;
 
     @GetMapping("/public/{academyId}/students")
-    public ResponseEntity<Page<StudentDto>> getStudentsByAcademy(@PathVariable int academyId,
-                                                                 @PageableDefault(size = 20, sort = "studentId", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<StudentDto> students = studentsService.getStudentsByAcademy(academyId, pageable);
+    public ResponseEntity<List<StudentDto>> getStudentsByAcademy(@PathVariable int academyId) {
+        List<StudentDto> students = studentsService.getStudentsByAcademy(academyId);
         return ResponseEntity.ok(students);
     }
 
