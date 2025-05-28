@@ -38,9 +38,15 @@ public class PaymentController {
     }
 
     //수업료 수정하는 부분
-    @PostMapping("/dir/{classId}/payment/UpdateTuiton")
-    public ResponseEntity<ClassResponse> updateTuiton(@PathVariable int classId,
-                                                      @RequestBody Map<String, Object> payload) {
+    //403 에러가 발생 -
+    @PostMapping("/dir/{classId}/payment/UpdateTuition")
+    public ResponseEntity<?> updateTuition(@PathVariable int classId,
+                                          @RequestBody Map<String, Object> payload)
+    /*
+    payload 는 { "tuition": 50000 } 과 같이 json body 로 받아오는데
+    여기서 Map<String, Object> 사용함.
+    */
+    {
         int tuition = Integer.parseInt(payload.get("tuition").toString());
 
         paymentService.updateTuition(classId, tuition);
