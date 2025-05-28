@@ -13,13 +13,13 @@ const TotalEvaluationsAdmin = () => {
     //왼쪽 메뉴에서 학생 선택 시 필요
     const[selectStudentId, setSelectStudentId]=useState(null);
     const [selectStudentName, setSelectStudentName] = useState('');
-    const handleSelectStudent=(name)=> setSelectStudentName(name);
+    // const handleSelectStudent=(name)=> setSelectStudentName(name);
     const [student, setStudent]=useState([]);
     //const [checkStudent,setCheckStudent]=useState([]);
     //로그인한 계정이 담당하는 과목
     const [subject,setSubject]=useState([]);
     //토큰이 저장하는 정보
-    const token=localStorage.getItem('token');
+    // const token=localStorage.getItem('token');
     
     //저장 버튼 이벤트
     const handleSaveEvaluation=()=>{
@@ -59,7 +59,7 @@ const TotalEvaluationsAdmin = () => {
         //로그인한 userId에 해당하는 과목 가져오기
         axios.get(`/public/user`,{withCredentials:true})
         .then(respose=>{
-            const { userId, role } = respose.data;
+            // const { userId, role } = respose.data;
             return axios.get(`/teachers/subjects`, { params: { role: respose.data.role, userId: respose.data.userId } })
         })
         .then(respose=>{
