@@ -347,7 +347,7 @@ const Main = () => {
                         <span className='naviTitle'> 챗봇 </span> <br />
 
                         <span className='naviContent'>
-                            <i class="bi bi-chat"></i>&nbsp;&nbsp;
+                            <i className="bi bi-chat"></i>&nbsp;&nbsp;
                             챗봇
                         </span>
                     </div>

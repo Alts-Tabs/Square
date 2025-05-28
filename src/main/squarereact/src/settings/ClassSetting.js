@@ -13,7 +13,7 @@ const ClassSetting = () => {
 
     // 클래스 목록 함수
     const fetchClassList = useCallback(() => {
-        axios.get(`/dir/${acaId}/classes`, {withCredentials: true})
+        axios.get(`/th/${acaId}/classes`, {withCredentials: true})
             .then(res => setClasses(res.data))
             .catch(err => alert("클래스 목록 로딩 실패", err));
     }, [acaId]);

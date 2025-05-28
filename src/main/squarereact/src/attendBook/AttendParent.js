@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+// import React, { useState } from 'react'; - build test
 import './attend.css';
 import './attendStu.css';
 import './attendParent.css';
@@ -32,7 +33,8 @@ const AttendParent = () => {
         ];
     
         // (임시) 입력 활성화 여부 상태 (임시) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        const [isEditable, setIsEditable] = useState(false);
+        // const [isEditable, setIsEditable] = useState(false);
+        getTodayDate(); // 빌드 테스트를 위해 주석 및 임시 사용 - 개발하시면서 지워도 됨
     
         
         return (

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './attend.css';
 import './attendStu.css';
-import { Link } from 'react-router-dom';
-import { isEditable } from '@testing-library/user-event/dist/utils';
+// import { Link } from 'react-router-dom';
+// import { isEditable } from '@testing-library/user-event/dist/utils'; - 빌드테스트 주석
 
 const AttendStu = () => {
     // 당일 출석 날짜 출력
@@ -34,6 +34,7 @@ const AttendStu = () => {
 
     // (임시) 입력 활성화 여부 상태 (임시) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     const [isEditable, setIsEditable] = useState(false);
+    setIsEditable(false);
 
     
     return (

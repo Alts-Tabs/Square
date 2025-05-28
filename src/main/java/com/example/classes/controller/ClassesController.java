@@ -63,7 +63,7 @@ public class ClassesController {
     }
 
     // 학원 내 모든 클래스 정보 불러오기
-    @GetMapping("/dir/{academyId}/classes")
+    @GetMapping("/th/{academyId}/classes")
     public ResponseEntity<List<ClassResponse>> getClassesByAcademy(@PathVariable int academyId) {
         List<ClassesEntity> classes = classesRepository.findByAcademyId(academyId);
 
@@ -79,6 +79,7 @@ public class ClassesController {
         return ResponseEntity.ok(response);
     }
 
+    // 학원 내 클래스 삭제
     @DeleteMapping("/dir/{classId}/delete")
     public ResponseEntity<?> deleteClassesByClassId(@PathVariable int classId) {
         if(!classesRepository.existsById(classId)) {
