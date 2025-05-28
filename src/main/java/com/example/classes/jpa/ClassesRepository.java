@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ClassesRepository extends JpaRepository<ClassesEntity, Integer> {
     // 학원 아이디로 클래스 리스트 조회
-    @Query("SELECT c FROM ClassesEntity c WHERE c.academy.academy_id = :academyId")
+    @Query("SELECT c FROM ClassesEntity c WHERE c.academy.academyId = :academyId")
     List<ClassesEntity> findByAcademyId(@Param("academyId") int academyId);
 }

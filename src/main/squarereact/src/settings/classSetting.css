@@ -27,7 +27,6 @@
     cursor: pointer;
 }
 
-
 /* 클래스 목록 내용 영역 */
 .listBody {
     flex-grow: 1;

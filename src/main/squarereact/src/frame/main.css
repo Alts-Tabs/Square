@@ -69,6 +69,7 @@
     position: relative;
     width: 343px;
     padding-top: 10px;
+    padding-bottom: 50px;
     background-color: white;
     border-top: 2px solid #EBF0F0;
     overflow-y: auto;

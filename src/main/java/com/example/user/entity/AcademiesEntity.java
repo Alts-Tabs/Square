@@ -25,7 +25,8 @@ public class AcademiesEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int academy_id;
+    @Column(name = "academy_id")
+    private int academyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

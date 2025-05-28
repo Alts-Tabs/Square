@@ -13,7 +13,7 @@ public class TeacherDto {
 
     public static TeacherDto fromEntity(TeachersEntity entity) {
         return new TeacherDto(
-                entity.getTeacher_id(),
+                entity.getTeacherId(),
                 entity.getUser().getName(),
                 entity.getSubject()
         );
