@@ -16,6 +16,11 @@ import java.util.List;
 public class StudentsService {
     private final StudentsRepository studentsRepository;
 
+    /** 임시 전체 학생 목록 가져오기 */
+    public List<StudentDto> getAllStudentsWithNames() {
+        return studentsRepository.findAllWithUserNames();
+    }
+
     /**
      * 학원 내 학생 목록 가져오기
      * @param academyId int

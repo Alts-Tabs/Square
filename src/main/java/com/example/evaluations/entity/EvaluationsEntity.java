@@ -2,6 +2,7 @@ package com.example.evaluations.entity;
 
 import java.sql.Timestamp;
 
+import com.example.user.entity.StudentsEntity;
 import com.example.user.entity.TeachersEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,9 +25,10 @@ public class EvaluationsEntity {
 	private int evaluation_id;
 	
 	//StudentEntity랑 추후 연결 예정
-	//@ManyToOne(fetch = FetchType.LAZY)
-	private int studentId;
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="student_id",nullable = false)
+	private StudentsEntity student;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="teacher_id",nullable = false)
 	private TeachersEntity teacher;
