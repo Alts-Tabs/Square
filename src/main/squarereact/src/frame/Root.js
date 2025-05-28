@@ -25,7 +25,7 @@ const Root = () => {
     return (
         <div
             ref={rootRef} // 이 div에 버블 커서 적용
-            className="root-container fade-in"
+            className="root-container"
         >
             <img src={whale_R} alt="whale_R" style={{width:'7%'}}/>  {/* 고래 */}
 

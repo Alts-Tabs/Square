@@ -289,8 +289,11 @@ const Main = () => {
                     {/*  Navi4 - 학습 관리 =========================================================== */}
                     <div className='study naviForm'>
                         <span className='naviTitle'> 학습 관리 </span> <br />
-                        <span className='naviContent'> <i className="bi bi-clock-history"></i>&nbsp;&nbsp;
-                            시간표 설정
+                        <span className='naviContent'> 
+                            <i className="bi bi-clock-history"></i>&nbsp;&nbsp;
+                            <Link to="timetable" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                시간표
+                            </Link>
                         </span> <br />
 
                         <span className='naviContent'> <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
