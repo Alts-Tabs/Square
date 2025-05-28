@@ -63,7 +63,7 @@ public class ClassesController {
     }
 
     // 학원 내 모든 클래스 정보 불러오기
-    @GetMapping("/dir/{academyId}/classes")
+    @GetMapping("/th/{academyId}/classes")
     public ResponseEntity<List<ClassResponse>> getClassesByAcademy(@PathVariable int academyId) {
         List<ClassesEntity> classes = classesRepository.findByAcademyId(academyId);
 
