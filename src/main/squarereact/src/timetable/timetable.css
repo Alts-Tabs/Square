@@ -1,0 +1,159 @@
+/* 좌측 학년 선택 영역 ====================================== */
+.radioContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-top: 30px;
+    align-items: flex-end;
+}
+
+.radioContainer label {
+    font-size: 19px;
+    font-weight: 500;
+}
+
+.radioItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px; 
+  cursor: pointer;
+}
+
+/* radio 버튼 커스텀 */
+.radioItem input[type="radio"] {
+  display: none;
+}
+
+.radioItem .radioMark { /* 미선택 상태 */
+    height: 20px;
+    width: 20px;
+    border: 1px solid rgba(121, 215, 190, 0.5);
+    background-color: white;
+    display: inline-block;
+    position: relative;
+}
+
+.radioItem .radioText {
+  transition: color 0.2s ease;
+}
+
+.radioItem input[type="radio"]:checked + .radioMark::after { /* 선택 상태 */
+    content: "✔";
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: #79D7BE;
+    position: absolute;
+}
+
+.radioItem input[type="radio"]:checked + .radioMark + .radioText {
+  color: #79D7BE; /* 체크 시 바뀔 색상 */
+}
+
+/* 일 - 주 - 월 */
+.buttonsWrapper2 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.buttonsWrapper2 button:first-child {
+    width: 40px;
+    height: 37px;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px 0 0 10px;
+    border-right: 1px solid #EBF0F0;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+.buttonsWrapper2 button:nth-child(2) {
+    width: 40px;
+    height: 37px;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+    border: none;
+    border-left: 1px solid #EBF0F0;
+    border-right: 1px solid #EBF0F0;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+.buttonsWrapper2 button:nth-child(3) {
+    width: 40px;
+    height: 37px;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    border-left: 1px solid #EBF0F0;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+/* 일 - 주 - 월 하나만 선택하는 디자인 */
+.selectedButton {
+    background-color: #79D7BE !important;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+
+/* 우측 시간표 영역 ====================================== */
+.timetableContainer {
+    width: 100%;
+    height: 100%;
+    padding-top: 30px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-end;
+}
+
+/* 편집 버튼 */
+.buttonsWrapper :first-child {
+    width: 75px;
+    height: 42px;
+    margin-right: 12px;
+    color: rgba(125, 138, 138, 0.7);
+    font-size: 17px;
+    font-weight: 500;
+    background-color: white;
+    border: 2px solid rgba(125, 138, 138, 0.7);
+    border-radius: 10px;
+}
+
+.buttonsWrapper :first-child:hover {
+    color: white;
+    background-color: #7D8A8A;
+}
+
+/* 시간표 생성 버튼 */
+.buttonsWrapper button:nth-child(2) {
+    width: 125px;
+    height: 42px;
+    color: rgba(121, 215, 190, 0.7);
+    font-size: 17px;
+    font-weight: 500;
+    background-color: white;
+    border: 2px solid rgba(121, 215, 190, 0.7);
+    border-radius: 10px;
+}
+
+.buttonsWrapper button:nth-child(2):hover  {
+    color: white;
+    background-color: #79D7BE;
+}
+
+/* 시간표 */
+.timetable {
+    width: 100%;
+    height: 100%;
+    margin-top: 10px;
+    background-color: white;
+}

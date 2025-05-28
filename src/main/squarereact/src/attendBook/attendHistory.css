@@ -96,6 +96,7 @@ tbody td:last-child {
     border-right: none; /* 오른쪽 가장자리 선 제거 */
 }
 
+/* 출석 수정 버튼 */
 tbody tr td button {
     color: #79D7BE;
     font-size: 20px;
@@ -104,6 +105,11 @@ tbody tr td button {
     border-radius: 10px;
     background-color: white;
     cursor: pointer;
+}
+
+tbody tr td button:hover {
+    color: white;
+    background-color: #79D7BE;
 }
 
 /* 오른쪽 영역 =============================================== */

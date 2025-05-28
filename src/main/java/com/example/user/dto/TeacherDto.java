@@ -18,4 +18,8 @@ public class TeacherDto {
                 entity.getSubject()
         );
     }
+    public TeacherDto(String subject, String teacherName) {
+        this.subject = subject;
+        this.teacherName = teacherName;
+    }
 }

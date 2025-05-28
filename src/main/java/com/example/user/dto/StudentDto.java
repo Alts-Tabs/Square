@@ -24,4 +24,10 @@ public class StudentDto {
     private String parentPhone; // 학부모 연락처
 
     private String schoolName; // 소속 학교명
+
+
+    public StudentDto(int studentId, String name) {
+        this.studentId = studentId;
+        this.name = name;
+    }
 }
