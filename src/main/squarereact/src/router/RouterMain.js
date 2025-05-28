@@ -12,7 +12,7 @@ import ChatbotPage from '../ChatBot/ChatbotPage';
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
-import Timetable from '../timetable/Timetable';
+import { Timetable, CreateTimetable } from '../timetable';
 
 const RouterMain = () => {
     return (
@@ -51,7 +51,8 @@ const RouterMain = () => {
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
                     {/* 학습 관리 ================================================================================== */}
-                    <Route path="timetable" element={<Timetable />} /> {/* 시간표 설정 */}
+                    <Route path="timetable" element={<Timetable />} /> {/* 시간표 */}
+                    <Route path="timetable/create-timetable" element={<CreateTimetable />} /> {/* 시간표 생성 */}
 
 
                     {/* 학원 정보 ================================================================================== */}

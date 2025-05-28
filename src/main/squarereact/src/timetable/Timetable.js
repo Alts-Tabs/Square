@@ -24,10 +24,16 @@ const Timetable = () => {
     // 권한에 따른 전용 기능 구현
     const role = userInfo.role;
 
-    // '일', '주', '월' 중 하나만 선택
+    // '일', '주', '월' 중 하나만 선택 =======================================
     const [selectedPeriod, setSelectedPeriod] = useState(''); 
     const handlePeriodClick = (period) => {
         setSelectedPeriod(period);
+    };
+
+    // 시간표 생성 페이지 이동
+    const navigate = useNavigate();
+    const handleCreateClick = () => {
+        navigate('create-timetable');
     };
 
 
@@ -77,7 +83,8 @@ const Timetable = () => {
                 {(userInfo.role !== '학생' && userInfo.role !== '학부모') && (
                     <div className='buttonsWrapper'>
                         <button> 편집 </button>
-                        <button> 시간표 생성 </button>
+                        <button onClick={handleCreateClick}> 시간표 생성 </button>
+
                     </div>
                 )}
 
