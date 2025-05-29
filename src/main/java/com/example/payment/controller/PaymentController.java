@@ -52,4 +52,13 @@ public class PaymentController {
         paymentService.updateTuition(classId, tuition);
         return ResponseEntity.ok().build();
     }
+    
+    //학부모가 결제한 이력을 조회하는 부분
+    //학원 id와 학부모 id로 매핑을 잡아서 특정 학원에 자녀를 둔 학부모의 결제 내역을 확인하도록 한다
+    //결제 과정을 디자인 과정에서보다 수정할 필요 있음
+//    @GetMapping("/parent/payment/{academyId}/{parentId}")
+//    public ResponseEntity<List<?>> getParentPayment(@PathVariable int academyId, @PathVariable int parentId)
+//    {
+//        
+//    }
 }
