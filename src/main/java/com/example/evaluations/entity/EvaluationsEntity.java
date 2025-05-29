@@ -10,11 +10,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name="evaluations")
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

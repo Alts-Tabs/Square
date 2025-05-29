@@ -4,6 +4,7 @@ import com.example.user.dto.StudentDto;
 import com.example.user.entity.StudentsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,4 +18,9 @@ public interface StudentsRepository extends JpaRepository<StudentsEntity, Intege
 
     @Query("SELECT new com.example.user.dto.StudentDto(s.studentId, u.name) FROM StudentsEntity s JOIN s.user u")
     List<StudentDto> findAllWithUserNames();
+
+    //userId에 해당하는 studentId 조회
+    @Query("SELECT s FROM StudentsEntity s WHERE s.user.user_id = :userId")
+    StudentsEntity findByUserId(@Param("userId") int userId );
+
 }
