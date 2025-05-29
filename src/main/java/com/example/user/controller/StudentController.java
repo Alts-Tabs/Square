@@ -16,11 +16,13 @@ import java.util.List;
 public class StudentController {
     private final StudentsService studentsService;
 
-
     //전체 학생 조회 추후 수정할 예정
     @GetMapping("/studentList")
     public ResponseEntity<List<StudentDto>> getAllStudents() {
         List<StudentDto> students = studentsService.getAllStudentsWithNames();
         return ResponseEntity.ok(students);
     }
+
+    
+
 }

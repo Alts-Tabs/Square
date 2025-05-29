@@ -114,4 +114,14 @@ public class StudentsService {
             return phone;
         return phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
     }
+
+    /** userId에 대한 studentId 조회*/
+    public int getStudentIdByUserId(int userId ){
+        StudentsEntity student=studentsRepository.findByUserId(userId );
+        if(student==null){
+            throw new IllegalArgumentException("학생 정보가 없습니다.");
+        }
+        return student.getStudentId();
+    }
+
 }
