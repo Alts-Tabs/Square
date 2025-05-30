@@ -81,6 +81,14 @@ const PaymentManagement = () => {
                                 강사명&nbsp;&nbsp;&nbsp;
                                 <input className='insert-input'/>
                             </p>
+                            <p className='insert-label'>
+                                자녀명&nbsp;&nbsp;&nbsp;
+                                <input className='insert-input'/>
+                            </p>
+                            <p className='insert-label'>
+                                기간&nbsp;&nbsp;&nbsp;
+                                <input className='insert-input'/>
+                            </p>
                             <button className='btn insertButton btn-outline-success'>신청하기</button>
                         </div>
                     </div>
