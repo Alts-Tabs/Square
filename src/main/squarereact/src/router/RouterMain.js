@@ -13,6 +13,7 @@ import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 import Timetable from '../timetable/Timetable';
+import { AcademyCaller } from '../academycaller';
 
 const RouterMain = () => {
     return (
@@ -57,6 +58,7 @@ const RouterMain = () => {
 
                     {/* 학원 정보 ================================================================================== */}
                     <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
+                    <Route path="academycaller" element={<AcademyCaller />} />{/* 학원 관리 */}
 
 
                     {/* 챗봇 ================================================================================== */}

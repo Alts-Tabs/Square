@@ -1,0 +1,331 @@
+@font-face {
+    /* 700 */
+    font-family: 'NanumSquareNeoExtraBold';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-dEb.ttf) format("truetype");
+}
+
+@font-face {
+    /* 800 */
+    font-family: 'NanumSquareNeoHeavy';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.ttf) format("truetype");
+}
+.academy-caller-container {
+  display: flex;
+  padding: 20px;
+  height: 100%;
+  min-height: 0;
+  
+}
+
+.academy-caller-sidebar {
+  width: 20%;
+  padding-right: 20px;
+  
+}
+
+.academy-caller-title {
+  color: #4DA1A9;
+  font-size: 30px;
+  margin-bottom: 10px;
+  font-family: 'NanumSquareNeoHeavy', sans-serif;
+}
+
+.caller-registerBtn {
+  background-color: #79D7BE;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  width: 70%;
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-family: 'NanumSquareNeoBold', sans-serif;
+  transition: background-color 0.2s ease;
+}
+.caller-registerBtn:hover {
+  background-color: #aeaeae;
+}
+
+.caller-registerBtn:active {
+  background-color: #aeaeae;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.caller-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 70%;
+}
+
+.caller-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'NanumSquareNeoBold', sans-serif;
+  color: #7D8A8A;
+  cursor: pointer;
+}
+/* 체크박스 스타일 제거 + 커스터마이징 */
+.caller-checkbox-item input[type='checkbox'] {
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border: none;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+/* 체크되었을 때 색상 변경 */
+.caller-checkbox-item input[type='checkbox']:checked {
+  background-color: #79D7BE;
+  border-color: #79D7BE;
+}
+.caller-checkbox-item input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 10px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+/* 체크 시 글자 색 변경 */
+.caller-checkbox-item input[type='checkbox']:checked + span {
+  color: #79D7BE;
+  font-size: 1.2em;
+}
+
+/* ============== FullCalendar ================ 디자인 */
+.academy-calendar-wrapper {
+  width: 80%;
+  height: 100%;
+  overflow-y: auto;
+  font-size: 0.8vw;
+}
+.academy-calendar-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.fc-daygrid-body table {
+  border-collapse: separate !important;
+  border-spacing: 0 10px; /* 열 간격 0, 행 간격 10px */
+}
+/* 날짜 숫자 */
+.fc-daygrid-day-number {
+  font-size: 0.9em;
+}
+
+/* 이벤트 텍스트 (필요 시) */
+.fc-event-title {
+  font-size: 0.8em;
+}
+
+/* 달력 셀의 테두리 제거 */
+.fc-daygrid-day,
+.fc-daygrid-day-frame {
+  border: none !important;
+  background-color: white;
+}
+/* 월간 뷰에서의 경계선 제거 */
+.fc-daygrid-body table,
+.fc-scrollgrid,
+.fc-scrollgrid-section,
+.fc-scrollgrid-sync-table {
+  border: none !important;
+}
+/* 날짜 셀 안을 Flex로 가운데 정렬 */
+.fc-daygrid-day-frame {
+  display: flex;
+  align-items: center;
+  flex-direction: column; /* 날짜 + 이벤트가 수직 정렬*/
+  padding: 0 !important;
+  font-family: 'NanumSquareNeoBold', sans-serif;
+}
+/* 날짜 숫자 스타일 - 기본 a 태그*/
+.fc-daygrid-day-number {
+  color: black !important;
+  text-decoration: none !important; /* 밑줄 제거 */
+  font-size: 0.8em;
+}
+
+/* 헤더 버튼 */
+.fc .fc-button {
+  /* 공통 버튼 초기화 */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: black;
+  padding: 4px 8px;
+
+}
+.fc .fc-prev-button,
+.fc .fc-next-button {
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 1.2em;
+  padding: 2px 8px;
+  margin-right: 20px;
+}
+/* today 버튼은 그대로 유지 */
+.fc .fc-today-button {
+  background-color: #79D7BE;
+  border: none;
+  border-radius: 5px;
+  color: #333;
+  font-weight: 500;
+  padding: 6px 12px;
+  margin: 0 5px;
+  transition: background-color 0.2s ease;
+}
+/* today hover/active 유지 */
+.fc .fc-today-button:hover {
+  background-color: #88dbc0;
+}
+
+.fc .fc-today-button:active {
+  background-color: #6cccb0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 년월 텍스트 스타일 */
+.fc .fc-toolbar-title {
+  font-family: 'NanumSquareNeoHeavy', sans-serif;
+  font-size: 2.5em;
+  color: black;
+}
+
+/* ========= 일정 등록 모달 디자인 ========== */
+.schedule-modal-content {
+  background: white;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+}
+
+.schedule-modal-title {
+  font-weight: bold;
+  color: #4DA1A9;
+  margin-bottom: 16px;
+}
+
+.schedule-form-group {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.schedule-form-label {
+  width: 60px;
+  font-weight: 600;
+  margin-right: 10px;
+  display: block;
+}
+
+.schedule-radio-group {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.schedule-form-input {
+  width: 65%;
+  padding: 8px 10px;
+  font-size: 14px;
+  background-color: #F6F4F0;
+  border: 1px solid #F6F4F0;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+/* 모달 라디오 버튼 커스텀 */
+.schedule-custom-radio {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.schedule-custom-radio input[type="radio"] {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  padding: 2px;
+  transition: border-color 0.2s ease-in-out;
+}
+/* Checked 상태일 때 */
+.schedule-custom-radio input[type="radio"]:checked {
+  border-color: #79D7BE;
+}
+
+/* 안쪽 점 생성 */
+.schedule-custom-radio input[type="radio"]::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-color: #79D7BE;
+  border-radius: 50%;
+  /* position: absolute;
+  top: 3px;
+  left: 3px; */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* checked 시에 안쪽 점 보이기 */
+.schedule-custom-radio input[type="radio"]:checked::before {
+  opacity: 1;
+}
+
+/* 버튼 그룹 */
+.schedule-button-group {
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.schedule-btn-save {
+  background-color: #FFFFFF;
+  color: #79D7BE;
+  width: 80px;
+  padding: 8px 16px;
+  border: 1px #79D7BE solid;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.schedule-btn-save:hover {
+  background-color: #88dbc0;
+  color: white;
+}
+
+.schedule-btn-cancel {
+  background-color: #FFFFFF;
+  color: #7D8A8A;
+  width: 80px;
+  padding: 8px 16px;
+  border: 1px #7D8A8A solid;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.schedule-btn-cancel:hover {
+  background-color: #e0e0e0;
+}
