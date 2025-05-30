@@ -11,15 +11,19 @@ import com.example.user.jpa.TeachersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class EvaluationsService {
     private final EvaluationsRepository evaluationsRepository;
     private final TeachersRepository teachersRepository;
     private final StudentsRepository studentsRepository;
-    /**
-     * 평가 등록 프로세스
-     */
+
+    /** * 평가 등록 프로세스 */
     public void insertEvaluation(EvaluationsDto dto,String periods){
         EvaluationPeriod period;
 
@@ -47,6 +51,107 @@ public class EvaluationsService {
                 .build();
 
         evaluationsRepository.save(evaluations);
+    }
+
+    /**evaluationStudent 페이지 진입 시 userId를 받아서 전체 목록 조회 */
+    public List<EvaluationsDto> getStudentEvaluations(int userId) {
+        StudentsEntity student = studentsRepository.findByUserId(userId);
+        if (student == null) {
+            throw new RuntimeException("해당 학생 정보가 없습니다.");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
+
+        List<EvaluationsEntity> entities = evaluationsRepository.findByDynamicConditions(
+                student.getStudentId(), null, null, null, null
+        );
+        return entities.stream()
+                .map(e-> {
+                    EvaluationsDto dto=new EvaluationsDto();
+                    dto.setSubject(e.getSubject());
+                    dto.setScore(e.getScore());
+                    dto.setContents(e.getContents());
+                    dto.setStartDate(e.getStartDate());
+                    dto.setEndDate(e.getEndDate());
+                    dto.setCreated_at(formatter.format(e.getCreated_at().toInstant()));
+                    dto.setTeacherId(e.getTeacher().getTeacherId());
+                    dto.setStudentId(e.getStudent().getStudentId());
+                    dto.setTeacherName(e.getTeacher().getUser().getName());
+                    return  dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    /**학생으로 로그인 시 조건에 맞는 조회 결과 노출 - 학생페이지 */
+    public List<EvaluationsDto> searchStudentEvaluations(int userId, String subject, String period, String startDate, String endDate) {
+        StudentsEntity student = studentsRepository.findByUserId(userId);
+        if (student == null) {
+            throw new RuntimeException("해당 학생 정보가 없습니다.");
+        }
+
+        EvaluationPeriod evalPeriod = null;
+        if (period != null && !period.isEmpty()) {
+            try {
+                evalPeriod = EvaluationPeriod.valueOf(period.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid Period value: " + period);
+            }
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
+
+        List<EvaluationsEntity> entities = evaluationsRepository.findByDynamicConditions(
+                student.getStudentId(), subject, evalPeriod, startDate, endDate
+        );
+
+        return entities.stream()
+                .map(e -> {
+                    EvaluationsDto dto = new EvaluationsDto();
+                    dto.setSubject(e.getSubject());
+                    dto.setScore(e.getScore());
+                    dto.setContents(e.getContents());
+                    dto.setStartDate(e.getStartDate());
+                    dto.setEndDate(e.getEndDate());
+                    dto.setCreated_at(formatter.format(e.getCreated_at().toInstant()));
+                    dto.setTeacherId(e.getTeacher().getTeacherId());
+                    dto.setStudentId(e.getStudent().getStudentId());
+                    dto.setTeacherName(e.getTeacher().getUser().getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /** 조건에 맞는 목록 노출 - 종합평가 학부모 페이지*/
+    public List<EvaluationsDto> searchParentEvaluations(int studentId, String subject, String period, String startDate, String endDate) {
+        StudentsEntity student = studentsRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("학생 정보가 없습니다."));
+
+        EvaluationPeriod evalPeriod = null;
+        if (period != null && !period.isEmpty()) {
+            try{
+               evalPeriod = EvaluationPeriod.valueOf(period.toUpperCase());
+            }catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid Period value: " + period);
+            }
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Seoul"));
+
+        List<EvaluationsEntity> entities = evaluationsRepository.findEvaluationsForParentPage(
+                student.getStudentId(),subject,evalPeriod,startDate,endDate
+        );
+
+        return entities.stream()
+                .map(e->{
+                    EvaluationsDto dto=new EvaluationsDto();
+                    dto.setSubject(e.getSubject());
+                    dto.setScore(e.getScore());
+                    dto.setContents(e.getContents());
+                    dto.setCreated_at(formatter.format(e.getCreated_at().toInstant()));
+                    return  dto;
+                })
+                .collect(Collectors.toList());
     }
 
 

@@ -10,6 +10,7 @@ const TotalEvaluationsAdmin = () => {
     const [endDate, setEndDate]=useState('');
     const [score, setScore]=useState('');
     const [contents, setContents]=useState('');
+    const [teacherId,setTeacherId]=useState(null);
     //왼쪽 메뉴에서 학생 선택 시 필요
     const[selectStudentId, setSelectStudentId]=useState(null);
     const [selectStudentName, setSelectStudentName] = useState('');
@@ -18,11 +19,16 @@ const TotalEvaluationsAdmin = () => {
     //const [checkStudent,setCheckStudent]=useState([]);
     //로그인한 계정이 담당하는 과목
     const [subject,setSubject]=useState([]);
+    const [role, setRole] = useState('');  // 역할 저장용
     //토큰이 저장하는 정보
     // const token=localStorage.getItem('token');
     
     //저장 버튼 이벤트
     const handleSaveEvaluation=()=>{
+        if (role === "관리자" || role === "원장") {
+            alert("강사 계정으로 로그인 부탁드립니다.");
+            return;
+        }
         //const selectStudentId = Object.keys(checkStudent).find(key => checkStudent[key]);
         if(!selectStudentId) return alert('선택된 학생이 없습니다.');
         if(!selectSubject) return alert('과목을 선택해주세요.');
@@ -35,7 +41,7 @@ const TotalEvaluationsAdmin = () => {
 
     const requestBody={
         studentId:parseInt(selectStudentId),//선택된 학생의 id
-        teacherId:4, //로그인한 아이디에서 userId 받아오지 않아서 임의로 고정
+        teacherId:teacherId,
         subject: selectSubject,
         score:parseInt(score),
         startDate:startDate,
@@ -52,30 +58,38 @@ const TotalEvaluationsAdmin = () => {
             alert('저장 중 오류가 발생했습니다.');
         });
     };//저장 버튼 이벤트 종료
-
-
-
-    useEffect(()=>{
-        //로그인한 userId에 해당하는 과목 가져오기
-        axios.get(`/public/user`,{withCredentials:true})
-        .then(respose=>{
-            // const { userId, role } = respose.data;
-            return axios.get(`/teachers/subjects`, { params: { role: respose.data.role, userId: respose.data.userId } })
+    
+    useEffect(() => {
+    // 로그인한 userId, role 받아오기
+    axios.get(`/public/user`, { withCredentials: true })
+        .then(response => {
+            const { userId, role } = response.data;
+            setRole(role); 
+            if (role === "강사") {
+            return axios.get(`/public/teacher/getTeacherId`, { params: { userId } })
+                .then(teacherResponse => {
+                    const teacherId = teacherResponse.data;
+                    setTeacherId(teacherId);
+                    return axios.get(`/public/teacher/subjects`, { params: { role, userId } });
+                });
+            } else {
+                // 강사 아닐 때는 teacherId 필요 없음, 바로 과목 요청
+                return axios.get(`/public/teacher/subjects`, { params: { role, userId } });
+            }
         })
-        .then(respose=>{
-            setSubject(respose.data);
+        .then(subjectResponse => {
+            setSubject(subjectResponse.data);
         })
-        .catch(error=>console.error(error));
+        .catch(error => console.error(error));
 
-        //학생 목록 가져오기 임시로 전체 학생 목록 가져오기
-        axios.get(`/studentList`,{withCredentials:true})
-            .then(respose=>{
-                //console.log("받은 데이터:", respose.data);
-                setStudent(respose.data);
-            })
-            .catch(error=>console.error(error));
-        
-    },[]);
+    // 학생 목록 가져오기`
+    axios.get(`/studentList`, { withCredentials: true })
+        .then(response => {
+            setStudent(response.data);
+        })
+        .catch(error => console.error(error));
+
+}, []);
 
     //학생 목록 체크박스 이벤트
     const toggleStudentSelection = (stuId, stuName) => {

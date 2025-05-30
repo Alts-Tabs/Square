@@ -34,12 +34,14 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/index.html", "/static/**", "/favicon.ico", "/manifest.json", "/logo192.png", "/logo512.png").permitAll()
+                .requestMatchers("/api/auth/**").permitAll() //녹엽추가
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/dir/**").hasAnyRole("ADMIN", "DIRECTOR")
                 .requestMatchers("/th/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER")
                 .requestMatchers("/parent/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "PARENT")
                 .requestMatchers("/student/**").hasAnyRole("ADMIN", "DIRECTOR", "TEACHER", "PARENT", "STUDENT")
+                .requestMatchers("/public/api/chatbot").authenticated() // 녹엽 인증 요구
                 .anyRequest().authenticated());
 
         http.sessionManagement(

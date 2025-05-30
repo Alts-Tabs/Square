@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Root, Main } from '../frame';
 import { Attend, AttendHistory, AttendStu } from '../attendBook';
 import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
-import { PaymentManagement, NonPayCheck } from '../components/payment';
+import { PaymentManagement, NonPayCheck, PaymentPayCheck, PaymentCheck } from '../payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
@@ -12,6 +12,7 @@ import ChatbotPage from '../ChatBot/ChatbotPage';
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
+import { AcademyCaller } from '../academycaller';
 import { Timetable, CreateTimetable } from '../timetable';
 
 const RouterMain = () => {
@@ -48,6 +49,7 @@ const RouterMain = () => {
                     {/* 수강료 ===================================================================================== */}
                     <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
+                    <Route path="paymentPayCheck/:userId" element={<PaymentPayCheck />} /> {/* 학부모의 결제와 확인 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
                     {/* 학습 관리 ================================================================================== */}
@@ -57,6 +59,7 @@ const RouterMain = () => {
 
                     {/* 학원 정보 ================================================================================== */}
                     <Route path="class-setting/:acaId" element={<ClassSetting />} /> {/* 클래스 관리 */}
+                    <Route path="academycaller" element={<AcademyCaller />} />{/* 학원 관리 */}
 
 
                     {/* 챗봇 ================================================================================== */}

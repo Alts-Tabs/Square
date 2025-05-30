@@ -1,14 +1,17 @@
 package com.example.payment.jpa;
 
-import com.example.payment.entity.PaymentEntity;
+import com.example.classes.entity.ClassesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-public interface PaymentGetClassRepository extends JpaRepository<PaymentEntity, Integer> {
+public interface PaymentGetClassRepository extends JpaRepository<ClassesEntity, Integer> {
     //ClassesRepository와 유사하나 수업료가 추가되어야 함
-    @Query("select tuition from ClassesEntity c where c.academy.academyId = :academyId")
-    List<PaymentEntity> findByAcademyId(@Param("academyId") Integer academyId);
+    //콜론은 꼭 뒷부분과 붙여서 쓸 것! 자세한 건 JPQL 문법을 참조하세요!
+    @Modifying
+    @Transactional
+    @Query("update ClassesEntity c SET c.tuition = :tuition where c.classId = :classId")
+    int updateTuitionByClassId(@Param("classId") int classId, @Param("tuition") int tuition);
 }

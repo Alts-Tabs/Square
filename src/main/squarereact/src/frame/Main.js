@@ -262,12 +262,48 @@ const Main = () => {
                     {/* Navi3 - 수강료 =================================================================== */}
                     <div className='payment naviForm'>
                         <span className='naviTitle'> 수강료 </span> <br />
-                        <span className='naviContent'>
-                            <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
-                            <Link to={`paymentManagement/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                수강료 관리
-                            </Link>
-                        </span> <br />
+                        {/*
+                            원장은 수강료 관리 => 조회와 수업료 수정
+                            학부모는 자녀의 수업을 등록 후 등록한 수업에 대한 조회와 납부
+                            학생은 본인이 등록한 수업에 납부한 내역을 조회만 가능
+                            강사는 메뉴가 존재하지 않음
+                        */}
+                        {
+                            userInfo.role === "원장" ?
+                            (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
+                                        <Link to={`paymentManagement/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            수강료 관리
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : userInfo.role === "학부모" ?
+                            (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
+                                        <Link to={`paymentPayCheck/${userInfo.userId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            수강료 결제 및 확인
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : userInfo.role === "학생" ?
+                            (
+                                <>
+                                    <span className='naviContent'>
+                                        <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
+                                        <Link to={`paymentRead/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            수강료 확인
+                                        </Link>
+                                    </span>
+                                    <br />
+                                </>
+                            ) : null
+                        }
 
                         {/* [미납 관리] - 학생 & 학부모 외 모두 접근 가능 */}
                         {
@@ -296,8 +332,13 @@ const Main = () => {
                             </Link>
                         </span> <br />
 
-                        <span className='naviContent'> <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
-                            학원 캘린더
+                        <span className='naviContent'>
+                            <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
+                            <Link to="academycaller"
+                             state={{ acaId: userInfo.acaId }} // 상태 전달
+                             style={{ textDecoration: 'none', color: 'inherit' }}>
+                                학원 캘린더
+                            </Link>
                         </span> <br />
 
                         {/* [자료실] - 학부모 외 모두 접근 가능 */}
@@ -348,7 +389,9 @@ const Main = () => {
 
                         <span className='naviContent'>
                             <i className="bi bi-chat"></i>&nbsp;&nbsp;
-                            챗봇
+                            <Link to="chat" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                챗봇
+                            </Link>
                         </span>
                     </div>
                 </div>
