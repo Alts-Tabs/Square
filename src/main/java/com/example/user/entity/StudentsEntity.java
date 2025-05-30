@@ -1,6 +1,7 @@
 package com.example.user.entity;
 
 import com.example.classes.entity.ClassUsersEntity;
+import com.example.schedule.entity.SchoolsEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
