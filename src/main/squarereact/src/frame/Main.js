@@ -389,7 +389,9 @@ const Main = () => {
 
                         <span className='naviContent'>
                             <i className="bi bi-chat"></i>&nbsp;&nbsp;
-                            챗봇
+                            <Link to="chat" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                챗봇
+                            </Link>
                         </span>
                     </div>
                 </div>
