@@ -74,6 +74,11 @@ public class SubUserController {
         Optional<CodeEntity> infoOpt = codeRepository.findBySubcode(subcode);
         Map<String, Object> data = new HashMap<>();
 
+        if(subcode == null || subcode.trim().isEmpty()) { // 값이 제대로 전달 받지 못한 예외처리
+            data.put("message", "Missing code");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(data);
+        }
+
         if(infoOpt.isEmpty()) {
             data.put("message", "Invalid code");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

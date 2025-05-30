@@ -58,7 +58,7 @@ const TotalEvaluationsAdmin = () => {
             alert('저장 중 오류가 발생했습니다.');
         });
     };//저장 버튼 이벤트 종료
-
+    
     useEffect(() => {
     // 로그인한 userId, role 받아오기
     axios.get(`/public/user`, { withCredentials: true })

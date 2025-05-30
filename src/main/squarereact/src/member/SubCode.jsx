@@ -44,7 +44,7 @@ const SubCode = () => {
       return;
     }
 
-    let url = "/public/subCode?subcode="+subcode;
+    let url = "/public/subCode?subcode="+encodeURIComponent(subcode);
     axios.get(url).then(res => {
       setWarns();
       setVisible(true);

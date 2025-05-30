@@ -1,5 +1,6 @@
-package com.example.user.entity;
+package com.example.schedule.entity;
 
+import com.example.user.entity.SchoolLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "schools")
@@ -35,4 +38,8 @@ public class SchoolsEntity { // 이거 필요하면 파일 위치 Refactor로 �
 
     @Column(precision = 10, scale = 7)
     private BigDecimal lng;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<SchoolsScheduleEntity> schoolSchedules = new ArrayList<>();
 }

@@ -332,8 +332,13 @@ const Main = () => {
                             </Link>
                         </span> <br />
 
-                        <span className='naviContent'> <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
-                            학원 캘린더
+                        <span className='naviContent'>
+                            <i className="bi bi-calendar-event"></i>&nbsp;&nbsp;
+                            <Link to="academycaller"
+                             state={{ acaId: userInfo.acaId }} // 상태 전달
+                             style={{ textDecoration: 'none', color: 'inherit' }}>
+                                학원 캘린더
+                            </Link>
                         </span> <br />
 
                         {/* [자료실] - 학부모 외 모두 접근 가능 */}

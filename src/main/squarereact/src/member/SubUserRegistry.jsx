@@ -61,6 +61,7 @@ const SubUserRegistry = () => {
       data: {subcode, people, role, endday, username, code},
       withCredentials: true // 쿠키로 JWT 토큰 이동
     }).then(res => {
+      alert(`${subcode} 코드 생성 완료!`);
       setCode('');
       setSubcode('');
       setPeople(1);
