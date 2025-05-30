@@ -8,12 +8,17 @@ const EvaluationStudent = () => {
     //로그인한 계정 정보
     const [subject,setSubject]=useState([]);
     const [userId, setUserId]= useState(null);
+    const [role, setRole]= useState('');
     const [evaluations, setEvaluations] = useState([]);
 
     //조회 버튼 이벤트
     const handleSearchStudenEval=()=>{
         if (!userId) {
             alert("사용자 정보가 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+        if (role !== "학생") {
+            alert("학생 계정으로만 조회 가능합니다.");
             return;
         }
         axios.get(`/student/evalStuSearch`,{
@@ -32,21 +37,27 @@ const EvaluationStudent = () => {
         .catch(error=>console.error(error));
     };
 
-    //진입 시 전체 평가 리스트 가져오기
     useEffect(() => {
-        // 로그인한 userId 받아오기
+        // 로그인한 userId와 role 받아오기
         axios.get(`/public/user`, { withCredentials: true })
             .then(response => {
-                //console.log("로그인 사용자 정보:", response.data);
-                const { userId } = response.data; //서버에서 userId를 추출 API 응답데이터에서 userId를 꺼내서 상태(setUserId)에 넣어주는 작업
-                 return Promise.all([
-                    axios.get(`/student/evalStuSubject`, { params: { userId }, withCredentials: true }),
-                    axios.get(`/student/evalStuList`, { params: { userId }, withCredentials: true })
-                 ]).then(([subjectRes,evalRes]) => {
-                setSubject(subjectRes.data);
-                setEvaluations(evalRes.data);
-                 setUserId(userId);
-                });
+                const { userId, role } = response.data;
+                setUserId(userId);
+                setRole(role);
+
+                if (role === "학생") {
+                    return Promise.all([
+                        axios.get(`/student/evalStuSubject`, { params: { userId }, withCredentials: true }),
+                        axios.get(`/student/evalStuList`, { params: { userId }, withCredentials: true })
+                    ]).then(([subjectRes, evalRes]) => {
+                        setSubject(subjectRes.data);
+                        setEvaluations(evalRes.data);
+                    });
+                } else {
+                    // role이 학생이 아닌 경우 데이터 초기화
+                    setSubject([]);
+                    setEvaluations([]);
+                }
             })
             .catch(error => console.error(error));
     }, []);

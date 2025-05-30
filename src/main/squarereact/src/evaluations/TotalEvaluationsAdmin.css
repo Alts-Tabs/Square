@@ -170,7 +170,7 @@
   margin-bottom: 20px;
 }
 .evaluationContent .evaluSelect{
-    width: 130px;
+    width: 120px;
     height: 30px;
     margin: 0 5px 5px 0;
     border-radius: 10px;
@@ -183,9 +183,10 @@
 .evaluationContent .evalA-endDate .evalA-end {
     font-size: 15px;
     margin-bottom: 15px;
+    
 }
 .evaluationContent .evalA-Date {
-    width: 130px;
+    width: 125px;
     height: 30px;
     border-radius: 10px;
     background-color: #F6F4F0;
@@ -195,7 +196,7 @@
 }
 
 .evaluationContent .saveEval {
-  width: 120px;
+  width: 115px;
   height: 35px;
   border-radius: 10px;
   background-color: white;

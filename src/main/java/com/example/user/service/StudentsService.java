@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -123,5 +124,14 @@ public class StudentsService {
         }
         return student.getStudentId();
     }
+
+    /** parentId에 대한 student List 조회 */
+    public List<StudentDto> getStudentsByParentId(int parentId){
+        List<StudentsEntity> students = studentsRepository.findByParentParentId(parentId);
+        return students.stream()
+                .map(student -> new StudentDto(student.getStudentId(), student.getUser().getName()))
+                .collect(Collectors.toList());
+    }
+
 
 }
