@@ -2,7 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 
+
+
 const PaymentManagement = () => {
+    const [classes, setClasses] = useState([]);
+
+    const handleSelectClass = (e) => {
+        
+    }
+
     return (
         <div>
            <div className='paymentManagementContainer'>    
@@ -68,27 +76,25 @@ const PaymentManagement = () => {
                     {/* 수업료 변경 */}
                     <div className='tuitionUpdate'>
                         <div className='insertClass'>
-                            <select/>
-                            <p className='insert-label'>
-                                수업명&nbsp;&nbsp;&nbsp;
-                                <input className='insert-input'/>
-                            </p>
-                            <p className='insert-label'>
-                                수업료&nbsp;&nbsp;&nbsp;
-                                <input className='insert-input'/>
-                            </p>
-                            <p className='insert-label'>
-                                강사명&nbsp;&nbsp;&nbsp;
-                                <input className='insert-input'/>
-                            </p>
-                            <p className='insert-label'>
-                                자녀명&nbsp;&nbsp;&nbsp;
-                                <input className='insert-input'/>
-                            </p>
-                            <p className='insert-label'>
-                                기간&nbsp;&nbsp;&nbsp;
-                                <input className='insert-input'/>
-                            </p>
+                            <select className='classFilter' style={{ width: '70%' }}
+                            onChange={handleSelectClass}>
+                                <option value=''> 수업 선택 </option>
+                                {}
+                            </select>
+                            <table>
+                                <tr>
+                                    <td rowspan="3">
+                                        <div className='ellipse'/>
+                                    </td>
+                                    <td>강사명 고영희</td>
+                                </tr>
+                                <tr>
+                                    <td>[사회]</td>
+                                </tr>
+                                <tr>
+                                    <td>400,000원</td>
+                                </tr>
+                            </table>
                             <button className='btn insertButton btn-outline-success'>신청하기</button>
                         </div>
                     </div>
