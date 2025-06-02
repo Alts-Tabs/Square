@@ -1,8 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './attend.css';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { connectSocket, sendMessage, onMessage } from '../websocket/socket';
+import axios from 'axios';
 
 const Attend = () => {
+    const { acaId } = useParams();
+
+    // Web Socket
+    useEffect(() => {
+        const socket = connectSocket();
+    
+        onMessage((data) => {
+            if (data.type === 'check') {
+                console.log(`${data.studentName} submitted code ${data.code}`);
+                // 여기서 상태 업데이트해서 프로필 체크 표시
+                setCheckedStudents(prev => {
+                    if (!prev.includes(data.studentName)) { // 중복 추가 방지
+                        return [...prev, data.studentName];
+                    }
+                    return prev;
+                });
+            }
+        });
+
+        return () => socket.close();
+    }, []);
+    
+
+    // 출석한 학생 별 체크 표시 (테스트 중) ===========================================
+    const [checkedStudents, setCheckedStudents] = useState([]);
+
+    // 학생 목록 상태 추가
+    const [students, setStudents] = useState([]);
+
+    // 학생 목록 호출 (ClassStudentsManage와 동일한 로직)
+    const fetchStudentsInClass = () => {
+        // acaId가 없을 경우 API 호출을 하지 않습니다.
+        if (!acaId) {
+            console.warn("acaId is not available, skipping student fetch.");
+            return;
+        }
+
+        axios.get(`/public/${acaId}/students`, { withCredentials: true })
+            .then(res => {
+                setStudents(res.data);
+            })
+            .catch(err => {
+                alert("수강생 목록을 불러오는 데 실패했습니다.", err);
+            });
+    };
+
+    // acaId 변경 시 또는 컴포넌트 마운트 시 학생 목록 호출
+    useEffect(() => {
+        fetchStudentsInClass();
+    }, [acaId]); // acaId가 변경될 때마다 다시 호출
+    // ====================================================================
+    
     // 당일 출석 날짜 출력
     const getTodayDate = () => {
         const today = new Date();
@@ -18,17 +72,16 @@ const Attend = () => {
     const [randomNumber, setRandomNumber] = useState(null);   
 
     const handleAttendanceClick = () => {
-    if (!attending) {
-        // 출석 시작 시
-        const random = Math.floor(100 + Math.random() * 900);
-        setRandomNumber(random);
-        setAttending(true);
-    } else {
-        // 출석 종료 시
-        setAttending(false);
-        setRandomNumber(null);      // 숫자 제거
-        setAttendanceEnded(true);   // 버튼 제거
-    }
+        if (!attending) {
+            const random = Math.floor(100 + Math.random() * 900);
+            setRandomNumber(random);
+            setAttending(true);
+            sendMessage({ type: 'start', randomCode: random });
+        } else {
+            setAttending(false);
+            setRandomNumber(null);
+            setAttendanceEnded(true);
+        }
     };
 
     // 지난 출석 날짜 출력 (임시) ================================================
@@ -111,18 +164,19 @@ const Attend = () => {
                         <hr style={{marginBottom:'35px'}}/>
                         
                         <div className='listWrapper'>
-                            {/* 반복 출력 리스트 ================================*/}
-                            <div className='studentList'>
-                                (프로필 이미지)
-                                <hr style={{border:'1px solid #7D8A8A'}}/>
-                                <span className='attenderTitle'> (학생명) </span>
-                            </div>
-                            {/* ================================================ */}
-                            <div className='studentList'>
-                                (프로필 이미지)
-                                <hr style={{border:'1px solid #7D8A8A'}}/>
-                                <span className='attenderTitle'> (학생명) </span>
-                            </div>
+                            {/* 수강생 반복 출력 영역 (테스트 중) ================================*/}
+                            {students.map((student) => (
+                                <div className='studentList' key={student.studentId}>
+                                    <div className='studentProfileCircle'>
+                                        {checkedStudents.includes(student.name) && (
+                                            <i className="bi bi-check-circle-fill checkIcon"></i>
+                                        )}
+                                    </div> {/* 학생 프로필 이미지란 (또는 아바타) */}
+                                    <hr style={{ border: '1px solid #7D8A8A' }} />
+                                    <span className='attenderTitle'> {student.name} </span>
+                                </div>
+                            ))}
+                            {/* ============================================================ */}
                         </div>
                     </div>
                 </div>
@@ -193,10 +247,10 @@ const Attend = () => {
                             absent: attend.absent
                             }}
                         >
-        <i className="bi bi-chevron-right"></i>
-      </Link>
-    </div>
-  ))}
+                            <i className="bi bi-chevron-right"></i>
+                        </Link>
+                        </div>
+                    ))}
                     </div>
                 </div>
                 

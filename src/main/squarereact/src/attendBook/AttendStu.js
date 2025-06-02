@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './attend.css';
 import './attendStu.css';
+import { connectSocket, onMessage, sendMessage } from '../websocket/socket';
 // import { Link } from 'react-router-dom';
 // import { isEditable } from '@testing-library/user-event/dist/utils'; - 빌드테스트 주석
 
 const AttendStu = () => {
+    // Web Socket
+    useEffect(() => {
+    const socket = connectSocket();
+
+    onMessage((data) => {
+        if (data.type === 'start') {
+            setIsEditable(true); // 입력창 활성화
+        }
+    });
+
+    return () => socket.close();
+    }, []);
+
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            sendMessage({ type: 'submit', studentName: '홍길동', code: e.target.value });
+            e.target.value = '';
+        }
+    };
+
+
     // 당일 출석 날짜 출력
     const getTodayDate = () => {
         const today = new Date();
@@ -74,6 +97,7 @@ const AttendStu = () => {
                             type="text"
                             placeholder="출석 진행 중"
                             disabled={isEditable} 
+                            onKeyDown={handleKeyDown} // Web Socket
                         />
                         <br />
                         <span style={{fontSize:"17px", display:"inline-block", marginBottom:"25px"}}>
@@ -149,8 +173,8 @@ const AttendStu = () => {
                             </span>
                         </div>
 
-    </div>
-  ))}
+                        </div>
+                    ))}
                     </div>
                 </div>
                 
