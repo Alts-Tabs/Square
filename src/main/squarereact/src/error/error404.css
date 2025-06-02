@@ -1,0 +1,41 @@
+.errorContainer {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 상단-하단 간격 최대 */
+    align-items: center;
+    padding: 300px 0 0 70px;
+}
+
+.errorContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.errorText {
+    z-index: 1;
+}
+
+.backSpan {
+    font-size: 38px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.backSpan:hover {
+    color: white;
+}
+
+
+.bottomImage {
+    position: absolute;
+    bottom: 0;
+    z-index: 0;
+    width: 180px;
+}
