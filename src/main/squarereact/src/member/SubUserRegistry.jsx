@@ -23,7 +23,9 @@ const SubUserRegistry = () => {
 
   // 날짜 관련
   const dateInputRef = useRef(null);
-  const date = new Date().toISOString().slice(0, 16);
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const date = tomorrow.toISOString().slice(0, 16);
   const [defaultDate, defaultTime] = date.split("T");
   const defaults = `${defaultDate} ${defaultTime}:00`;
   const [formatDay, setFormatDay] = useState(defaults);
