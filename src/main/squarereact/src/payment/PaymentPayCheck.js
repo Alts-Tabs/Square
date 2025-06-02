@@ -4,12 +4,9 @@ import { useParams } from 'react-router-dom';
 
 
 
-const PaymentManagement = () => {
+const PaymentPayCheck = () => {
     const [classes, setClasses] = useState([]);
-
-    const handleSelectClass = (e) => {
-        
-    }
+    const [selClasses, setSelClasses] = useState([]);
 
     return (
         <div>
@@ -74,12 +71,14 @@ const PaymentManagement = () => {
 
                 <div className='rightContainer'>
                     {/* 수업료 변경 */}
-                    <div className='tuitionUpdate'>
+                    <div className='selectParentClass'>
                         <div className='insertClass'>
                             <select className='classFilter' style={{ width: '70%' }}
-                            onChange={handleSelectClass}>
+                            value={selClasses} onChange={(e) => setSelClasses(e.target.value)}>
                                 <option value=''> 수업 선택 </option>
-                                {}
+                                {classes.map(cls => (
+                                    <option key={cls.id} value={cls.id}>{cls.name}</option>
+                                ))}
                             </select>
                             <table>
                                 <tr>
@@ -110,4 +109,4 @@ const PaymentManagement = () => {
     );
 };
 
-export default PaymentManagement;
+export default PaymentPayCheck;
