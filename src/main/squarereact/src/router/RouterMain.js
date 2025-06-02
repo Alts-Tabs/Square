@@ -14,6 +14,7 @@ import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 import { AcademyCaller } from '../academycaller';
 import { Timetable, CreateTimetable } from '../timetable';
+import Error404 from '../error/Error404';
 
 const RouterMain = () => {
     return (
@@ -65,9 +66,11 @@ const RouterMain = () => {
                     {/* 챗봇 ================================================================================== */}
                     <Route path="chat" element={<ChatbotPage/>}></Route>
                 </Route>
+
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
                     <Route path="/subcode" element={<SubCode />} />
+                    <Route path="/error404" element={<Error404 />} />
             </Routes>
         </BrowserRouter>
     );
