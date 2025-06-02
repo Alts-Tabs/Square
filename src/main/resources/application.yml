@@ -18,6 +18,9 @@ jwt:
   expiration_time: 3600000
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
 
+file:
+  upload-dir: uploads/
+
 clova:
   chatbot:
     api:

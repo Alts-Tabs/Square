@@ -1,0 +1,61 @@
+/* 시간표 생성 영역 */
+.createWrapper {
+    display: flex;
+    width: 100%;  
+    height: auto;
+}
+
+/* 구성 요소 제목 영역*/
+.createTitle {
+    flex: 0 0 12%;
+    display: flex;  
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px; 
+    min-height: 500px;
+    padding: 30px 15px;
+    border-right: 3px solid #EBF0F0;
+    border-radius: 10px 0 0 10px;
+    background-color: white;
+}
+
+.createTitle span { /* 제목, 수업, 반, 조건 */
+    font-size: 25px;
+    font-weight: 700;
+}
+
+/* 내용 설정 영역 */
+.createContent {
+    flex: 1;     
+    min-height: 500px;
+    padding-top: 30px;
+    border-radius: 0 10px 10px 0;
+    background-color: white;
+}
+
+.contentRow {
+    display: flex;
+    justify-content: space-between; /* input은 왼쪽, 텍스트는 오른쪽 */
+    align-items: center;
+}
+
+/* 제목 입력란*/
+.createContent input {
+    width: 70%;
+    margin-left: 15px;
+    padding: 6px;
+    color: #7D8A8A;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background-color: #F6F4F0;
+}
+
+/* 토글 컨테이너 */
+.toggleContainer {
+    font-size: 20px;
+    color: #4A4A4A;
+    margin-left: 10px;
+}
+
+/* 시간표 미리보기 ========================================= */

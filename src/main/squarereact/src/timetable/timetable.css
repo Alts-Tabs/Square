@@ -4,7 +4,7 @@
     flex-direction: column;
     height: 100%;
     padding-top: 30px;
-    align-items: flex-end;
+    align-items: flex-start; /* 왼쪽 정렬 */
 }
 
 .radioContainer label {

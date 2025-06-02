@@ -12,8 +12,12 @@ import ChatbotPage from '../ChatBot/ChatbotPage';
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
-import Timetable from '../timetable/Timetable';
 import { AcademyCaller } from '../academycaller';
+import { Timetable, CreateTimetable } from '../timetable';
+
+import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
+import { MyPage } from '../components/Mypage';
+
 
 const RouterMain = () => {
     return (
@@ -54,7 +58,8 @@ const RouterMain = () => {
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
                     {/* 학습 관리 ================================================================================== */}
-                    <Route path="timetable" element={<Timetable />} /> {/* 시간표 설정 */}
+                    <Route path="timetable" element={<Timetable />} /> {/* 시간표 */}
+                    <Route path="timetable/create-timetable" element={<CreateTimetable />} /> {/* 시간표 생성 */}
 
 
                     {/* 학원 정보 ================================================================================== */}
@@ -64,6 +69,15 @@ const RouterMain = () => {
 
                     {/* 챗봇 ================================================================================== */}
                     <Route path="chat" element={<ChatbotPage/>}></Route>
+
+                    <Route path="reference">
+                        <Route index element={<Reference />} /> {/*자료실 메인 */}
+                        <Route path="write" element={<ReferenceWrite />} /> {/*자료실 글쓰기 */}
+                        <Route path=":fileId" element={<ReferenceDetail />} /> {/*자료실 상세보기 */}
+                        <Route path=":fileId/edit" element={<ReferenceEdit />} /> {/*자료실 글수정 */}
+                     </Route>
+
+                     <Route path="mypage" element={<MyPage />} /> {/*마이페이지 */}
                 </Route>
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
