@@ -1,5 +1,6 @@
-package com.example.payment.jpa;
+package com.example.payment.service;
 
+import com.example.payment.jpa.PaymentGetClassRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,4 +14,6 @@ public class PaymentService {
     public void updateTuition(int classId, int tuition) {
         paymentGetClassRepository.updateTuitionByClassId(classId, tuition);
     }
+
+
 }
