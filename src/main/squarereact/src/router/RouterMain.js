@@ -30,7 +30,7 @@ const RouterMain = () => {
                     {/* 수강생 ===================================================================================== */}
                     <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
-                    <Route path="attend" element={<Attend />} /> {/* 출석 관리 */}
+                    <Route path="attend/:acaId" element={<Attend />} /> {/* 출석 관리 */}
                     <Route path="attend/attend-history" element={<AttendHistory />} />
                     <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
                     <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 출석 관리 경로 */}
@@ -83,7 +83,7 @@ const RouterMain = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
                     <Route path="/subcode" element={<SubCode />} />
-                    <Route path="/error404" element={<Error404 />} />
+                    <Route path="*" element={<Error404 />} /> {/* 404 Error */}
             </Routes>
         </BrowserRouter>
     );

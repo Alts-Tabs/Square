@@ -223,7 +223,7 @@ const Main = () => {
                                         출석 관리
                                     </Link>
                                 ) : userInfo.role ? ( // 원장, 강사 로그인
-                                    <Link to="attend" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <Link to="attend/${userInfo.acaId}" style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
                                 ) : ( // userInfo.role이 아직 로드되지 않았을 경우
