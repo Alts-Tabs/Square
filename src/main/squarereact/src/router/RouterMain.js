@@ -14,6 +14,7 @@ import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 import { AcademyCaller } from '../academycaller';
 import { Timetable, CreateTimetable } from '../timetable';
+import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
 import { MyPage } from '../components/Mypage';
@@ -78,9 +79,11 @@ const RouterMain = () => {
 
                      <Route path="mypage" element={<MyPage />} /> {/*마이페이지 */}
                 </Route>
+
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
                     <Route path="/subcode" element={<SubCode />} />
+                    <Route path="/error404" element={<Error404 />} />
             </Routes>
         </BrowserRouter>
     );
