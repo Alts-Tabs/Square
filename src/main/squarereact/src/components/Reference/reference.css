@@ -1,0 +1,229 @@
+.contents { 
+  margin: 30px 45px 45px 25px;
+  width: 100%;
+}
+
+.title {
+  flex-shrink: 0;
+  display: inline-block;
+  font-size: 30px;
+  font-weight: 700;
+  color: #4DA1A9;
+  margin: 5px;
+}
+
+.reference-body {
+  display: flex;
+  gap: 20px;
+  height: calc(100% - 60px);
+}
+
+.reference-sidebar {
+  width: 240px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.reference-folder-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reference-folder-title {
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.folder-add-btn {
+  font-weight: 800;
+  font-size: 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.folder-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.folder-list li {
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.selected-folder {
+  color: #4da1a9;
+  font-weight: 500;
+}
+
+.reference-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* 축소 허용 */
+  overflow-x: auto; /* 가로 스크롤 가능 */
+}
+
+.reference-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.write-btn,
+.delete-btn {
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid #4da1a9;;
+  background: #4da1a9;
+  color: white;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: white;
+  color: #4da1a9;
+}
+
+.search-box {
+  position: relative;
+  margin-left: auto;
+  width: 220px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 6px 30px 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 18px;
+  color: #666;
+}
+
+.reference-table-box {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  min-width: 600px;
+  overflow-x: auto;
+}
+
+.reference-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.reference-table thead {
+  background: #f9f9f9;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.reference-table th,
+.reference-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.reference-table tbody tr:hover {
+  background-color: #f0f9f9;
+  cursor: pointer;
+}
+
+.reference-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-weight: 400;
+}
+
+.page-number {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.page-number.active {
+  font-weight: 700;
+  background-color: #4da1a9;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .reference-body {
+    flex-wrap: nowrap; /* 가로 정렬 유지 */
+  }
+  .reference-sidebar {
+    width: 240px; /* 고정 유지 */
+    max-height: none;
+    overflow-y: auto;
+  }
+  .reference-main {
+    /* 축소 허용 및 가로 스크롤 가능 */
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .reference-table-box {
+    min-width: 600px;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .reference-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .search-box {
+    width: 100%;
+    margin-left: 0;
+  }
+  .write-btn,
+  .delete-btn {
+    flex: 1 1 45%;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 24px;
+  }
+  .reference-table {
+    font-size: 12px;
+    min-width: 480px;
+  }
+  .reference-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .write-btn,
+  .delete-btn {
+    width: 100%;
+  }
+}

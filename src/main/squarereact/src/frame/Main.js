@@ -140,7 +140,7 @@ const Main = () => {
                 {/* dropdown 내용 - 링크 타겟은 후일 수정 */}
                 {open &&
                 <div className='headerList' ref={dropdownRef}>
-                    <Link to="/main" className='headerLink'>내 정보</Link>
+                    <Link to="mypage" className='headerLink'>내 정보</Link>
                     <hr />
                     {itemToRender.map((item, idx) => (
                         <React.Fragment key={idx}>
@@ -347,7 +347,7 @@ const Main = () => {
                                 <>
                                     <span className='naviContent'>
                                         <i className="bi bi-collection"></i>&nbsp;&nbsp;
-                                        <Link to="" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Link to="reference" style={{ textDecoration: 'none', color: 'inherit' }}>
                                         자료실
                                         </Link>
                                     </span>

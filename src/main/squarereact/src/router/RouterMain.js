@@ -16,6 +16,10 @@ import { AcademyCaller } from '../academycaller';
 import { Timetable, CreateTimetable } from '../timetable';
 import Error404 from '../error/Error404';
 
+import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
+import { MyPage } from '../components/Mypage';
+
+
 const RouterMain = () => {
     return (
         <BrowserRouter>
@@ -65,6 +69,15 @@ const RouterMain = () => {
 
                     {/* 챗봇 ================================================================================== */}
                     <Route path="chat" element={<ChatbotPage/>}></Route>
+
+                    <Route path="reference">
+                        <Route index element={<Reference />} /> {/*자료실 메인 */}
+                        <Route path="write" element={<ReferenceWrite />} /> {/*자료실 글쓰기 */}
+                        <Route path=":fileId" element={<ReferenceDetail />} /> {/*자료실 상세보기 */}
+                        <Route path=":fileId/edit" element={<ReferenceEdit />} /> {/*자료실 글수정 */}
+                     </Route>
+
+                     <Route path="mypage" element={<MyPage />} /> {/*마이페이지 */}
                 </Route>
 
                     <Route path="/login" element={<LoginPage />} />
