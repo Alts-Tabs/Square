@@ -1,7 +1,7 @@
 let socket;
 
 export const connectSocket = () => {
-    socket = new WebSocket('ws://localhost:8080');
+    socket = new WebSocket('ws://localhost:8090');
 
     return socket;
 };

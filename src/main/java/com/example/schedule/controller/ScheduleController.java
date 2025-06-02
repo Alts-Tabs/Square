@@ -1,9 +1,8 @@
 package com.example.schedule.controller;
 
-import com.example.schedule.dto.ScheduleResponse;
-import com.example.schedule.dto.ScheduleSaveRequest;
+import com.example.schedule.dto.*;
+import com.example.schedule.entity.ScheduleEntity;
 import com.example.schedule.service.ScheduleService;
-import com.example.schedule.dto.SchoolsSimpleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,4 +40,21 @@ public class ScheduleController {
         List<ScheduleResponse> schedules = scheduleService.getAllSchedulesByAcademyId(academyId);
         return ResponseEntity.ok(schedules);
     }
+
+    // 스케줄 일정 변경
+    @PatchMapping("/th/{scheduleId}/dates")
+    public ResponseEntity<ScheduleEntity> updateScheduleDates(@PathVariable int scheduleId,
+                                                              @RequestBody ScheduleDateUpdateRequest request) {
+        ScheduleEntity updated = scheduleService.updateScheduleDates(scheduleId, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    // 스케줄 전체 내용 변경
+    @PatchMapping("/th/{scheduleId}/updateSchedule")
+    public ResponseEntity<ScheduleEntity> updateSchedule(@PathVariable int scheduleId,
+                                                         @RequestBody ScheduleUpdateRequest request) {
+        ScheduleEntity updated = scheduleService.updateSchedule(scheduleId, request);
+        return ResponseEntity.ok(updated);
+    }
+
 }

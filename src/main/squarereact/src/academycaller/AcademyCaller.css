@@ -28,7 +28,7 @@
 .academy-caller-title {
   color: #4DA1A9;
   font-size: 30px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-family: 'NanumSquareNeoHeavy', sans-serif;
 }
 
@@ -39,7 +39,7 @@
   border-radius: 10px;
   width: 70%;
   padding: 6px 12px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   cursor: pointer;
   font-family: 'NanumSquareNeoBold', sans-serif;
   transition: background-color 0.2s ease;

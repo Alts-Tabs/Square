@@ -1,8 +1,6 @@
 package com.example.schedule.service;
 
-import com.example.schedule.dto.ScheduleResponse;
-import com.example.schedule.dto.ScheduleSaveRequest;
-import com.example.schedule.dto.SchoolsSimpleDto;
+import com.example.schedule.dto.*;
 import com.example.schedule.entity.ScheduleEntity;
 import com.example.schedule.entity.ScheduleType;
 import com.example.schedule.entity.SchoolsEntity;
@@ -12,6 +10,7 @@ import com.example.schedule.jpa.SchoolsRepository;
 import com.example.schedule.jpa.SchoolsScheduleRepository;
 import com.example.user.entity.AcademiesEntity;
 import com.example.user.jpa.AcademiesRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +79,7 @@ public class ScheduleService {
             SchoolsEntity school = schoolsRepository.findById(dto.getSchoolId())
                     .orElseThrow(() -> new IllegalArgumentException("School NOT FOUND"));
 
+
             SchoolsScheduleEntity link = SchoolsScheduleEntity.builder()
                     .school(school)
                     .schedule(schedule)
@@ -121,5 +121,68 @@ public class ScheduleService {
             return dtoBuilder.build();
         }).toList();
     }
+
+
+    /**
+     * 학원 스케줄 일정만 변경
+     * @param scheduleId int
+     * @param request ScheduleDateUpdateRequest
+     * @return schedule ScheduleEntity
+     */
+    @Transactional
+    public ScheduleEntity updateScheduleDates(int scheduleId, ScheduleDateUpdateRequest request) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("Schedule NOT FOUNT"));
+
+        schedule.setStartDate(request.getStartDate());
+        schedule.setEndDate(request.getEndDate());
+
+        return schedule;
+    }
+
+    @Transactional
+    public ScheduleEntity updateSchedule(int scheduleId, ScheduleUpdateRequest request) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("Schedule NOT FOUNT"));
+
+        // 기본 필드가 null 이 아닌 경우만 수령
+        if(request.getTitle() != null) schedule.setTitle(request.getTitle());
+        if(request.getDescription() != null) schedule.setDescription(request.getDescription());
+        if(request.getStartDate() != null) schedule.setStartDate(request.getStartDate());
+        if(request.getEndDate() != null) schedule.setEndDate(request.getEndDate());
+
+        // 유형이 변경된 경우
+        if(request.getType() != null && request.getType() != schedule.getType()) {
+            // 기존 매핑 삭제
+            schoolsScheduleRepository.findBySchedule(schedule).ifPresent(schoolsScheduleRepository::delete);
+            schedule.setType(request.getType());
+
+            // 새 유형 - ACADEMIC 일 시 매핑 생성
+            if(request.getType() == ScheduleType.ACADEMIC && request.getSchoolsId() != null) {
+                SchoolsEntity school = schoolsRepository.findById(request.getSchoolsId())
+                        .orElseThrow(() -> new EntityNotFoundException("School NOT FOUND"));
+
+                SchoolsScheduleEntity newMapping = SchoolsScheduleEntity.builder()
+                        .schedule(schedule)
+                        .school(school)
+                        .build();
+
+                schoolsScheduleRepository.save(newMapping);
+            }
+        }
+        // 유형은 그대로인데 학교만 변경된 경우
+        else if (schedule.getType() == ScheduleType.ACADEMIC && request.getSchoolsId() != null) {
+            SchoolsEntity newSchool = schoolsRepository.findById(request.getSchoolsId())
+                    .orElseThrow(() -> new EntityNotFoundException("School NOT FOUND"));
+
+            SchoolsScheduleEntity mapping = schoolsScheduleRepository.findBySchedule(schedule)
+                    .orElseThrow(() -> new EntityNotFoundException("ACADEMIC Mapping NOT FOUND"));
+
+            mapping.setSchool(newSchool);
+        }
+
+        return schedule;
+    }
+
 
 }

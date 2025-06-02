@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -9,18 +9,54 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
 const AcademyCaller = () => {
-  // 학원 PK 값 상태로 받기
+  // 유저 정보 받아오기
   const location = useLocation();
-  const academyId = location.state?.acaId;
+  const academyId = location.state?.acaId; // 소속 학원 PK
+  const role = location.state?.role; // 유저 권한
 
   const [openModal, setOpenModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 정보
+  const [openEventModal, setOpenEventModal] = useState(false);
   const [schedules, setSchedules] = useState([]); // 학원 스케줄
-
+  const [academySchoolList, setAcademySchoolList] = useState([]); // 상태 값
+  
   // 오늘 날짜 구하기
   const getTodayDateString = () => {
     const today = new Date();
     return today.toISOString().slice(0, 10);
   }
+
+  const fetchAcademySchools = async () => {
+    try {
+      if(!academyId) return;
+      const res = await axios.get(`/public/${academyId}/schools`, {withCredentials:true});
+      setAcademySchoolList(res.data);
+    } catch(error) {
+      alert(`학원 스케줄 연관 학교 목록 fetch fail: ${error}`);
+    }
+  }
+
+  // 체크박스 필터링 이벤트
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const handleCheckboxChange = (value) => {
+    setSelectedFilters(prev => 
+      prev.includes(value) ? prev.filter(v => v !== value)
+      : [...prev, value]
+    );
+  }
+
+  const filteredSchedules = useMemo(() => {
+    if(selectedFilters.length === 0)
+      return schedules;
+    
+    return schedules.filter(event => {
+      if(event.type === "ACADEMY") {
+        return selectedFilters.includes("ACADEMY");
+      } else {
+        return selectedFilters.includes(String(event.schoolId));
+      }
+    });
+  }, [selectedFilters, schedules]);
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -28,17 +64,20 @@ const AcademyCaller = () => {
       const res = await axios.get(`/public/${academyId}/schedule`, {withCredentials: true});
       const events = res.data.map((item) => {
         const endDateObj = new Date(item.endDate);
-        endDateObj.setDate(endDateObj.getDate() + 1);
+        endDateObj.setDate(endDateObj.getDate() + 1); // FullCallendar는 마지막날 기본적으로 배제
         return {
           id: item.scheduleId,
           title: item.title,
           description: item.description,
           start: item.startDate,
           end: endDateObj.toISOString().slice(0, 10)+"T23:59:59",
+          originalEnd: item.endDate, // 원본
+          type: item.type,
+          schoolId: item.schoolId || null,
+          allDay: true,
           backgroundColor: item.color,
           textColor: 'black',
           display: 'block',
-          allDay: true,
         };
       });
       // console.log(events);
@@ -117,6 +156,7 @@ const AcademyCaller = () => {
   useEffect(() => {
     fetchSchoolList();
     fetchSchedules(); // academyId를 기반으로 fetch
+    fetchAcademySchools();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -124,20 +164,28 @@ const AcademyCaller = () => {
   return (
     <div className='academy-caller-container'>
       <div className='academy-caller-sidebar'>
-        <h2 className='academy-caller-title'>학원 캘린더</h2>
-        <button type='button' className='caller-registerBtn'
-         onClick={() => setOpenModal(true)}>학사일정 등록</button>
+        <h2 className='academy-caller-title'>학원 캘린더 </h2>
+        {(role === '원장' || role === '강사') &&
+          <button type='button' className='caller-registerBtn'
+           onClick={() => setOpenModal(true)}>학사일정 등록</button>
+        }
 
         <div className='caller-checkbox-list'>
           <label className='caller-checkbox-item'>
-            <input type="checkbox" />
+            <input type="checkbox" value="ACADEMY"
+             checked={selectedFilters.includes("ACADEMY")}
+             onChange={(e) => handleCheckboxChange(e.target.value)} />
             <span>학원 일정</span>
           </label>
-          {/* 학교 목록 띄우기 */}
-          <label className='caller-checkbox-item'>
-            <input type="checkbox" />
-            <span>222</span>
-          </label>
+          {/* 학교 목록 띄우기 - 반복*/}
+          {academySchoolList.map((school) => (
+            <label key={school.schoolId} className='caller-checkbox-item'>
+              <input type="checkbox" value={school.schoolId}
+               checked={selectedFilters.includes(String(school.schoolId))}
+               onChange={(e) => handleCheckboxChange(e.target.value)} />
+              <span>{school.name}</span>
+            </label>
+          ))}
         </div>
       </div>
 
@@ -150,11 +198,16 @@ const AcademyCaller = () => {
          height='auto'
          selectable={true}
          editable={true}
-         events={schedules}
-         eventClick={function(info) {
-          alert(info.event._def.title + info.event._def.extendedProps.description);
-         }}
-        />
+         events={filteredSchedules}
+         eventClick = {function(info) {
+           setSelectedEvent({
+             title: info.event.title,
+             start: info.event.startStr,
+             end: info.event.extendedProps.originalEnd.slice(0, 10),
+             description: info.event.extendedProps.description || info.event.endStr,
+           });
+           setOpenEventModal(true);
+         }} />
       </div>
 
       {/* 학원 등록 모달 */}
@@ -234,6 +287,36 @@ const AcademyCaller = () => {
                onClick={() => setOpenModal(false)}>취소</button>
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* 일정 상세보기 모달 */}
+      {openEventModal && selectedEvent && (
+        <Modal onClose={() => setOpenEventModal(false)}>
+          <div className='schedule-modal-content'>
+      <h2 className="schedule-modal-title">일정 상세 보기</h2>
+      <hr />
+      <div className='schedule-form-group'>
+        <label className='schedule-form-label'>제목</label>
+        <div>{selectedEvent.title}</div>
+      </div>
+      <div className='schedule-form-group'>
+        <label className='schedule-form-label'>시작</label>
+        <div>{selectedEvent.start}</div>
+      </div>
+      <div className='schedule-form-group'>
+        <label className='schedule-form-label'>종료</label>
+        <div>{selectedEvent.end}</div>
+      </div>
+      <div className='schedule-form-group'>
+        <label className='schedule-form-label'>설명</label>
+        <div>{selectedEvent.description || '-'}</div>
+      </div>
+      <div className='schedule-button-group'>
+        <button className='schedule-btn-cancel'
+         onClick={() => setOpenEventModal(false)}>닫기</button>
+      </div>
+    </div>
         </Modal>
       )}
     </div>
