@@ -8,10 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface PaymentGetClassRepository extends JpaRepository<ClassesEntity, Integer> {
-    //ClassesRepository와 유사하나 수업료가 추가되어야 함
+    //ClassesRepository 와 유사하나 수업료가 추가되어야 함
     //콜론은 꼭 뒷부분과 붙여서 쓸 것! 자세한 건 JPQL 문법을 참조하세요!
     @Modifying
     @Transactional
     @Query("update ClassesEntity c SET c.tuition = :tuition where c.classId = :classId")
     int updateTuitionByClassId(@Param("classId") int classId, @Param("tuition") int tuition);
+
+    //학부모가 select 에서 장바구니에 넣을 수업을 선택하면 조회될 수 있도록
+//    @Query("select ")
 }
