@@ -27,7 +27,11 @@ const Timetable = () => {
     // '일', '주', '월' 중 하나만 선택 =======================================
     const [selectedPeriod, setSelectedPeriod] = useState(''); 
     const handlePeriodClick = (period) => {
-        setSelectedPeriod(period);
+        if (selectedPeriod === period) {
+            setSelectedPeriod(''); // 이미 선택된 버튼은 다시 누르면 해제됨.
+        } else {
+            setSelectedPeriod(period); // 버튼 선택
+        }
     };
 
     // 시간표 생성 페이지 이동
@@ -39,7 +43,7 @@ const Timetable = () => {
 
     return (
         <div className='attendContainer'>
-            <div className='leftContainer' style={{width:'17%'}}>
+            <div className='leftContainer' style={{minWidth:'7%', maxWidth:'15%',width:'auto', flexShrink:'0'}}>
                 <span className='attendTitle'> 시간표 </span>
                     
                 {/* leftContainer */}
@@ -59,7 +63,7 @@ const Timetable = () => {
                     <label className="radioItem">
                         <input type="radio" name="class" value="option3" />
                         <span className="radioMark"></span>
-                        <span className="radioText">(클래스 C)</span>
+                        <span className="radioText">(길이가 긴 클래스명 C)</span>
                     </label>
                 </div>'
                 

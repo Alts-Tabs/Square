@@ -33,9 +33,15 @@
     background-color: white;
 }
 
+.contentRow {
+    display: flex;
+    justify-content: space-between; /* input은 왼쪽, 텍스트는 오른쪽 */
+    align-items: center;
+}
+
 /* 제목 입력란*/
 .createContent input {
-    width: 400px;
+    width: 70%;
     margin-left: 15px;
     padding: 6px;
     color: #7D8A8A;
@@ -43,6 +49,13 @@
     border-radius: 10px;
     border: none;
     background-color: #F6F4F0;
+}
+
+/* 토글 컨테이너 */
+.toggleContainer {
+    font-size: 20px;
+    color: #4A4A4A;
+    margin-left: 10px;
 }
 
 /* 시간표 미리보기 ========================================= */
