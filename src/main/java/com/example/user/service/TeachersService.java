@@ -40,4 +40,9 @@ public class TeachersService {
         }
     }
 
+    /**academyId에 해당하는 전체 선생님 목록 조회(users 테이블에서 name값도 같이 조회)
+     * */
+    public List<TeacherDto> getTeachersByAcaId(int acaId) {
+        return teachersRepository.findTeachersByAcaId(acaId);
+    }
 }

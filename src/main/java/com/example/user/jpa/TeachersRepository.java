@@ -27,5 +27,11 @@ public interface TeachersRepository extends JpaRepository<TeachersEntity, Intege
     @Query("SELECT new com.example.user.dto.TeacherDto(t.subject, t.user.name) FROM TeachersEntity t")
     List<TeacherDto> findAllTeacherDtos();
 
+    //academyId에 해당하는 전체 선생님 목록 조회(users 테이블에서 name값도 같이 조회)
+    @Query("SELECT new com.example.user.dto.TeacherDto(t.teacherId, u.name, t.subject) " +
+            "FROM TeachersEntity t " +
+            "JOIN UsersEntity u ON t.user.user_id = u.user_id " +
+            "WHERE t.academy.academyId = :acaId")
+    List<TeacherDto> findTeachersByAcaId(@Param("acaId") int acaId);
 
 }
