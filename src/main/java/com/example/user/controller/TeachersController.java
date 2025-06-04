@@ -29,4 +29,11 @@ public class TeachersController {
         int teacherId = teachersService.getTeacherIdByUserId(userId);
         return ResponseEntity.ok(teacherId);
     }
+
+    //academyId에 해당하는 전체 선생님 목록 조회(users 테이블에서 name값도 같이 조회) - 시간표 페이지에서 사용
+    @GetMapping("/public/getTeachersByacaId")
+    public List<TeacherDto> getTeachersByAcaId(@RequestParam("acaId") int acaId) {
+        return teachersService.getTeachersByAcaId(acaId);
+    }
+
 }

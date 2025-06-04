@@ -37,7 +37,7 @@ const Timetable = () => {
     // 시간표 생성 페이지 이동
     const navigate = useNavigate();
     const handleCreateClick = () => {
-        navigate('create-timetable');
+        navigate('create-timetable', { state: { acaId: userInfo.acaId } });
     };
 
 

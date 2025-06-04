@@ -327,7 +327,7 @@ const Main = () => {
                         <span className='naviTitle'> 학습 관리 </span> <br />
                         <span className='naviContent'> 
                             <i className="bi bi-clock-history"></i>&nbsp;&nbsp;
-                            <Link to="timetable" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link to="timetable"  style={{ textDecoration: 'none', color: 'inherit' }}>
                                 시간표
                             </Link>
                         </span> <br />
