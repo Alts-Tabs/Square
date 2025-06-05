@@ -5,6 +5,7 @@ import com.example.classes.entity.ClassUsersEntity;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.classes.jpa.ClassesRepository;
+import com.example.user.dto.StudentDto;
 import com.example.user.entity.StudentsEntity;
 import com.example.user.jpa.StudentsRepository;
 import lombok.RequiredArgsConstructor;

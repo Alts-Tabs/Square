@@ -20,8 +20,9 @@ const TotalEvaluationsAdmin = () => {
     //로그인한 계정이 담당하는 과목
     const [subject,setSubject]=useState([]);
     const [role, setRole] = useState('');  // 역할 저장용
-    //토큰이 저장하는 정보
-    // const token=localStorage.getItem('token');
+    const [acaId, setAcaId] = useState(''); // academyId 저장
+    const [classList, setClassList] = useState([]);
+    const [selectedClassId, setSelectedClassId] = useState('');
     
     //저장 버튼 이벤트
     const handleSaveEvaluation=()=>{
@@ -63,8 +64,10 @@ const TotalEvaluationsAdmin = () => {
     // 로그인한 userId, role 받아오기
     axios.get(`/public/user`, { withCredentials: true })
         .then(response => {
-            const { userId, role } = response.data;
+            const { userId, role, acaId } = response.data;
             setRole(role); 
+            setAcaId(acaId);
+
             if (role === "강사") {
             return axios.get(`/public/teacher/getTeacherId`, { params: { userId } })
                 .then(teacherResponse => {
@@ -82,14 +85,23 @@ const TotalEvaluationsAdmin = () => {
         })
         .catch(error => console.error(error));
 
-    // 학생 목록 가져오기`
-    axios.get(`/studentList`, { withCredentials: true })
-        .then(response => {
-            setStudent(response.data);
-        })
-        .catch(error => console.error(error));
-
 }, []);
+
+    useEffect(() => {
+        if (!acaId) return;
+
+        axios.get(`/th/${acaId}/classes`, { withCredentials: true })
+            .then(res => setClassList(res.data))
+            .catch(err => console.error(err));
+    }, [acaId]);
+
+    useEffect(()=>{
+        if(!selectedClassId) return;
+
+        axios(`/dir/${selectedClassId}/students`, {withCredentials:true})
+        .then(res=>setStudent(res.data))
+        .catch(err=>console.error(err));
+    },[selectedClassId])
 
     //학생 목록 체크박스 이벤트
     const toggleStudentSelection = (stuId, stuName) => {
@@ -108,10 +120,19 @@ const TotalEvaluationsAdmin = () => {
             <div className='eval-leftContainer'>
                 <h2 className='evalTitle'>종합 평가</h2>
                 <div className='eval-classSelect'>
-                    <select>
-                        <option>클래스 선택</option>
-                    </select> &nbsp;
-                    <span style={{fontSize:'20px', color:'#2E5077', fontWeight:'800'}}>(Class)</span>
+                    <select value={selectedClassId} onChange={(e) => setSelectedClassId(e.target.value)}>
+                        <option value="">클래스 선택</option>
+                        {classList.map(cls=>(
+                            <option key={cls.id} value={cls.id}>
+                                {cls.name}({cls.teacherName})
+                            </option>
+                        ))}
+                    </select> &nbsp;&nbsp;
+                    <span style={{fontSize:'20px', color:'#2E5077', fontWeight:'800'}}>
+                        {selectedClassId
+                            ? `${classList.find(cls => cls.id.toString() === selectedClassId)?.name || '클래스명'}`
+                        : ''}
+                    </span>
                 </div>
 
                 <div className='eval-classContents'>
@@ -123,26 +144,37 @@ const TotalEvaluationsAdmin = () => {
                           </tr>
                         </thead>
                         <tbody>
-                            {/**여기에 각 반별 목록을 출력할 예정 아래에 있는건 임시*/}
-                            {student.map((stu) => {
-                            return(
-                            <tr key={stu.studentId}>
-                                <td>
-                                    <label className="custom-checkbox-evalAdmin">
-                                            <input type="checkbox" data-student-id={stu.studentId}
-                                            style={{display:'none'}}
-                                            checked={selectStudentId === stu.studentId} 
-                                            onChange={() => toggleStudentSelection(stu.studentId, stu.name)}/>
+                            {selectedClassId===''? (
+                                <tr>
+                                    <td colSpan={2} style={{textAlign:'center', fontSize:'18px', color:'#2E5077', fontWeight:500}}>
+                                        클래스를 선택해주세요.
+                                    </td>
+                                </tr>
+                            ):(
+                            student.length === 0? (
+                                <tr>
+                                    <td colSpan={2} style={{textAlign:'center', fontSize:'18px', color:'#2E5077', fontWeight:500}}>
+                                        해당 클래스에 학생이 없습니다.
+                                    </td>
+                                </tr>    
+                            ):(
+                            student.map((stu)=>(
+                                <tr key={stu.studentId}>
+                                    <td>
+                                        <label className="custom-checkbox-evalAdmin">
+                                            <input type='checkbox' data-student-id={stu.studentId} style={{ display: 'none' }}
+                                            checked={selectStudentId === stu.studentId} onChange={() => toggleStudentSelection(stu.studentId, stu.name)} />
                                             <span></span>
-                                    </label>
-                                </td>
-                                <td className='studentName' checked={selectStudentId === stu.studentId}
-                                    onClick={()=>toggleStudentSelection(stu.studentId, stu.name)} 
-                                    style={{cursor:'pointer'}}> {stu.name}
-                                </td>
-                            </tr>
-                            );
-                        })}
+                                        </label>
+                                    </td>
+                                    <td className='studentName' onClick={() => toggleStudentSelection(stu.studentId, stu.name)}
+                                        style={{cursor:'pointer'}}>
+                                    {stu.name}
+                                    </td>
+                                </tr>
+                            ))
+                            )
+                            )}
                         </tbody>
                     </table>
                 </div>

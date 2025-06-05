@@ -236,9 +236,26 @@ const Main = () => {
 
                         <span className='naviContent'> 
                             <i className="bi bi-pencil"></i>&nbsp;&nbsp;
-                            <Link to="evaluationStudent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                종합 평가 
-                            </Link>
+                            {/* [종합 평가] - Role에 따라 각각 다른 페이지 로드 */}
+                            {
+                                userInfo.role === "학생" ? ( //학생 로그인
+                                    <Link to="evaluationStudent" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        종합 평가 
+                                    </Link>
+                                ): userInfo.role === "학부모" ? (
+                                    <Link to="evaluationParents" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        종합 평가 
+                                    </Link>
+                                ): userInfo.role ? ( //원장, 강사 로그인 
+                                    <Link to="evaluationAdmin" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        종합 평가 
+                                    </Link>
+                                ): (// userInfo.role이 아직 로드되지 않았을 경우
+                                    <span style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        종합 평가
+                                    </span>
+                                )
+                            }
                         </span>
                     </div>
 
