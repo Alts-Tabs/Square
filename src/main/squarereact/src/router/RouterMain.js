@@ -55,7 +55,7 @@ const RouterMain = () => {
                     <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
                     <Route path="paymentCheck/:userId" element={<PaymentCheck />} />
-                    <Route path="paymentPayCheck/:acaId/:userId" element={<PaymentPayCheck />} /> {/* 학부모의 결제와 확인 */}
+                    <Route path="paymentPayCheck/:acaId/:roleId" element={<PaymentPayCheck />} /> {/* 학부모의 결제와 확인 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
 
                     {/* 학습 관리 ================================================================================== */}
