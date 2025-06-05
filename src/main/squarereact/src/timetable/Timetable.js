@@ -93,7 +93,6 @@ const Timetable = () => {
                 )}
 
                 <div className='timetable'>
-                    시간표 자리 ㅎㅅㅎ 배경색은 영역 파악용~
                 </div>
             </div>
 

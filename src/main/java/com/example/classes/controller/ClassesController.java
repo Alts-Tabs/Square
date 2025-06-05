@@ -5,6 +5,8 @@ import com.example.classes.dto.ClassResponse;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.classes.jpa.ClassesRepository;
+import com.example.classes.service.ClassesService;
+import com.example.user.dto.StudentDto;
 import com.example.user.dto.TeacherDto;
 import com.example.user.entity.TeachersEntity;
 import com.example.user.jpa.TeachersRepository;
@@ -23,6 +25,7 @@ public class ClassesController {
     private final TeachersRepository teachersRepository;
     private final ClassesRepository classesRepository;
     private final ClassUsersRepository classUsersRepository;
+    private final ClassesService classesService;
 
     // 학원 내 모든 선생 리스트 가져오기 - 원장만 가능
     @GetMapping("/dir/{academyId}/teachers")
@@ -88,6 +91,13 @@ public class ClassesController {
 
         classesRepository.deleteById(classId);
         return ResponseEntity.ok().build();
+    }
+
+    /** userId로 student 이름 조회 - 종합평가 등록 페이지에서 사용*/
+    @GetMapping("/dir/{classId}/students")
+    public ResponseEntity<List<StudentDto>> getStudentsByClass(@PathVariable int classId) {
+        List<StudentDto> students = classesService.getStudentsByClassId(classId);
+        return ResponseEntity.ok(students);
     }
 
 }

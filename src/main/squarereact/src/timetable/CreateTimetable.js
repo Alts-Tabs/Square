@@ -5,6 +5,7 @@ import '../settings/classSetting.css';
 import './timetable.css';
 import './createTimetable.css'; 
 import { useLocation } from 'react-router-dom';
+import { type } from '@testing-library/user-event/dist/type';
 
 const CreateTimetable = () => {
     const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: ''});
@@ -13,13 +14,17 @@ const CreateTimetable = () => {
     const [selectedList, setSelectedList] = useState([]);
     const location = useLocation();
     const acaId = location.state?.acaId;
+    const [title, setTitle] = useState('');
     const [classList, setClassList]=useState([]);
     //const [teacherList, setTeacherList]=useState([]);
+    const [daySort, setDaySort] = useState(1);
     const [dayList, setDayList] = useState(['토요일']); // 선택된 요일 배열
     const [sort, setSort] = useState("CLASS"); 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [timetable, setTimetable] = useState({}); // 구조: {rowIndex: {colIndex: item}}
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const handleStartTimeChange = (e) => setStartTime(e.target.value);
     const handleEndTimeChange = (e) => setEndTime(e.target.value);
     
@@ -37,6 +42,7 @@ const CreateTimetable = () => {
     //종류 선택 값에 따라 오른쪽에 테이블 생성
     const handleSelectChange = (e) => {
         const value=Number(e.target.value);
+        setDaySort(value);
         let days= [];
         switch (value) {
             case 1:
@@ -157,7 +163,7 @@ const CreateTimetable = () => {
         setSelectedList(prev => prev.filter(i => !(i.type === item.type && i.id === item.id)));
     };
 
-    //드롭 핸들러
+    //Drag and Drop 핸들러
     const handleDrop = (rowIndex, colIndex, item) => {
         setTimetable((prev) => {
             const updated = { ...prev };
@@ -166,6 +172,85 @@ const CreateTimetable = () => {
             return updated;
         });
     };
+
+    //starTime, endTime 저장 시 필요한 내용
+    const getTimeByRowIndex = (baseStartTime, index) => {
+        const [h, m] = baseStartTime.split(':').map(Number); // 예: '17:00' → 17, 0
+        const start = new Date(0, 0, 0, h + index, m);        // 시작 시간 + rowIndex시간
+        const end = new Date(start.getTime() + 60 * 60 * 1000); // 시작 + 1시간
+
+        const toHHMM = (date) =>{
+            const hh = date.getHours().toString().padStart(2, '0');
+            const mm = date.getMinutes().toString().padStart(2, '0');
+            return `${hh}:${mm}:00`; // 초는 항상 00
+        };
+        return {
+            startTime: toHHMM(start), // "17:00"
+            endTime: toHHMM(end)      // "18:00"
+        };
+    };
+
+    //시간표 저장 핸들러
+    const handlesaveTimetable=()=>{
+        if(!startDate||!endDate||!startTime||!endTime||selectedList.length === 0 || Object.keys(timetable).length===0) {
+            alert("필수 정보를 모두 입력해주세요.")
+            return;
+        }
+
+        const contentsDtoList =[];
+        Object.entries(timetable).forEach(([rowIndex,cols])=>{
+            Object.entries(cols).forEach(([colIndex,item])=>{
+                const { startTime: cellStartTime, endTime: cellEndTime } = getTimeByRowIndex(startTime, Number(rowIndex));
+                contentsDtoList.push({
+                    classId:Number(item.id),
+                    startTime:cellStartTime,
+                    endTime:cellEndTime,
+                    type:item.type||sort,
+                });
+            });
+        });
+
+        const payload={
+            academyId: userInfo.acaId,
+            userId: userInfo.userId,
+            title,
+            daySort,
+            sort,
+            selectedList,
+            dayList,
+            startTime,
+            endTime,
+            startDate,
+            endDate,
+            timetable,
+            contentsDtoList 
+        };
+
+        //console.log('ACA ID 확인:', userInfo.acaId);
+        axios.post("/dir/saveTimetable",payload,{withCredentials:true})
+        .then(res=>{
+            alert("시간표가 저장되었습니다.");
+            //console.log("응답:",res.data);
+
+            setTitle('');
+            setSort('CLASS');
+            setSelectedList([]);
+            setDayList(['토요일']);
+            setStartTime('');
+            setEndTime('');
+            setStartDate('');
+            setEndDate('');
+            setTimetable({});
+            setSelectedClassValue('');
+            // setSelectedTeacherValue(''); // teacher 사용 시 주석 해제
+        })
+        .catch(err=>{
+            console.log("시간표 저장 실패:",err);
+            alert("저장 중 오류가 발생했습니다.");
+        })
+    }
+
+
     return (
         <div className='attendContainer'>
             {/* 시간표 생성 영역 =========================================== */}
@@ -187,8 +272,8 @@ const CreateTimetable = () => {
                     <div className='createContent'>
                         {/* 내용 설정 영역 (왼) */}
                         <div className='contentRow'>
-                            <input type='text'/>
-                            <select className='TimeTabConCon-daySelect' onChange={handleSelectChange} >
+                            <input type='text' value={title} onChange={(e)=>setTitle(e.target.value)}/>
+                            <select className='TimeTabConCon-daySelect' name="daySort" onChange={handleSelectChange} >
                                 <option value='1'>토요일(1일)</option>
                                 <option value='2'>토요일 ~ 일요일(2일)</option>
                                 <option value='5'>월요일 ~ 금요일(5일)</option>
@@ -197,7 +282,7 @@ const CreateTimetable = () => {
                             </select>
                             <div className='TimeTabConCon-Sort'>
                                 <label>
-                                    <input type="radio" name="sort" value="CLASS" checked={sort==="CLASS"} defaultChecked
+                                    <input type="radio" name="sort" value="CLASS" checked={sort==="CLASS"}
                                     onChange={handleSortChange}/>
                                     &nbsp;&nbsp;<b>반</b>
                                 </label>
@@ -233,8 +318,8 @@ const CreateTimetable = () => {
                                 <input type='time' className='TimeTabConCon-endTime' value={endTime} onChange={handleEndTimeChange}/>
                             </div>
                             <div className='TimeTabConCon-date'>
-                                <input type='date' className='TimeTabConCon-startDate'/>
-                                <input type='date' className='TimeTabConCon-endDate'/>
+                                <input type='date' className='TimeTabConCon-startDate' value={startDate} onChange={(e)=> setStartDate(e.target.value)}/>
+                                <input type='date' className='TimeTabConCon-endDate' value={endDate} onChange={(e)=>setEndDate(e.target.value)}/>
                             </div>
                             <hr/>
                             <div className="TimeTabCon-preview">
@@ -252,7 +337,7 @@ const CreateTimetable = () => {
                         </div>
                     </div>
                 </div>
-                <button type='button' className='TimeTabAddBtn'>생성하기</button>
+                <button type='button' className='TimeTabAddBtn' onClick={handlesaveTimetable}>생성하기</button>
             </div>
 
             {/* 시간표 미리보기 ============================================ */}

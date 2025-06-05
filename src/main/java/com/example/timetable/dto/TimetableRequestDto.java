@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -17,8 +17,8 @@ public class TimetableRequestDto {
     private int academyId;
     private String title;
     private int daySort;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private List<TimecontentsDto> contentsDtoList;
 

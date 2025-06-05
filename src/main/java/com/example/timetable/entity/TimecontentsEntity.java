@@ -1,6 +1,7 @@
 package com.example.timetable.entity;
 
 import com.example.classes.entity.ClassesEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 
@@ -29,9 +31,13 @@ public class TimecontentsEntity {
     private TimetableEntity timetable;
 
     @Column(name = "startTime", nullable = false)
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
     @Column(name = "endTime", nullable = false)
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
