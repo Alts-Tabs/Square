@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,10 +39,10 @@ public class TimetableEntity {
     private int daySort;
 
     @Column(name = "startDate", nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "endDate", nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @CreationTimestamp
     @Column(updatable = false)
