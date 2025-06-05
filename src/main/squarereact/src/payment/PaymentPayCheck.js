@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const PaymentPayCheck = () => {
-    const { acaId, parentId } = useParams();
+    const { acaId, roleId } = useParams();
 
     const [classes, setClasses] = useState([]);
     const [selClass, setSelClass] = useState([]);
@@ -15,11 +15,14 @@ const PaymentPayCheck = () => {
     const [selStudent, setSelStudent] = useState('');
 
     useEffect(() => {
-        if (!parentId) return;
-        axios.get(`/parent/${parentId}/students`, { withCredentials: true })
+        if (!roleId) {
+            alert('학부모 정보가 없습니다!');    
+            return;
+        }
+        axios.get(`/parent/${roleId}/students`, { withCredentials: true })
             .then(res => setStudents(res.data))
             .catch(err => alert('자녀 목록 호출 실패'));
-    }, [parentId]);
+    }, [roleId]);
 
     // const handleEnroll = () => {
     //     if (!selClass || !selStudent) return alert('수업/자녀를 선택하세요');
