@@ -19,13 +19,13 @@ const Main = () => {
     const formattedDate = `오늘은 ${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일입니다.`;
 
     // 로그인 시 받은 사용자 정보 상태
-    const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: ''});
+    const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: '', roleId: '', academyName: ''});
     useEffect(() => {
         // 페이지 로드 시 사용자 정보 요청
         axios.get("/public/user", {withCredentials: true})
             .then(res => {
-                const {name, role, username, acaId, userId} = res.data;
-                setUserInfo({name, role, username, acaId, userId});
+                const {name, role, username, acaId, userId, roleId, academyName} = res.data;
+                setUserInfo({name, role, username, acaId, userId, roleId, academyName});
             }).catch(() => { // 인증 실패 - 로그인 페이지로..
                 navi("/login");
             });

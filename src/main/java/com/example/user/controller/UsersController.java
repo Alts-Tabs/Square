@@ -10,6 +10,7 @@ import com.example.user.jpa.AcademiesRepository;
 import com.example.user.service.JoinService;
 import com.example.user.service.LoginService;
 import com.example.user.jpa.UsersRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 //import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -108,7 +109,8 @@ public class UsersController {
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String role = switch (userDetails.getRole().substring(5)) {
+        String roleStr = userDetails.getRole().substring(5);
+        String role = switch (roleStr) {
             case "ADMIN" -> "관리자";
             case "DIRECTOR" -> "원장";
             case "PARENT" -> "학부모";
@@ -117,20 +119,32 @@ public class UsersController {
             default -> "비회원";
         };
 
-        String name = userDetails.getName();
-        String username = userDetails.getUsername();
+        // 유저 정보 모두 얻기
+        UsersEntity user = usersRepository.findByUsername(userDetails.getUsername());
 
-        // 학원 고유 값 보내기
-        UsersEntity user = usersRepository.findByUsername(username);
+        // roleId 설정
+        Integer roleId = switch (roleStr) {
+            case "PARENT" -> user.getParent() != null ? user.getParent().getParentId() : null;
+            case "TEACHER" -> user.getTeacher() != null ? user.getTeacher().getTeacherId() : null;
+            case "STUDENT" -> !user.getStudents().isEmpty() ? user.getStudents().get(0).getStudentId() : null;
+            // ADMIN, DIRECTOR는 userId를 그대로 사용
+            default -> user.getUser_id();
+        };
+
+        // 학원값 얻기
         Integer academyId = UserAcademyResolver.getAcademyId(user);
+        AcademiesEntity academy = acaRepository.findById(academyId)
+                .orElseThrow(() -> new EntityNotFoundException("Academy NOT FOUND"));
 
         Map<String, Object> data = new HashMap<>();
         data.put("message", "Info OK!");
-        data.put("userId", userDetails.getUserId());
-        data.put("name", userDetails.getName());
-        data.put("username", userDetails.getUsername());
+        data.put("userId", user.getUser_id());
+        data.put("name", user.getName());
+        data.put("username", user.getUsername());
         data.put("role", role);
+        data.put("roleId", roleId);
         data.put("acaId", academyId);
+        data.put("academyName", academy.getAca_name());
 
         return ResponseEntity.ok(data);
     }
