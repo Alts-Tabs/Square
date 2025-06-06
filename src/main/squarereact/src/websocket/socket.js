@@ -1,7 +1,12 @@
 let socket;
 
 export const connectSocket = () => {
-    socket = new WebSocket('ws://localhost:8090');
+    // https 배포 시 wss://가 됨.
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const host = window.location.hostname;
+    const port = 8090; // server.js에서 정한 포트를 여기서도 명시 필요
+
+    socket = new WebSocket(`${protocol}://${host}:${port}`);
 
     return socket;
 };

@@ -50,17 +50,18 @@
     flex-grow: 1;
     overflow-y: auto;
     padding-top: 45px;
-    border-radius:  0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
     text-align: center;
     background-color: white;
+    scrollbar-width: none;
 }
 
 /* 출석 버튼 */
 .attendButton {
     width: 161px;
     height: 65px;
-    margin-top: 20px;
-    margin-bottom: 45px;
+    margin-top: 15px;
+    margin-bottom: 23px;
     color: white;
     font-size: 25px;
     font-weight: 700;
