@@ -90,8 +90,8 @@
   position: absolute;
   top: 25%;
   left: 10px;
-  width: 4px;
-  height: 9px;
+  width: 6px;
+  height: 12px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
@@ -100,6 +100,7 @@
 .caller-checkbox-item input[type='checkbox']:checked + span {
   color: #79D7BE;
   font-size: 1.2em;
+  font-weight: 500;
 }
 
 /* ============== FullCalendar ================ 디자인 */
