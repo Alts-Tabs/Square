@@ -140,6 +140,12 @@ public class ScheduleService {
         return schedule;
     }
 
+    /**
+     * 학원 스케줄 전체 변경
+     * @param scheduleId int
+     * @param request ScheduleUpdateRequest
+     * @return schedule ScheduleEntity
+     */
     @Transactional
     public ScheduleEntity updateSchedule(int scheduleId, ScheduleUpdateRequest request) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
@@ -153,8 +159,10 @@ public class ScheduleService {
 
         // 유형이 변경된 경우
         if(request.getType() != null && request.getType() != schedule.getType()) {
-            // 기존 매핑 삭제
-            schoolsScheduleRepository.findBySchedule(schedule).ifPresent(schoolsScheduleRepository::delete);
+            // 기존 매핑 삭제 (여러개일 경우 다 삭제)
+            List<SchoolsScheduleEntity> mappings = schoolsScheduleRepository.findAllBySchedule(schedule);
+            schoolsScheduleRepository.deleteAll(mappings);
+
             schedule.setType(request.getType());
 
             // 새 유형 - ACADEMIC 일 시 매핑 생성
@@ -179,10 +187,21 @@ public class ScheduleService {
                     .orElseThrow(() -> new EntityNotFoundException("ACADEMIC Mapping NOT FOUND"));
 
             mapping.setSchool(newSchool);
+            schoolsScheduleRepository.save(mapping);
         }
 
         return schedule;
     }
 
+    /**
+     * 학원 스케줄 삭제
+     * @param scheduleId int
+     */
+    @Transactional
+    public void deleteSchedule(int scheduleId) {
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("NOT FOUND schedule"));
+        scheduleRepository.delete(schedule);
+    }
 
 }

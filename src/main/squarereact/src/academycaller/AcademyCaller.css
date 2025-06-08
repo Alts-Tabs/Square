@@ -300,15 +300,18 @@
   margin-top: 16px;
 }
 
-.schedule-btn-save {
-  background-color: #FFFFFF;
-  color: #79D7BE;
+.schedule-button-group  button {
   width: 80px;
   padding: 8px 16px;
   border: 1px #79D7BE solid;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
+}
+
+.schedule-btn-save {
+  background-color: #FFFFFF;
+  color: #79D7BE;
 }
 
 .schedule-btn-save:hover {
@@ -319,14 +322,18 @@
 .schedule-btn-cancel {
   background-color: #FFFFFF;
   color: #7D8A8A;
-  width: 80px;
-  padding: 8px 16px;
-  border: 1px #7D8A8A solid;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
 }
 
 .schedule-btn-cancel:hover {
   background-color: #e0e0e0;
+}
+
+.schedule-btn-del {
+  background-color: #f84545;
+  color: white;
+}
+
+.schedule-btn-del:hover {
+  background-color: red;
+  color: black;
 }
