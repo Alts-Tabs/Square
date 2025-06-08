@@ -1,7 +1,9 @@
 .studentsManageWrapper {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    /* width: 100%; */
+    min-width: 100%;
+    max-width: 100vh; /* 전체 화면 기준으로는 성공적으로 오류 수정 */
     height: 100%;
 }
 
@@ -115,7 +117,7 @@
     flex-direction: column;
     align-items: center; /* 가로 중앙 정렬 */
     position: relative;
-    width: 23%;
+    width: max-content;
     height: 100%;
     padding: 15px;
     border-radius: 10px;
