@@ -108,10 +108,18 @@
 
 .rightPCContainer .title {
     font-weight: 800;
+    display: inline-block;
+    text-align: right;
 }
 
 .rightPCContainer .insert-input {
     background-color: #f6f4f0;
     border-radius: 10px;
     border-width: 0;
+}
+
+.insertClass .title {
+    text-align: left;
+    width: 100%;
+    display: block; /* span을 block으로 바꿔야 text-align 적용됨 */
 }
