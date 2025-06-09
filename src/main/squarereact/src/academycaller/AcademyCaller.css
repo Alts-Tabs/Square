@@ -211,9 +211,10 @@
   font-family: sans-serif;
 }
 
+/* 학사 일정 추가 */
 .schedule-modal-title {
   font-weight: bold;
-  color: #4DA1A9;
+  color: #2E5077;
   margin-bottom: 16px;
 }
 
@@ -329,11 +330,11 @@
 }
 
 .schedule-btn-del {
-  background-color: #f84545;
+  background-color: #D85858;
   color: white;
 }
 
 .schedule-btn-del:hover {
-  background-color: red;
+  background-color: #D85858;
   color: black;
 }

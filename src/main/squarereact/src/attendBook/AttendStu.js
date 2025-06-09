@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './attend.css';
 import './attendStu.css';
 import { connectSocket, onMessage, sendMessage } from '../websocket/socket';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import ApexCharts from 'apexcharts';
+import { attendanceChartOptions  } from './attendanceChartOptions';
 
 const AttendStu = () => {
     const { acaId } = useParams();
     const [isEditable, setIsEditable] = useState(false);
+    const chartRef = useRef(null);
+
+    // 누적 출석 차트
+    useEffect(() => {
+        if (chartRef.current) {
+        const chart = new ApexCharts(chartRef.current, attendanceChartOptions );
+        chart.render();
+
+        // 언마운트 시 chart 파괴
+        return () => chart.destroy();
+        }
+    }, []);
 
     // WebSocket 연결 및 출석 시작 신호 처리
     useEffect(() => {
@@ -141,7 +155,7 @@ const AttendStu = () => {
             <div className='rightContainer'>
                 <span className='attendTitle'> 우리 반 누적 출석률 </span>
                 <div className='stackAttend'>
-                    <div className='attendGraph'>그래프 자리</div>
+                    <div className='attendGraph' ref={chartRef}></div>
 
                     <div className='attendClass'>
                         <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '700' }}>우리 반 누적 출석률은</span> &nbsp;
