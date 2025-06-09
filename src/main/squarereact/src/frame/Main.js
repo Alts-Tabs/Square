@@ -200,7 +200,9 @@ const Main = () => {
                                 <>
                                     <span className='naviContent'>
                                         <i className="bi bi-people"></i>&nbsp;&nbsp;
-                                        <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Link to="studentsManage"
+                                         state={{acaId: userInfo.acaId}}
+                                         style={{ textDecoration: 'none', color: 'inherit' }}>
                                             수강생 관리
                                         </Link>
                                     </span>
@@ -381,14 +383,16 @@ const Main = () => {
                                 <span className='naviTitle'> 학원 정보 </span> <br />
 
                                 <span className='naviContent'>
-                                    <i className="bi bi-gear"></i>&nbsp;&nbsp;
-                                    학원 설정
+                                    <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
+                                    <Link to={`students-manage/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        클래스 관리
+                                    </Link>
                                 </span> <br />
 
                                 <span className='naviContent'>
-                                    <i className="bi bi-bounding-box-circles"></i>&nbsp;&nbsp;
+                                    <i className="bi bi-gear"></i>&nbsp;&nbsp;
                                     <Link to={`class-setting/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        클래스 관리
+                                        클래스 설정
                                     </Link>
                                 </span> <br />
 
