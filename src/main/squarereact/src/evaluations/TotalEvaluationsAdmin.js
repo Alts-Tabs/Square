@@ -139,14 +139,18 @@ const TotalEvaluationsAdmin = () => {
                     <table className='evalA-StudentList'>
                         <thead className='evalA-thead'>
                           <tr>
-                            <th style={{width:'100px',fontSize:'20px'}}>선택</th>
-                            <th style={{fontSize:'20px',width:'200px'}}>학생명</th>
+                            <th style={{width:'100px',fontSize:'20px'}}>
+                                선택
+                            </th>
+                            <th style={{fontSize:'20px',width:'200px'}}>
+                                학생명
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                             {selectedClassId===''? (
                                 <tr>
-                                    <td colSpan={2} style={{textAlign:'center', fontSize:'18px', color:'#2E5077', fontWeight:500}}>
+                                    <td colSpan={2} style={{textAlign:'center', fontSize:'18px', color:'rgba(125, 138, 138, 0.8)'}}>
                                         클래스를 선택해주세요.
                                     </td>
                                 </tr>
@@ -183,10 +187,14 @@ const TotalEvaluationsAdmin = () => {
             <div className='eval-rightContainer'>
               <h2 style={{visibility: 'hidden'}}>영역확보</h2>
                 <div className='eval-rightTitle'>
-                    <span style={{fontSize:'20px', color:'#2E5077', fontWeight:'800'}}
-                    className='rightStudentName'>{selectStudentName ? `${selectStudentName}` : '선택된 학생 없음'}</span>&nbsp;
-                    <span>종합평가</span>
+                    <div className='rightStudentName' style={{ fontSize: '23px', color: '#2E5077', fontWeight: '800' }}>
+                        {selectStudentName ? selectStudentName : '선택된 학생 없음'}
+                    </div>
+                    <div className='rightTitleLabel' style={{ marginTop: '4px' }}>
+                        종합 평가
+                    </div>
                 </div>
+
                 
                 <div className='evaluationContent'>
                   <div className='evaluationHeader'>
@@ -215,11 +223,13 @@ const TotalEvaluationsAdmin = () => {
                         <input type='date' className='evalA-Date'
                             value={endDate} onChange={(e)=>setEndDate(e.target.value)}/>
                     </div>
-                    <button  type='button' className='saveEval' onClick={handleSaveEvaluation}>저장</button>  
+                    <button  type='button' className='saveEval' onClick={handleSaveEvaluation}>
+                        저장
+                    </button>  
                   </div>
 
                   <div className='evaluationBody'>
-                    <span>점수</span>
+                    <span> 점수 </span>
                     <input type='number' min="0" max="100"
                         value={score} onChange={(e)=>setScore(e.target.value)}
                         onBlur={() => {
@@ -228,11 +238,14 @@ const TotalEvaluationsAdmin = () => {
                             if (num > 100) num = 100;
                             setScore(num);}}
                     />
-                    <br/>
-                    <span>평가 작성</span>
-                    <br/>
-                    <textarea placeholder='평가 내용을 입력해주세요.'
-                        value={contents} onChange={(e)=>setContents(e.target.value)}></textarea>
+                    <div className="evaluationRow">
+                        <span> 평가 작성 </span>
+                        <textarea
+                        placeholder='평가 내용을 입력해주세요.'
+                        value={contents}
+                        onChange={(e) => setContents(e.target.value)}
+                        />
+                    </div>
                   </div>
                 </div>
             </div>
