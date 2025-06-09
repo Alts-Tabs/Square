@@ -3,6 +3,7 @@ package com.example.classes.controller;
 import com.example.classes.dto.ClassCreateRequestDto;
 import com.example.classes.dto.ClassResponse;
 import com.example.classes.entity.ClassesEntity;
+import com.example.classes.jpa.ClassCountProjection;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.classes.jpa.ClassesRepository;
 import com.example.classes.service.ClassesService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -70,10 +72,17 @@ public class ClassesController {
     public ResponseEntity<List<ClassResponse>> getClassesByAcademy(@PathVariable int academyId) {
         List<ClassesEntity> classes = classesRepository.findByAcademyId(academyId);
 
+        Map<Integer, Long> classIdToCount = classUsersRepository
+                .countStudentsByAcademy(academyId).stream().collect(Collectors.toMap(
+                        ClassCountProjection::getClassId,
+                        ClassCountProjection::getCount
+                ));
+
         List<ClassResponse> response = classes.stream()
                 .map(c -> ClassResponse.builder()
                         .id(c.getClassId())
                         .name(c.getName())
+                        .currentCount(classIdToCount.getOrDefault(c.getClassId(), 0L).intValue())
                         .capacity(c.getCapacity())
                         .teacherId(c.getTeacher().getTeacherId())
                         .teacherName(c.getTeacher().getUser().getName())
