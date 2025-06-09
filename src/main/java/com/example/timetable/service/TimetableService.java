@@ -3,6 +3,7 @@ package com.example.timetable.service;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.timetable.dto.TimecontentsDto;
+import com.example.timetable.dto.TimetableDto;
 import com.example.timetable.dto.TimetableRequestDto;
 import com.example.timetable.entity.TimecontentsEntity;
 import com.example.timetable.entity.TimetableEntity;
@@ -17,11 +18,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import static java.time.DayOfWeek.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +36,10 @@ public class TimetableService {
     private final ClassUsersRepository classUsersRepository;
     private final AcademiesRepository academiesRepository;
 
+    /**시간표 등록
+     * timetable > timecontents > timeusers 순으로 등록*/
     @Transactional
     public void saveTimetable(TimetableRequestDto dto){
-
         AcademiesEntity academy = academiesRepository.getReferenceById(dto.getAcademyId());
 
         //timetable 저장
@@ -80,6 +85,38 @@ public class TimetableService {
                 .toList();
 
         timeusersRepository.saveAll(timeusers);
+    }
+
+    /**시간표 조회 - academyId 기준*/
+    public List<TimetableDto> getByAcademyID(int academyId){
+        return timetableRepository.findByAcademy_AcademyId(academyId)
+                .stream()
+                .map(t -> TimetableDto.builder()
+                        .timetableId(t.getTimetableId())
+                        .title(t.getTitle())
+                        .daySort(t.getDaySort())
+                        .startDate(t.getStartDate())
+                        .endDate(t.getEndDate())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
+    /**시간표 상세 조회 - daySort 필터는 프론트에 처리 예정  */
+    public List<TimecontentsDto> getContentsByTimetableId(int timetableId){
+        return timecontentsRepository.findByTimetable_TimetableId(timetableId)
+                .stream()
+                .map(c->{
+                    String className=c.getClasses().getName();
+                    return TimecontentsDto.builder()
+                            .startTime(c.getStartTime())
+                            .endTime(c.getEndTime())
+                            .classId(c.getClasses().getClassId())
+                            .className(className)
+                            .type(c.getType())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
 }

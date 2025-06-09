@@ -24,5 +24,6 @@ public class TimecontentsDto {
 
     private int classId;
     private String type;//현재 "CLASS" 고정
+    public String className; //class id로 classes 테이블에 있는 name 값 노출시키는 용도
 
 }
