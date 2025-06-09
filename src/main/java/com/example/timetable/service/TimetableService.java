@@ -59,21 +59,29 @@ public class TimetableService {
         Set<Integer> studentIds=new HashSet<>();
 
         for(TimecontentsDto contentDto : dto.getContentsDtoList()){
-            ClassesEntity classesEntity =ClassesEntity.builder().classId(contentDto.getClassId()).build();
 
-            TimecontentsEntity content=TimecontentsEntity.builder()
+            TimecontentsEntity.TimecontentsEntityBuilder builder = TimecontentsEntity.builder()
                     .timetable(timetable)
                     .startTime(contentDto.getStartTime().truncatedTo(ChronoUnit.MINUTES))
                     .endTime(contentDto.getEndTime().truncatedTo(ChronoUnit.MINUTES))
-                    .classes(classesEntity)
                     .type(contentDto.getType())
-                    .build();
-            contentEntities.add(content);
+                    .dayOfWeek(contentDto.getDayOfWeek())
+                    .description(contentDto.getDescription());
 
-            //수업에 속한 학생id 모으기
-            List<Integer> classStudentIds=classUsersRepository.findStudentIdsByClassId(contentDto.getClassId());
-            studentIds.addAll(classStudentIds);
+
+            // classId가 있는 경우만 클래스 설정
+            if (contentDto.getClassId() != null) {
+                builder.classes(ClassesEntity.builder().classId(contentDto.getClassId()).build());
+
+                // 수업에 속한 학생 ID 모으기
+                List<Integer> classStudentIds = classUsersRepository.findStudentIdsByClassId(contentDto.getClassId());
+                studentIds.addAll(classStudentIds);
+            }
+            // 최종 엔티티 빌드 및 리스트에 추가
+            TimecontentsEntity content = builder.build();
+            contentEntities.add(content);
         }
+        // Timecontents 저장
         timecontentsRepository.saveAll(contentEntities);
 
         //Timeusers 저장
@@ -107,13 +115,17 @@ public class TimetableService {
         return timecontentsRepository.findByTimetable_TimetableId(timetableId)
                 .stream()
                 .map(c->{
-                    String className=c.getClasses().getName();
+                    Integer classId = c.getClasses() != null ? c.getClasses().getClassId() : null;
+                    String className = c.getClasses() != null ? c.getClasses().getName() : null;
+
                     return TimecontentsDto.builder()
                             .startTime(c.getStartTime())
                             .endTime(c.getEndTime())
-                            .classId(c.getClasses().getClassId())
+                            .classId(classId)
                             .className(className)
                             .type(c.getType())
+                            .dayOfWeek(c.getDayOfWeek())
+                            .description(c.getDescription())
                             .build();
                 })
                 .collect(Collectors.toList());

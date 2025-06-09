@@ -165,6 +165,13 @@
   border-collapse: collapse;
   border-radius: 10px;
 }
+
+/* .TimeTabCellEmpty 스타일 */
+.TimeTabCellEmpty {
+    cursor: pointer;
+    height: 100%;
+}
+
 .timeTable thead th{
   background-color: white;
 }

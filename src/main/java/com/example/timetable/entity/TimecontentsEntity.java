@@ -39,11 +39,18 @@ public class TimecontentsEntity {
     @DateTimeFormat(pattern = "HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
+    
+    //요일정보를 저장하기위한 항목
+    @Column(name = "day_of_week", nullable = false)
+    private int dayOfWeek;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="class_id")
+    @JoinColumn(name="class_id", nullable=true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ClassesEntity classes;
+
+    @Column(name = "description", length = 255)
+    private String description;
 
     @Column(name = "type",length = 50)
     private String type;

@@ -21,7 +21,7 @@
 }
 
 /* radio 버튼 커스텀 */
-.radioItem input[type="radio"] {
+.radioItem input[type="checkbox"] {
   display: none;
 }
 
@@ -38,7 +38,7 @@
   transition: color 0.2s ease;
 }
 
-.radioItem input[type="radio"]:checked + .radioMark::after { /* 선택 상태 */
+.radioItem input[type="checkbox"]:checked + .radioMark::after { /* 선택 상태 */
     content: "✔";
     color: white;
     text-align: center;
