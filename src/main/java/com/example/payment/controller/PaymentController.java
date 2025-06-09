@@ -3,6 +3,7 @@ package com.example.payment.controller;
 import com.example.classes.dto.ClassResponse;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassesRepository;
+import com.example.payment.dto.PaymentEnrollDto;
 import com.example.payment.dto.PaymentGetChildrenDto;
 import com.example.payment.service.PaymentService;
 import com.example.user.dto.StudentDto;
@@ -95,9 +96,13 @@ public class PaymentController {
     }
 
     //학부모가 장바구니에 넣으면 enroll에 등록이 되어야 함
-//    @PostMapping("/parent/payment/{academyId}/{parentId}")
-//    public ResponseEntity<?> registerClassEnrollment(@PathVariable int academyId, @PathVariable int parentId)
-//    {
-//
-//    }
+    @PostMapping("/parent/paymentEnroll/{academyId}/{parentId}/{studentId}")
+    public ResponseEntity<?> registerClassEnrollment(@RequestBody PaymentEnrollDto dto,
+                                                     @PathVariable int academyId,
+                                                     @PathVariable int parentId,
+                                                     @PathVariable int studentId)
+    {
+        PaymentEnrollDto result = paymentService.insertEnrollClass(academyId, parentId, studentId, dto);
+        return ResponseEntity.ok(result);
+    }
 }

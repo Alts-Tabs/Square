@@ -9,6 +9,7 @@ const PaymentPayCheck = () => {
     const [classes, setClasses] = useState([]);
     const [selClass, setSelClass] = useState([]);
     const selectedClass = classes.find(cls => String(cls.id) === String(selClass));
+    const [duration, setDuration] = useState([]);
 
     //수업을 들을 자녀를 선택
     const [students, setStudents] = useState([]);
@@ -24,16 +25,20 @@ const PaymentPayCheck = () => {
             .catch(err => alert('자녀 목록 호출 실패'));
     }, [roleId]);
 
-    // const handleEnroll = () => {
-    //     if (!selClass || !selStudent) return alert('수업/자녀를 선택하세요');
-    //     axios.post(`/parent/payment/${acaId}/${parentId}`, {
-    //         classId: selClass,
-    //         parentId,
-    //         studentId: selStudent
-    //     }, { withCredentials: true })
-    //         .then(res => { /* enroll 리스트 추가 등 */ })
-    //         .catch(err => alert('신청 실패'));
-    // };
+    const handleEnrollDuration = (e) => {
+        setDuration(e.target.value);
+    }
+
+    const handleEnroll = () => {
+        if (!selClass || !selStudent) return alert('수업/자녀를 선택하세요');
+        axios.post(`/parent/paymentEnroll/${acaId}/${roleId}`, {
+            classId: selClass,
+            roleId,
+            studentId: selStudent
+        }, { withCredentials: true })
+            .then(res => { /* enroll 리스트 추가 등 */ })
+            .catch(err => alert('신청 실패'));
+    };
 
 
     // 클래스 목록 불러오기
@@ -145,7 +150,11 @@ const PaymentPayCheck = () => {
                                             </b></td>
                                         </tr>
                                         <tr>
-                                            <select style={{ width:'70%', textAlign: 'center' }}>
+                                            <select
+                                                style={{ width:'70%', textAlign: 'center' }}
+                                                value={duration}
+                                                onChange={(e)=>setDuration(e.target.value)}
+                                            >
                                                 <option value="may">2025년 5월</option>
                                                 <option value="june">2025년 6월</option>
                                             </select>
