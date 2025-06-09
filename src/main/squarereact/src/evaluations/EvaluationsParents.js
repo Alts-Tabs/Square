@@ -133,12 +133,14 @@ const EvaluationsParents = () => {
                         <tr>
                             <th>시작</th>
                             <td>
-                                    <input type="date" className='evalP-StartDate'/>
+                                <input type="date" className='evalP-StartDate'/>
                             </td>
                             <th>종료</th>
                             <td>
                                 <input type="date" className='evalP-EndDate'/>
-                                <button type='button' className='evalP-Searchbtn' onClick={handelSearchParentsEval}>조회</button>
+                                <button type='button' className='evalP-Searchbtn' onClick={handelSearchParentsEval}>
+                                    조회
+                                </button>
                             </td>
                         </tr>
                     </table>
