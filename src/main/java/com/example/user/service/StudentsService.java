@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,13 +41,24 @@ public class StudentsService {
 
             String formattedPhone = formatPhone(user.getPhone());
             String formattedParentPhone = parent != null ? formatPhone(parent.getUser().getPhone()) : null;
+            String parentName = parent != null ? parent.getUser().getName() : null;
 
             String schoolName = school != null ? school.getName() : null;
 
-            List<String> classNames = s.getClassUsers().stream()
-                    .map(cu -> cu.getClassEntity().getName()).toList();
-            List<Integer> classIds = s.getClassUsers().stream()
-                    .map(cu -> cu.getClassEntity().getClassId()).toList();
+            List<String> classNames = new ArrayList<>();
+            List<Integer> classIds = new ArrayList<>();
+            List<String> teacherNames = new ArrayList<>();
+            List<String> teacherSubjects = new ArrayList<>();
+
+            for(var cu : s.getClassUsers()) {
+                var classEntity = cu.getClassEntity();
+                classNames.add(classEntity.getName());
+                classIds.add(classEntity.getClassId());
+
+                var teacher = classEntity.getTeacher();
+                teacherNames.add(teacher.getUser().getName());
+                teacherSubjects.add(teacher.getSubject());
+            }
 
             return StudentDto.builder()
                     .studentId(s.getStudentId())
@@ -56,10 +68,13 @@ public class StudentsService {
                     .grade(s.getGrade())
                     .room(s.getRoom())
                     .regDate(regDate)
+                    .parentName(parentName)
                     .parentPhone(formattedParentPhone)
                     .classNames(classNames)
                     .classIds(classIds)
                     .schoolName(schoolName)
+                    .teacherNames(teacherNames)
+                    .teacherSubjects(teacherSubjects)
                     .build();
         }).toList();
     }
@@ -83,15 +98,24 @@ public class StudentsService {
 
             String formattedPhone = formatPhone(user.getPhone());
             String formattedParentPhone = parent != null ? formatPhone(parent.getUser().getPhone()) : null;
+            String parentName = parent != null ? parent.getUser().getName() : null;
 
             String schoolName = school != null ? school.getName() : null;
 
-            List<String> classNames = s.getClassUsers().stream()
-                    .map(cu -> cu.getClassEntity().getName())
-                    .toList();
-            List<Integer> classIds = s.getClassUsers().stream()
-                    .map(cu -> cu.getClassEntity().getClassId())
-                    .toList();
+            List<String> classNames = new ArrayList<>();
+            List<Integer> classIds = new ArrayList<>();
+            List<String> teacherNames = new ArrayList<>();
+            List<String> teacherSubjects = new ArrayList<>();
+
+            for(var cu : s.getClassUsers()) {
+                var classEntity = cu.getClassEntity();
+                classNames.add(classEntity.getName());
+                classIds.add(classEntity.getClassId());
+
+                var teacher = classEntity.getTeacher();
+                teacherNames.add(teacher.getUser().getName());
+                teacherSubjects.add(teacher.getSubject());
+            }
 
             return StudentDto.builder()
                     .studentId(s.getStudentId())
@@ -103,8 +127,11 @@ public class StudentsService {
                     .regDate(regDate)
                     .classNames(classNames)
                     .classIds(classIds)
+                    .parentName(parentName)
                     .parentPhone(formattedParentPhone)
                     .schoolName(schoolName)
+                    .teacherNames(teacherNames)
+                    .teacherSubjects(teacherSubjects)
                     .build();
         }).toList();
     }

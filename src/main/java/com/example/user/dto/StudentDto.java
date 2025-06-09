@@ -21,10 +21,13 @@ public class StudentDto {
     // 소속 클래스들
     private List<String> classNames;
     private List<Integer> classIds;
+    private String parentName;
     private String parentPhone; // 학부모 연락처
 
     private String schoolName; // 소속 학교명
 
+    private List<String> teacherNames; // 담당 강사 명들
+    private List<String> teacherSubjects; // 담당 과목들
 
     public StudentDto(int studentId, String name) {
         this.studentId = studentId;

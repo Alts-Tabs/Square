@@ -97,7 +97,7 @@ const ClassSetting = () => {
         <div className='attendContainer'>
                 {/* 왼쪽 영역 */}
                 <div className='leftContainer'>
-                <span className='attendTitle'> 클래스 관리 </span>
+                <span className='attendTitle'> 클래스 설정 </span>
 
                 <div className='listHeader'>
                     <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '700' }}>

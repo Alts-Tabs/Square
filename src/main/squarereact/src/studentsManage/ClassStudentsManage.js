@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../attendBook/attend.css';
 import '../settings/classSetting.css';
@@ -162,9 +162,58 @@ const ClassStudentsManage = () => {
     }
   }
 
+
+  // 마우스 이벤트 핸들러
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    function handleMouseDown(e) {
+      isDown = true;
+      container.classList.add('active');
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+    }
+
+    function handleMouseLeave() {
+      isDown = false;
+      container.classList.remove('active');
+    }
+
+    function handleMouseUp() {
+      isDown = false;
+      container.classList.remove('active');
+    }
+
+    function handleMouseMove(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5; // 드래그 속도 조절
+      container.scrollLeft = scrollLeft - walk;
+    }
+
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   return (
     <div className='studentsManageWrapper'>
-      <span className='attendTitle'> 수강생 관리 </span>
+      <span className='attendTitle'> 클래스 관리 </span>
 
       <div className='listHeader' style={{ justifyContent: 'normal' }}>
         {/* 클래스 필터 */}
@@ -254,7 +303,7 @@ const ClassStudentsManage = () => {
       </div>
 
 
-      <div className='studentsManageBody'>
+      <div className='studentsManageBody' ref={scrollRef}>
         {filterdStudents.map((student) => (
           <div className='studentCard' key={student.studentId}>
             <i className="bi bi-x-lg" onClick={() => handleRemoveStudent(student)}></i> {/* X 삭제 아이콘 */}
@@ -278,11 +327,11 @@ const ClassStudentsManage = () => {
               </div>
               <div className='grayText2'>
                 <span className="label"><b>담당 강사</b></span>
-                <span> - </span> {/* 추후 추가하기 */}
+                <span>{student.teacherNames && student.teacherNames.length > 0 ? student.teacherNames.join(', ') : '-'}</span>
               </div>
               <div className='grayText2'>
                 <span className="label"><b>수강 과목</b></span>
-                <span> - </span> {/* 추후 추가하기 */}
+                <span>{student.teacherSubjects && student.teacherSubjects.length > 0 ? student.teacherSubjects.join(', ') : '-'}</span>
               </div>
               <br />
 

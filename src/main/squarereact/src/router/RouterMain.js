@@ -18,6 +18,7 @@ import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
 import { MyPage } from '../components/Mypage';
+import { StudentsManage } from '../studentsManage';
 
 
 const RouterMain = () => {
@@ -28,6 +29,7 @@ const RouterMain = () => {
 
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     {/* 수강생 ===================================================================================== */}
+                    <Route path="studentsManage" element={<StudentsManage />} />
                     <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
                     <Route path="attend/:acaId" element={<Attend />} /> {/* 출석 관리 */}
