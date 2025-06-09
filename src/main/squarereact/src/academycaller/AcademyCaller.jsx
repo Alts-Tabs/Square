@@ -326,7 +326,7 @@ const AcademyCaller = () => {
       {openModal && (
         <Modal onClose={() => setOpenModal(false)}>
           <div className='schedule-modal-content'>
-            <h2 className="schedule-modal-title">학사 일정 추가</h2>
+            <h2 className="schedule-modal-title"> 일정 추가 </h2>
             <hr />
             <div className='schedule-form-group'>
               <label className='schedule-form-label'>종류</label>

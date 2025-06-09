@@ -1,16 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './attend.css';
 import { Link, useParams } from 'react-router-dom';
 import { connectSocket, sendMessage, onMessage } from '../websocket/socket';
 import axios from 'axios';
+import ApexCharts from 'apexcharts';
+import { attendanceChartOptions  } from './attendanceChartOptions';
 
 const Attend = () => {
     const { acaId } = useParams();
+    const chartRef = useRef(null);
 
+    // 누적 출석 차트
+    useEffect(() => {
+        if (chartRef.current) {
+        const chart = new ApexCharts(chartRef.current, attendanceChartOptions );
+        chart.render();
+
+        // 언마운트 시 chart 파괴
+        return () => chart.destroy();
+        }
+    }, []);
+
+    
     // Web Socket
     useEffect(() => {
     const socket = connectSocket();
-
+    
     const handleMessage = (data) => {
         if (data.type === 'check') {
             console.log(`${data.studentName} submitted code ${data.code}`);
@@ -27,11 +42,12 @@ const Attend = () => {
             setAttendanceEnded(true);
         }
     };
-
+    
         onMessage(handleMessage);
-
+        
         return () => socket.close();
     }, []);
+
     
 
     // 출석한 학생 별 체크 표시 (테스트 중) ===========================================
@@ -218,10 +234,8 @@ const Attend = () => {
                     {/* 우리 반 누적 출석률 =========================================== */}
                     <span className='attendTitle'> 우리 반 누적 출석률 </span>
                     <div className='stackAttend'>
-                        {/* 원형 그래프 */}
-                        <div className='attendGraph'>
-                            그래프 자리
-                        </div>
+                        {/* 원형(도넛) 그래프 */}
+                        <div className='attendGraph' ref={chartRef}></div>
 
                         {/* 반 누적 % */}
                         <div className='attendClass'>
