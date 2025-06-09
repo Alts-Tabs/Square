@@ -31,8 +31,8 @@ const RouterMain = () => {
                     <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
                     <Route path="attend/:acaId" element={<Attend />} /> {/* 출석 관리 */}
-                    <Route path="attend/attend-history" element={<AttendHistory />} />
-                    <Route path="attend-stu" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
+                    <Route path="attend/:acaId/attend-history" element={<AttendHistory />} />
+                    <Route path="attend-stu/:acaId" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
                     <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 출석 관리 경로 */}
 
                     <Route path="evaluationAdmin" element={<EvalAdmin/>}/> {/*학원관계자 종합평가 관리 */}

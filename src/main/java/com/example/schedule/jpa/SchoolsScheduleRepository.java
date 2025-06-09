@@ -19,5 +19,7 @@ public interface SchoolsScheduleRepository extends JpaRepository<SchoolsSchedule
             """)
     List<SchoolsEntity> findDistinctSchoolsByAcademyId(@Param("academyId") int academyId);
 
-    Optional<SchoolsScheduleEntity> findBySchedule(ScheduleEntity schedule); // 학사일정 관련 매핑 조회
+    // 학사일정 관련 매핑 조회 - 단건 및 여러개
+    Optional<SchoolsScheduleEntity> findBySchedule(ScheduleEntity schedule);
+    List<SchoolsScheduleEntity> findAllBySchedule(ScheduleEntity schedule);
 }

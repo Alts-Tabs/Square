@@ -6,6 +6,7 @@ import com.example.user.dto.StudentDto;
 import com.example.user.entity.StudentsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,11 @@ public interface ClassUsersRepository extends JpaRepository<ClassUsersEntity, In
             "JOIN s.user u " +
             "WHERE cu.classEntity.classId = :classId")
     List<StudentDto> findStudentDtoByClassId(int classId);
+
+    /** classId 별 student 수를 미리 조회해 매핑 */
+    @Query("SELECT cu.classEntity.classId AS classId, COUNT(cu) AS count " +
+            "FROM ClassUsersEntity cu " +
+            "WHERE cu.classEntity.academy.academyId = :academyId " +
+            "GROUP BY cu.classEntity.classId")
+    List<ClassCountProjection> countStudentsByAcademy(@Param("academyId") int academyId);
 }

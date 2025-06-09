@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './attend.css';
 import './attendHistory.css';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AttendHistory = () => {
     // 해당 출석 날짜 Title
@@ -29,6 +30,19 @@ const AttendHistory = () => {
     setStudentStatuses(updated);
     };
 
+    // <이전 기능에 필요한 요소
+    const navi = useNavigate();
+    const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: ''});
+    useEffect(() => {
+        // 페이지 로드 시 사용자 정보 요청
+        axios.get("/public/user", {withCredentials: true})
+            .then(res => {
+                const {name, role, username, acaId, userId} = res.data;
+                setUserInfo({name, role, username, acaId, userId});
+            }).catch(() => { // 인증 실패 - 로그인 페이지로..
+                navi("/login");
+            });
+    }, [navi]);
 
     return (
         <div className='attendContainer'>
@@ -39,7 +53,7 @@ const AttendHistory = () => {
 
                 {/* 이전으로 돌아가기 */}
                 <div className='attendbookHeader'>
-                <Link to="/main/attend">
+                <Link to={`/main/attend/${userInfo.acaId}`}>
                     <i className="bi bi-chevron-left"></i>
                     <span>이전</span>
                 </Link>

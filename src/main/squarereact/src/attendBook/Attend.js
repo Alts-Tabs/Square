@@ -9,20 +9,26 @@ const Attend = () => {
 
     // Web Socket
     useEffect(() => {
-        const socket = connectSocket();
-    
-        onMessage((data) => {
-            if (data.type === 'check') {
-                console.log(`${data.studentName} submitted code ${data.code}`);
-                // 여기서 상태 업데이트해서 프로필 체크 표시
-                setCheckedStudents(prev => {
-                    if (!prev.includes(data.studentName)) { // 중복 추가 방지
-                        return [...prev, data.studentName];
-                    }
-                    return prev;
-                });
-            }
-        });
+    const socket = connectSocket();
+
+    const handleMessage = (data) => {
+        if (data.type === 'check') {
+            console.log(`${data.studentName} submitted code ${data.code}`);
+            setCheckedStudents(prev => {
+                if (!prev.includes(data.studentName)) {
+                    return [...prev, data.studentName];
+                }
+                return prev;
+            });
+        } else if (data.type === 'start') {
+            setRandomNumber(data.code); // 출석 숫자 표시
+        } else if (data.type === 'stop') {
+            setRandomNumber(null);
+            setAttendanceEnded(true);
+        }
+    };
+
+        onMessage(handleMessage);
 
         return () => socket.close();
     }, []);
@@ -71,17 +77,25 @@ const Attend = () => {
     const [attendanceEnded, setAttendanceEnded] = useState(false); 
     const [randomNumber, setRandomNumber] = useState(null);   
 
+    // 출석 숫자 생성/중단 요청
     const handleAttendanceClick = () => {
         if (!attending) {
-            const random = Math.floor(100 + Math.random() * 900);
-            setRandomNumber(random);
             setAttending(true);
-            sendMessage({ type: 'start', randomCode: random });
+            sendMessage({ type: 'start' });
         } else {
             setAttending(false);
-            setRandomNumber(null);
-            setAttendanceEnded(true);
+            sendMessage({ type: 'stop' });
         }
+    };
+
+
+    // 출석 취소 기능
+    const handleCancelAttendance = () => {
+        setAttending(false);
+        setRandomNumber(null);
+        // 출석 취소 시 참여한 학생 리스트도 초기화할 수 있음 (선택사항)
+        setCheckedStudents([]);
+        // sendMessage({ type: 'cancel' }); // 백엔드나 학생 쪽에 알림 보내고 싶다면 사용
     };
 
     // 지난 출석 날짜 출력 (임시) ================================================
@@ -125,25 +139,43 @@ const Attend = () => {
                         </span>
                         <br />
 
-                        {/* 3자리 랜덤 숫자 출력 */}
-                        {randomNumber && (
-                            <div style={{
-                            fontSize: '60px',
-                            fontWeight: 'bold',
-                            color: '#2E5077',
-                            }}>
-                            {randomNumber}
-                            </div>
-                        )}
-
                         {/* 출석 시작 & 출석 종료 버튼 */}
                         {!attendanceEnded ? (
+                        <>
+                            {/* 출석 중일 때만 랜덤 숫자 출력 */}
+                            {attending && randomNumber && (
+                                <div style={{
+                                    fontSize: '60px',
+                                    fontWeight: 'bold',
+                                    color: '#2E5077',
+                                }}>
+                                    {randomNumber}
+                                </div>
+                            )}
+
                             <button
                                 onClick={handleAttendanceClick}
                                 className={`attendButton ${attending ? 'end' : ''}`}
                             >
                                 {attending ? '출석 종료' : '출석 시작'}
                             </button>
+
+
+                            {/* 출석 취소 텍스트 */}
+                            {attending && (
+                                <div
+                                    onClick={handleCancelAttendance}
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: 'rgba(125,138,138,0.7)',
+                                        fontWeight: '600',
+                                        textDecoration: 'underline',
+                                    }}
+                                >
+                                    출석 취소
+                                </div>
+                            )}
+                            </>
                             ) : (
                             <div
                                 style={{
@@ -164,7 +196,7 @@ const Attend = () => {
                         <hr style={{marginBottom:'35px'}}/>
                         
                         <div className='listWrapper'>
-                            {/* 수강생 반복 출력 영역 (테스트 중) ================================*/}
+                            {/* 수강생 반복 출력 영역 =======================================*/}
                             {students.map((student) => (
                                 <div className='studentList' key={student.studentId}>
                                     <div className='studentProfileCircle'>

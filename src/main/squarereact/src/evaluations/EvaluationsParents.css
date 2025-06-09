@@ -21,19 +21,19 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
 }
 .evalp-selectInfo {
-    overflow-y: visible; /* 또는 auto로도 가능 */
-    flex-shrink: 0;
-    min-height: 200px; /* 또는 높이 제거 */
-    text-align: left;
-    line-height: 50px;
-    height: 60%;
-    border-radius: 10px 10px 0 0 ;
+    overflow-x: visible;
+    overflow-y: visible;
+    display: block; 
+    min-height: auto; 
+    height: auto;     /* 높이를 내용물에 맞춤 */
+    border-radius: 10px 10px 0 0;
     background-color: white;
     position: relative;
-    display: flex;
+    text-align: left;
+    line-height: 50px;
 }
 .evalp-selectInfo table {
     width: 100%;
@@ -72,35 +72,42 @@
 }
 .evalp-topContainer select {
     margin-left: 9px;
-    border-color:#79D7BE;
-    border: 1px solid #79D7BE;
-    color:#2E5077;
+    border: 1px solid rgba(125, 138, 138, 0.4);
+    color: rgba(125, 138, 138, 0.8);
     font-weight: 500;
     font-size:15px; 
     width:330px;
     height: 40px;
     border-radius: 10px;
+    cursor: pointer;
 }
+
+/* 조회 버튼 */
 .evalp-topContainer .evalP-Searchbtn {
-  width: 120px;
-  height: 40px;
-  border-radius: 10px;
-  background-color: white;
-  border:2px solid #79D7BE;
-  color: #79D7BE;
-  font-weight: 500;
-  font-size: 22px;
-  padding-bottom: 5px !important;
-  line-height: 1;
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: white;
+    border: 2px solid rgba(121, 215, 190, 0.7);
+    color: rgba(121, 215, 190, 0.7);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 35px;
+    text-align: center;
 }
+.evalp-topContainer .evalP-Searchbtn:hover {
+    color: white;
+    background-color: #79D7BE;
+}
+
 .evalp-topContainer .evalP-StartDate,
 .evalp-topContainer .evalP-EndDate {
   margin-left: 9px;
   margin-right: 25%;
   border-radius: 10px;
   height: 40px;
-  border: 1px solid #79D7BE;
-  color: #2E5077;
+  border: 1px solid rgba(125, 138, 138, 0.4);
+  color: rgba(125, 138, 138, 0.8);
   font-weight: 500;
   padding: 10px;
 }
@@ -120,17 +127,17 @@
     padding: 1px;
 }
 .evalp-listTable {
-  border-collapse: separate;
-  background-color: white;
-  margin-top: -2px;
-  text-align: center;
-  overflow: hidden;
-  width: 100%;  
-  border-spacing: 0; /* 셀 간격 0으로 붙이기 */
-  border: none;
+    border-collapse: separate;
+    background-color: white;
+    margin-top: -2px;
+    text-align: center;
+    overflow: hidden;
+    width: 100%;  
+    border-spacing: 0; /* 셀 간격 0으로 붙이기 */
+    border: none;
 }
 .evalp-listTable thead , .evalp-listTable tbody {
-      height: 40px;
+    height: 40px;
 }
 /* 내부 셀만 테두리 유지 */
 .evalp-listTable th,
@@ -154,19 +161,19 @@
 /* 마지막 줄과 마지막 열은 테두리 제거해서 둥글게 만들거나 깔끔하게 처리 */
 .evalp-listTable tr:last-child td,
 .evalp-listTable tr:last-child th {
-  border-bottom: 2px solid #DFDFDF; /*border-bottom: none;*/
+  border-bottom: 2px solid #DFDFDF;
 }
 .evalp-listTable td:last-child,
 .evalp-listTable th:last-child {
   border-right: none;
 }
-/* 위쪽 선 제거 */
+
 .evalp-listTable thead tr:first-child th {
-  border-top: none;
+  border-top: none; /* 위쪽 선 제거 */
 }
 
-/* 왼쪽 선 제거 */
+
 .evalp-listTable tbody tr td:first-child,
 .evalp-listTable thead tr th:first-child {
-  border-left: none;
+  border-left: none; /* 왼쪽 선 제거 */
 }

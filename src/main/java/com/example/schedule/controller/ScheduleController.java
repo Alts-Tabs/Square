@@ -57,4 +57,11 @@ public class ScheduleController {
         return ResponseEntity.ok(updated);
     }
 
+    // 스케줄 삭제 API
+    @DeleteMapping("/th/{scheduleId}/delSchedule")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable int scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
 }
