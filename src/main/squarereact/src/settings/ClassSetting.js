@@ -131,7 +131,7 @@ const ClassSetting = () => {
                                 </span>
                             </span>
                             <span style={{ fontSize: '22px', color: '#2E5077', fontWeight: '700' }}>
-                                [현재 인원] &nbsp;&nbsp; 0/{cls.capacity}
+                                [현재 인원] &nbsp;&nbsp; {cls.currentCount}/{cls.capacity}
                             </span>
                         </div>
 
