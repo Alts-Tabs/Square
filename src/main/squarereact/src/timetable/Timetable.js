@@ -10,8 +10,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Timetable = () => {
-
-
     // 로그인 시 받은 사용자 정보 상태
     const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: ''});
         const navi = useNavigate();
@@ -27,7 +25,7 @@ const Timetable = () => {
         }, [navi]);
 
     // 권한에 따른 전용 기능 구현
-    const role = userInfo.role;
+    //const role = userInfo.role;
 
     // '일', '주', '월' 중 하나만 선택 =======================================
     const [selectedPeriod, setSelectedPeriod] = useState(''); 
@@ -47,12 +45,15 @@ const Timetable = () => {
 
     // 시간표 목록 조회 + 선택
     const [timetableList, setTimetableList] = useState([]);
-    const [selectedTimetable, setSelectedTimetable]=useState(null);
+    const [selectedTimetable, setSelectedTimetable]=useState([]);
 
     useEffect(()=>{
         if(userInfo.acaId){
             axios.get(`/public/timetablelist?academyId=${userInfo.acaId}`)
-            .then(res=>setTimetableList(res.data));
+            .then(res=>{
+                setTimetableList(res.data);
+                setSelectedTimetable(res.data); //모든 timetable 기본 선택
+            });
         }
     },[userInfo.acaId]);
 
@@ -63,47 +64,56 @@ const Timetable = () => {
     //선택된 시간표의 timecontents 조회 + 반복 일정 생성
     const [events, setEvents] =useState([]);
     useEffect(()=>{
-        if(selectedTimetable){
-            axios.get(`/public/${selectedTimetable.timetableId}/timecontents`)
-            .then(res=>{
-                const timecontents= res.data;
-                const repeatEvents=generateRepeatedEvents(
-                    timecontents,
-                    selectedTimetable.startDate,
-                    selectedTimetable.endDate,
-                    selectedTimetable.daySort
-                );
-                setEvents(repeatEvents);
-            });
+        if (selectedTimetable.length === 0) {
+            setEvents([]);
+            return;
         }
+
+        Promise.all(
+            selectedTimetable.map(t =>
+                axios.get(`/public/${t.timetableId}/timecontents`).then(res=>({
+                    timetable:t,
+                    timecontents: res.data,
+                }))
+            )
+        ).then(result=>{
+            const allEvents= result.flatMap(({timetable,timecontents})=>
+                generateRepeatedEvents(timecontents,timetable.startDate,timetable.endDate)
+            );
+            setEvents(allEvents);
+        });
     },[selectedTimetable]);
 
+
     //요일 반복 이벤트 함수 생성
-    const generateRepeatedEvents = (timecontents,startDate,endDate, daySort)=>{
+    const generateRepeatedEvents = (timecontents,startDate,endDate)=>{
         const start= new Date(startDate);
         const end = new Date(endDate);
-        const dayMap={
-            1:[6], //토
-            2:[6,0], //토 ~ 일
-            5:[1,2,3,4,5], //월~금
-            6:[1,2,3,4,5,6], //월~토
-            7:[0,1,2,3,4,5,6] // 매일
-        };
-        const vaildDays=dayMap[daySort]|| [];
         const events=[];
         
-        for(let d=new Date(start); d<=end; d.setDate(d.getDate() + 1)) {
-            if(vaildDays.includes(d.getDay())){
-                const dateStr=d.toISOString().split('T')[0];
-                timecontents.forEach(tc=>{
-                    events.push({
-                        title:tc.className,
-                        start: `${dateStr}T${tc.startTime}`,
-                        end: `${dateStr}T${tc.endTime}`
-                    });
-                });
-            }
+        for(let d=new Date(start); d<=end;d.setDate(d.getDate()+1)){
+            const day=d.getDay(); //현재 요일
+            const dateStr=d.toISOString().split('T')[0];
+
+            timecontents
+            .filter(tc=>tc.dayOfWeek===day)
+            .forEach(tc=>{
+                let title='';
+                if(tc.classId&&tc.className){
+                    title=tc.className;
+                }else if(!tc.classId && tc.description){
+                    title = tc.description;
+                }
+
+
+                events.push({
+                    title:title,
+                    start: `${dateStr}T${tc.startTime}`,
+                    end: `${dateStr}T${tc.endTime}`
+                })
+            })
         }
+        
         return events;
     }
 
@@ -117,8 +127,15 @@ const Timetable = () => {
                     {/* 클래스 목록 반복 리스트 ========================= */}
                     {timetableList.map(t=>(
                     <label className="radioItem" key={t.timetableId}>
-                        <input type="radio" name="class" 
-                        onChange={()=>handleTimetableSelect(t)} />
+                        <input type="checkbox" name="class" 
+                        checked={selectedTimetable.some(sel => sel.timetableId === t.timetableId)}
+                        onChange={(e)=>{
+                            if(e.target.checked){
+                                setSelectedTimetable(prev=>[...prev,t]);
+                            }else{
+                                setSelectedTimetable(prev=>prev.filter(sel=>sel.timetableId!==t.timetableId));
+                            }
+                        }} />
                         <span className="radioMark"></span>
                         <span className="radioText">{t.title}</span>
                     </label>

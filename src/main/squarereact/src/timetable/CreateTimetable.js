@@ -27,6 +27,8 @@ const CreateTimetable = () => {
     const [endDate, setEndDate] = useState('');
     const handleStartTimeChange = (e) => setStartTime(e.target.value);
     const handleEndTimeChange = (e) => setEndTime(e.target.value);
+    const [editingCell, setEditingCell] = useState(null); // {rowIndex, colIndex}
+    const [editingText, setEditingText] = useState('');
     
     useEffect(()=>{
         axios.get("/public/user",{withCredentials:true})
@@ -46,19 +48,19 @@ const CreateTimetable = () => {
         let days= [];
         switch (value) {
             case 1:
-                days=['토요일'];
+                days=[{label:'토요일',value:6}];
                 break;
             case 2:
-                days=['토요일','일요일'];
+                days=[{label:'토요일',value:6},{label:'일요일',value:0}];
                 break;
             case 5:
-                days=['월요일','화요일','수요일','목요일','금요일'];
+                days=[{label:'월요일',value:1},{label:'화요일',value:2},{label:'수요일',value:3},{label:'목요일',value:4},{label:'금요일',value:5}];
                 break;
             case 6:
-                days=['월요일','화요일','수요일','목요일','금요일','토요일'];
+                days=[{label:'월요일',value:1},{label:'화요일',value:2},{label:'수요일',value:3},{label:'목요일',value:4},{label:'금요일',value:5},{label:'토요일',value:6}];
                 break;
             case 7:
-                days=['월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
+                days=[{label:'월요일',value:1},{label:'화요일',value:2},{label:'수요일',value:3},{label:'목요일',value:4},{label:'금요일',value:5},{label:'토요일',value:6},{label:'일요일',value:0}];
                 break;  
             default:
                 days=[];
@@ -201,11 +203,14 @@ const CreateTimetable = () => {
         Object.entries(timetable).forEach(([rowIndex,cols])=>{
             Object.entries(cols).forEach(([colIndex,item])=>{
                 const { startTime: cellStartTime, endTime: cellEndTime } = getTimeByRowIndex(startTime, Number(rowIndex));
+                const dayOfWeek=dayList[colIndex]?.value;//colIndex 기준으로 day_of_week 추출
                 contentsDtoList.push({
-                    classId:Number(item.id),
+                    classId: item?.id ? Number(item.id) : null,
+                    description: item?.description || null,
                     startTime:cellStartTime,
                     endTime:cellEndTime,
                     type:item.type||sort,
+                    dayOfWeek: dayOfWeek
                 });
             });
         });
@@ -349,7 +354,7 @@ const CreateTimetable = () => {
                             <tr>
                                 <th width="150px">시간</th>
                                 {dayList.map((day, index) => (
-                                    <th key={index}>{day}</th>
+                                    <th key={index}>{day.label}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -360,28 +365,58 @@ const CreateTimetable = () => {
                                     <td>{range}</td>
                                     {dayList.map((day, colIndex) => (
                                         <td key={colIndex}
-                                        onDragOver={(e)=>e.preventDefault()}//드롭 가능하게 함
-                                        onDrop={(e)=>{
-                                            e.preventDefault();
-                                            const data=JSON.parse(e.dataTransfer.getData("text/plain"));
-                                            handleDrop(rowIndex,colIndex,data);
-                                        }}>
-                                            {timetable[rowIndex]?.[colIndex] ? (
-                                                <div className="TimeTabCellContent">
-                                                    <span>{timetable[rowIndex][colIndex].label}</span>
-                                                    <i className="bi bi-x-lg TimeTabCellRemove"
-                                                        onClick={() => {setTimetable((prev) => {
-                                                            const updated = { ...prev };
-                                                            if (updated[rowIndex]) {
-                                                                delete updated[rowIndex][colIndex];
-                                                            }
-                                                            return { ...updated };
-                                                            });
-                                                        }}
-                                                    ></i>
-                                                </div>
-                                            ) : ""}
-                                        </td>
+                                            onClick={() => {
+                                                const currentItem = timetable[rowIndex]?.[colIndex];
+                                                if (!currentItem) {
+                                                    setEditingCell({ rowIndex, colIndex });
+                                                    setEditingText('');
+                                                }
+                                            }}
+                                            onDragOver={(e) => e.preventDefault()}
+                                            onDrop={(e) => {
+                                                e.preventDefault();
+                                                const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+                                                handleDrop(rowIndex, colIndex, data);
+                                            }}
+                                        >
+                                          {editingCell?.rowIndex === rowIndex && editingCell?.colIndex === colIndex ? (
+                                            <input type="text" autoFocus value={editingText}
+                                                onChange={(e) => setEditingText(e.target.value)}
+                                                onBlur={() => {
+                                                  if (editingText.trim()) {
+                                                    const newItem = {
+                                                        type: 'TEXT',
+                                                        label: editingText.trim(),
+                                                        description: editingText.trim(),
+                                                        id: null
+                                                    };
+                                                    handleDrop(rowIndex, colIndex, newItem);
+                                                }
+                                                setEditingCell(null);
+                                                setEditingText('');
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.target.blur(); // blur 처리로 저장
+                                                }
+                                            }}
+                                        />
+                                    ) : timetable[rowIndex]?.[colIndex] ? (
+                                        <div className="TimeTabCellContent">
+                                            <span>{timetable[rowIndex][colIndex].label}</span>
+                                            <i className="bi bi-x-lg TimeTabCellRemove"
+                                                onClick={() =>setTimetable((prev) => {
+                                                    const updated = { ...prev };
+                                                    if (updated[rowIndex]) {
+                                                        delete updated[rowIndex][colIndex];
+                                                    }
+                                                    return { ...updated };
+                                                })
+                                                }
+                                            ></i>
+                                        </div>
+                                    ) : null}
+                                    </td>
                                     ))}
                                 </tr>
                             ))
