@@ -68,6 +68,8 @@ const AttendStu = () => {
     // acaId 변경 시 또는 컴포넌트 마운트 시 학생 목록 호출
     useEffect(() => {
         fetchStudentsInClass();
+        setCheckedStudents([]); // 빌드 테스트 warning 제거용
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [acaId]); // acaId가 변경될 때마다 다시 호출
     
 

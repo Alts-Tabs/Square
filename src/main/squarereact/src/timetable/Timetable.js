@@ -57,9 +57,9 @@ const Timetable = () => {
         }
     },[userInfo.acaId]);
 
-    const handleTimetableSelect=(timetable)=>{
-        setSelectedTimetable(timetable);
-    };
+    // const handleTimetableSelect=(timetable)=>{
+    //     setSelectedTimetable(timetable);
+    // }; // 미사용 주석용
     
     //선택된 시간표의 timecontents 조회 + 반복 일정 생성
     const [events, setEvents] =useState([]);
