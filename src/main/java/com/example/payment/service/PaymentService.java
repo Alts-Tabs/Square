@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,9 +72,18 @@ public class PaymentService {
                 .build();
     }
 
+    //원장이 수강신청한 학부모와 학생의 정보를 확인
+    @Transactional
+    public List<EnrollEntity> getDirEnrollList(int academyId) {
+        return paymentEnrollRepository.getAllEnroll(academyId);
+    }
+
     //학부모가 장바구니에 수업을 신청하고 자신의 학부모 id를 이용해서 결제해야 할 부분을 select
     @Transactional
     public List<EnrollEntity> getEnrollByParentId(int parentId) {
         return paymentEnrollRepository.getEnrollByParentId(parentId);
     }
+
+    //학부모가 장바구니 목록에서 선택 삭제
+
 }

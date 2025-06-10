@@ -1,3 +1,6 @@
+::-webkit-scrollbar {
+  display: none;
+}
 .nonPayCheckContainer {
     display: flex;
     justify-content: space-between;
@@ -5,6 +8,11 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    -ms-overflow-style: none;
+}
+
+.nonPayCheckContainer::-webkit-scrollbar{
+  display:none;
 }
 
 .nonPayTitle {
@@ -58,10 +66,14 @@
     overflow-y: visible; /* 또는 auto로도 가능 */
     flex-shrink: 0;
     min-height: 200px; /* 또는 높이 제거 */
+    max-height: 650px; /*  */
     text-align: left;
     border-radius: 0 0 10px 10px;
     background-color: white;
     padding: 1px;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: auto; 
 }
 
 .classRead {

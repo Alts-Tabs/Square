@@ -118,6 +118,24 @@ public class PaymentController {
     @Getmapping (원장 / isPay / 학원 id ) 학부모 장바구니 창은 어차피 학부모 id만 받아오면 됨
     */
 
+    @GetMapping("/dir/{academyId}/enrollList")
+    public ResponseEntity<List<PaymentEnrollOutputDto>> getDirEnrollList(@PathVariable int academyId) {
+        List<EnrollEntity> allEnroll = paymentService.getDirEnrollList(academyId);
+
+        List<PaymentEnrollOutputDto> response = allEnroll.stream()
+                .map(e -> new PaymentEnrollOutputDto(
+                        e.getEnrollId(),
+                        e.getParent().getUser().getName(),
+                        e.getStudent().getUser().getName(),
+                        e.getClasses().getTeacher().getUser().getName(),
+                        e.getClasses().getName(),
+                        e.getDuration(),
+                        e.getClasses().getTuition()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
 
     /*
     enroll db에 입력한 내용 중 프론트에서 라우팅된 roleId와 학부모 id와 동일한 부분을
@@ -159,4 +177,13 @@ public class PaymentController {
 
         return ResponseEntity.ok(response);
     }
+
+    //토스페이먼츠로 장바구니 금액만큼 결제
+
+
+    //장바구니 단일 제거
+//    @DeleteMapping("/parent/{parentId}/deleteEnrollList")
+//    public ResponseEntity<?> removeEnrollList(@PathVariable int parentId) {
+//
+//    }
 }
