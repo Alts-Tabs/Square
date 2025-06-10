@@ -76,6 +76,7 @@ const Attend = () => {
     // acaId 변경 시 또는 컴포넌트 마운트 시 학생 목록 호출
     useEffect(() => {
         fetchStudentsInClass();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [acaId]); // acaId가 변경될 때마다 다시 호출
     // ====================================================================
     

@@ -60,12 +60,12 @@ const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) =>
       navigate('/main/reference');
     }
   };
-
-  const handleDelete = () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      onDelete && onDelete(initialData?.id);
-    }
-  };
+// 미사용 함수 - 빌드용 주석
+  // const handleDelete = () => {
+  //   if (window.confirm('정말 삭제하시겠습니까?')) {
+  //     onDelete && onDelete(initialData?.id);
+  //   }
+  // };
 
   return (
      <div className="board-wrap">

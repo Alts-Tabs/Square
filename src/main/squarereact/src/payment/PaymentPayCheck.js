@@ -75,10 +75,12 @@ const PaymentPayCheck = () => {
     // acaId(학원) 바뀔 때 1번만 부르기
     useEffect(() => {
         fetchClassSelect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [acaId]);
     // 장바구니 한번만 부르기
     useEffect(() => {
         fetchEnrollList();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roleId]);
 
     return (

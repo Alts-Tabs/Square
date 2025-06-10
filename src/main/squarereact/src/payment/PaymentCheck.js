@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+// import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import './PaymentCheck.css';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 
 
