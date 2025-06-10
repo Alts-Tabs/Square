@@ -13,4 +13,10 @@ public interface PaymentEnrollRepository extends JpaRepository<EnrollEntity, Int
     @Transactional
     @Query("select e from EnrollEntity e where e.parent.parentId = :parentId")
     List<EnrollEntity> getEnrollByParentId(@Param("parentId") int parentId);
+
+    //getEnrollByParentId 에서 원장이 확인 가능한 범위로 수정
+    //
+    @Transactional
+    @Query("select e from EnrollEntity e where e.academyId =:academyId")
+    List<EnrollEntity> getAllEnroll(@Param("academyId") int academyId);
 }

@@ -330,7 +330,7 @@ const Main = () => {
                                 <>
                                     <span className='naviContent'>
                                     <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
-                                    <Link to="nonPayCheck" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <Link to={`nonPayCheck/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         미납 관리
                                     </Link>
                                     </span>
