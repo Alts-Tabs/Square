@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './attend.css';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { connectSocket, sendMessage, onMessage } from '../websocket/socket';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
@@ -10,7 +10,7 @@ const Attend = () => {
     const { acaId } = useParams();
     const chartRef = useRef(null);
 
-    // 누적 출석 차트
+    // 누적 출석 차트 ===========================================================
     useEffect(() => {
         if (chartRef.current) {
         const chart = new ApexCharts(chartRef.current, attendanceChartOptions );
@@ -22,7 +22,7 @@ const Attend = () => {
     }, []);
 
     
-    // Web Socket
+    // Web Socket ===============================================================
     useEffect(() => {
     const socket = connectSocket();
     
@@ -47,8 +47,45 @@ const Attend = () => {
         
         return () => socket.close();
     }, []);
-
     
+
+    // 현재 수업 출력 ============================================================
+    const location = useLocation();
+    const passedUserInfo = location.state?.userInfo; // Main.js의 state에서 받은 userInfo
+    
+    const [userInfo, setUserInfo] = useState(() => { // userInfo 상태 정의
+        const stored = localStorage.getItem('userInfo');
+        return passedUserInfo || (stored ? JSON.parse(stored) : null);
+    });
+
+    useEffect(() => { // 새로 받아온 userInfo가 있으면 localStorage에 저장
+        if (passedUserInfo) {
+            localStorage.setItem('userInfo', JSON.stringify(passedUserInfo));
+            setUserInfo(passedUserInfo);
+        }
+    }, [passedUserInfo]);
+
+
+    const [currentClass, setCurrentClass] = useState(null);
+
+    useEffect(() => { // 로그인 상태의 강사 = 시간표 수업일 시 수업명 출력
+        if (!userInfo?.userId) return;
+
+        axios.get('/public/current-class', {
+            params: { userId: userInfo.userId },
+        }).then(res => {
+            if (res.data) {
+                setCurrentClass(res.data);
+            } else {
+                setCurrentClass(null);
+            }
+        }).catch(err => {
+            console.error('현재 수업 정보를 불러오는 중 오류 발생:', err);
+        });
+    }, [userInfo]);
+
+    console.log("userInfo:", userInfo);
+
 
     // 출석한 학생 별 체크 표시 (테스트 중) ===========================================
     const [checkedStudents, setCheckedStudents] = useState([]);
@@ -79,6 +116,7 @@ const Attend = () => {
     }, [acaId]); // acaId가 변경될 때마다 다시 호출
     // ====================================================================
     
+
     // 당일 출석 날짜 출력
     const getTodayDate = () => {
         const today = new Date();
@@ -103,7 +141,6 @@ const Attend = () => {
             sendMessage({ type: 'stop' });
         }
     };
-
 
     // 출석 취소 기능
     const handleCancelAttendance = () => {
@@ -139,14 +176,23 @@ const Attend = () => {
                 <div className='leftContainer'>
                     {/* 오늘의 출석 ==================================================== */}
                     <span className='attendTitle'> 오늘의 출석 </span>
-                    {/* 지금 수업은 ~입니다. */}
+                    {/* 현재 로그인 된 강사의 수업 출력 */}
                     <div className='todayAttendTitle'>
-                        <span> 지금 수업은 </span>
-                        <span style={{fontSize:'25px', color:'#2E5077', fontWeight:'800'}}> 
-                            (수업 시간표) 
+                    <span> 지금은 </span>
+                    {currentClass ? (
+                    <>
+                        <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '800' }}>
+                        {currentClass.className}
                         </span>
-                        <span> 입니다. </span> <br/>
+                        <span> 입니다. </span> <br />
+                    </>
+                    ) : (
+                    <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '800' }}>
+                        진행 중인 수업이 없습니다.
+                    </span>
+                    )}
                     </div>
+
 
                     {/* 출석 버튼 이벤트 */}
                     <div className='todayAttendContent'>
