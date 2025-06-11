@@ -53,11 +53,18 @@
   color: #79D7BE; /* 체크 시 바뀔 색상 */
 }
 
-/* 일 - 주 - 월 */
+/* 일 - 주 - 월, < - > */
 .buttonsWrapper2 {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
+    margin-top: 10px;
+}
+
+.buttonsWrapper2 .time-prevnextbtn:hover{
+    background-color: white;
+    color: #79D7BE;
+    border: 2px solid #79D7BE;
 }
 
 .buttonsWrapper2 button:first-child {
@@ -79,18 +86,6 @@
     font-weight: 500;
     font-size: 18px;
     border: none;
-    border-left: 1px solid #EBF0F0;
-    border-right: 1px solid #EBF0F0;
-    background-color: rgba(121, 215, 190, 0.5);
-}
-
-.buttonsWrapper2 button:nth-child(3) {
-    width: 40px;
-    height: 37px;
-    color: white;
-    font-weight: 500;
-    font-size: 18px;
-    border: none;
     border-radius: 0 10px 10px 0;
     border-left: 1px solid #EBF0F0;
     background-color: rgba(121, 215, 190, 0.5);
@@ -103,6 +98,29 @@
     border: 1px solid #007bff;
 }
 
+.buttonsWrapper3{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    width: 80px;
+    height: 37px;
+    margin-left: auto;
+}
+.buttonsWrapper3 .time-selectToday {
+    width: 800px;
+    color: white;
+    font-weight: 500;
+    font-size: 17px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+.buttonsWrapper3 .time-selectToday:hover{
+    background-color: white;
+    color: #79D7BE;
+    border: 2px solid #79D7BE;
+}
 
 /* 우측 시간표 영역 ====================================== */
 .timetableContainer {
@@ -156,4 +174,71 @@
     height: 100%;
     margin-top: 10px;
     background-color: white;
+    border-radius: 10px;
+}
+
+/* FullCalendar 커스텀=================================================================*/
+.fc-scroller-harness { /*요일 노출 영역 위로 조금 땡기고 fullcalendar 영역 노출되는 글자 검은색*/
+    top: -10px;
+    color: #2E5077;
+    font-weight: 500;
+}
+/*.fc-col-header tr{
+    background-color: white;
+    margin: none;
+}*/
+[role="presentation"] { /*요일 노출영역 배경색 */
+  background-color: white;
+  padding-right: -50px;
+}
+.fc-scrollgrid-sync-inner, 
+.fc-timegrid-col-frame{ /*캘린더 내 오른쪽 여백 제거*/
+    margin-right: -13px;
+}
+
+.fc-scroller { /*dayHeaders 스크롤 제거*/
+    overflow: auto;
+  -ms-overflow-style: none; /* IE, Edge */
+}
+.fc-scroller::-webkit-scrollbar {/*내용 노출 영역 스크롤 제거*/
+  display: none; /* Chrome, Safari, Opera */
+} 
+
+.fc-col-header-cell-cushion { /*요일 노출되는 영역 글자 색 조정*/
+    color: #2E5077;
+    text-decoration: none;
+}
+.fc-timegrid-slot fc-timegrid-slot-label fc-scrollgrid-shrink { /*시간영역 글자색 지정*/
+    color: #2E5077;
+    font-weight: 500;
+}
+.fc-event-main { /*일정있는 경우 css 지정*/
+    border:none;
+    border-radius: 5px;
+    background-color:  rgba(121, 215, 190,0.7);
+}
+.fc-event-main-frame{/*일정있는 경우 css 지정*/
+    padding-top: 5px;
+    background-color:  rgba(121, 215, 190, 0.7);
+    border:none;
+    color: white;
+    font-weight: 500;
+}
+
+/*일정 목록에 기본으로 노출되던 border 제거*/
+:root {
+    --fc-event-bg-color: none;
+    --fc-event-border-color:none;
+}
+
+/*요일 노출 영역 오른쪽 끝에 노출되던 선 제거*/
+.fc-theme-standard td, .fc-theme-standard th:last-child { 
+  border-right: none !important;
+  
+}
+
+/*fullcalendar 맨 아래 선 제거*/
+.fc-theme-standard tr:last-child td,
+.fc-theme-standard tr:last-child th {
+  border-bottom: none;
 }

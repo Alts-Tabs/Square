@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -7,6 +7,7 @@ import '../attendBook/attend.css';
 import './timetable.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import koLocale from '@fullcalendar/core/locales/ko';
 
 
 const Timetable = () => {
@@ -27,13 +28,38 @@ const Timetable = () => {
     // 권한에 따른 전용 기능 구현
     //const role = userInfo.role;
 
-    // '일', '주', '월' 중 하나만 선택 =======================================
-    const [selectedPeriod, setSelectedPeriod] = useState(''); 
+    // '일', '주' 중 하나만 선택 =======================================
+    const [selectedPeriod, setSelectedPeriod] = useState('주');
+    const calendarRef = useRef(null);
     const handlePeriodClick = (period) => {
         if (selectedPeriod === period) {
             setSelectedPeriod(''); // 이미 선택된 버튼은 다시 누르면 해제됨.
         } else {
             setSelectedPeriod(period); // 버튼 선택
+            const calendarApi=calendarRef.current?.getApi();
+            if(calendarApi){
+                calendarApi.changeView(period === '일' ? 'timeGridDay' : 'timeGridWeek');
+            }
+        }
+    };
+
+    //'<', '>' 클릭 이벤트
+    const handleDateNavigate = (direction) => {
+        const calendarApi = calendarRef.current?.getApi();
+        if(!calendarApi) return;
+
+        if(selectedPeriod === '일'){
+            if(direction === '<'){
+                calendarApi.prev();//이전 날짜
+            }else{
+                calendarApi.next();//다음 날짜
+            }
+        }else{
+            if(direction==='<'){
+                calendarApi.prev();//이전 주
+            }else {
+                calendarApi.next(); //다음 주
+            }
         }
     };
 
@@ -42,6 +68,18 @@ const Timetable = () => {
     const handleCreateClick = () => {
         navigate('create-timetable', { state: { acaId: userInfo.acaId } });
     };
+
+    // 시간표 편집 페이지 이동
+    const handleEditClick =()=>{
+        if(selectedTimetable.length === 0){
+            alert('선택된 시간표가 없습니다.');
+        }else if(selectedTimetable.length > 1){
+            alert('하나의 시간표만 선택해주세요.');
+        }else {
+            const timetableId = selectedTimetable[0].timetableId;
+            navigate('update-timetable',{ state: { timetableId, acaId: userInfo.acaId  } });
+        }
+    }
 
     // 시간표 목록 조회 + 선택
     const [timetableList, setTimetableList] = useState([]);
@@ -52,7 +90,9 @@ const Timetable = () => {
             axios.get(`/public/timetablelist?academyId=${userInfo.acaId}`)
             .then(res=>{
                 setTimetableList(res.data);
-                setSelectedTimetable(res.data); //모든 timetable 기본 선택
+                const today = new Date().toISOString().split('T')[0];
+                const ongoing = res.data.filter(t => t.endDate >= today);
+                setSelectedTimetable(ongoing);
             });
         }
     },[userInfo.acaId]);
@@ -125,25 +165,72 @@ const Timetable = () => {
                 {/* leftContainer */}
                 <div className='radioContainer'>
                     {/* 클래스 목록 반복 리스트 ========================= */}
-                    {timetableList.map(t=>(
-                    <label className="radioItem" key={t.timetableId}>
-                        <input type="checkbox" name="class" 
-                        checked={selectedTimetable.some(sel => sel.timetableId === t.timetableId)}
-                        onChange={(e)=>{
-                            if(e.target.checked){
-                                setSelectedTimetable(prev=>[...prev,t]);
-                            }else{
-                                setSelectedTimetable(prev=>prev.filter(sel=>sel.timetableId!==t.timetableId));
-                            }
-                        }} />
-                        <span className="radioMark"></span>
-                        <span className="radioText">{t.title}</span>
-                    </label>
+                    {(()=> {
+                        const today =new Date().toISOString().split('T')[0]; //'YYYY-MM-DD'
+                        const ongoing =timetableList.filter(t=>t.endDate>=today);
+                        const ended=timetableList.filter(t=>t.endDate<today);
+
+                        return(
+                            <>
+                                {/*진행 중 시간표 */}
+                                {ongoing.map(t=>(
+                                    <label className="radioItem" key={t.timetableId}>
+                                        <input type='checkbox' name='class' checked={selectedTimetable.some(sel => sel.timetableId === t.timetableId)}
+                                        onChange={(e)=>{
+                                            if(e.target.checked){
+                                                setSelectedTimetable(prev=>[...prev,t]);
+                                            }else {
+                                                setSelectedTimetable(prev => prev.filter(sel => sel.timetableId !== t.timetableId));
+                                            }
+                                        }}
+                                        />
+                                        <span className="radioMark"></span>
+                                        <span className="radioText">{t.title}</span>
+                                    </label>
+                                ))}
+                                {/*구분선 */}
+                                {ended.length>0&&<hr style={{margin:'10px 0', border:'1px solid black', width:'100%'}}/>}
+                                {/*종료된 시간표 */}
+                                {ended.map(t=>(
+                                    <label className="radioItem" key={t.timetableId}>
+                                        <input type='checkbox' name='class'
+                                        checked={selectedTimetable.some(sel => sel.timetableId === t.timetableId)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setSelectedTimetable(prev => [...prev, t]);
+                                            } else {
+                                                setSelectedTimetable(prev => prev.filter(sel => sel.timetableId !== t.timetableId));
+                                            }
+                                        }} />
+                                        <span className="radioMark"></span>
+                                        <span className="radioText" style={{ color: '#aaa' }}>{t.title}</span>
+                                    </label>
+                                ))}
+                            </>
+                        );
+                    })()}
+                </div>
+
+                <div className='buttonsWrapper3'>
+                        <button className='time-selectToday' onClick={() => handleDateNavigate()} style={{fontSize:'25px'}}
+                        >오늘</button>
+                </div>
+
+                <div className='buttonsWrapper2'>
+                    {['<', '>'].map((label) => (
+                        <button
+                            key={label}
+                            onClick={() => handleDateNavigate(label)}
+                            className='time-prevnextbtn'
+                            style={{fontSize:'25px'}}
+                        >
+                            {label}
+                        </button>
                     ))}
                 </div>
-                
+
                 <div className='buttonsWrapper2'>
-                    {['일', '주', '월'].map((label) => (
+                    {['일', '주'].map((label) => (
                         <button
                             key={label}
                             onClick={() => handlePeriodClick(label)}
@@ -161,7 +248,7 @@ const Timetable = () => {
                 {/* 학생 & 학부모는 아래 버튼 렌더링 X */}
                 {(userInfo.role !== '학생' && userInfo.role !== '학부모') && (
                     <div className='buttonsWrapper'>
-                        <button> 편집 </button>
+                        <button onClick={handleEditClick}> 편집 </button>
                         <button onClick={handleCreateClick}> 시간표 생성 </button>
 
                     </div>
@@ -171,12 +258,28 @@ const Timetable = () => {
                     <FullCalendar
                       plugins={[dayGridPlugin,timeGridPlugin,interactionPlugin]}
                       initialView='timeGridWeek'
+                      ref={calendarRef}
+                      headerToolbar={false}
                       dayHeaders={true}
                       allDaySlot={false}
                       slotDuration= {'00:10:00'}
                       allDayClassNames={false}
                       nowIndicator={true}
-                      height='100%'
+                      height='97%'
+                      scrollTime={new Date().toTimeString().slice(0, 8)} //현재시간에 자동으로 포커스
+                      locale={koLocale}
+                      dayHeaderContent={(args) => { //상단 dayHeader 커스텀
+                        const date=args.date;
+                        const option={weekday:'long',month:'2-digit',day:'2-digit'};
+                        const formatter=new Intl.DateTimeFormat('ko-KR',option);
+                        const parts=formatter.formatToParts(date);
+
+                        const weekday=parts.find(p=>p.type==='weekday')?.value;
+                        const month=parts.find(p=>p.type==='month')?.value;
+                        const day=parts.find(p=>p.type==='day')?.value;
+
+                        return `${weekday} (${month}/${day})`;
+                      }}
                       events={events}
                     />
                 </div>

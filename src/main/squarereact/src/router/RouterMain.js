@@ -13,7 +13,7 @@ import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 import { AcademyCaller, Consultation } from '../academycaller';
-import { Timetable, CreateTimetable } from '../timetable';
+import { Timetable, CreateTimetable, UpdateTimetable } from '../timetable';
 import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
@@ -64,6 +64,7 @@ const RouterMain = () => {
                     {/* 학습 관리 ================================================================================== */}
                     <Route path="timetable" element={<Timetable />} /> {/* 시간표 */}
                     <Route path="timetable/create-timetable" element={<CreateTimetable />} /> {/* 시간표 생성 */}
+                    <Route path="timetable/update-timetable" element={<UpdateTimetable/>} /> {/*시간표 수정 */}
 
 
                     {/* 학원 정보 ================================================================================== */}

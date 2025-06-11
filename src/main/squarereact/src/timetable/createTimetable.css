@@ -208,3 +208,8 @@
 .timeTable th:last-child {
   border-right: none;
 }
+/*맨 아래 선 제거*/
+.timeTable tr:last-child td,
+.timeTable tr:last-child th {
+  border-bottom: none;
+}

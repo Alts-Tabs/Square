@@ -279,6 +279,7 @@ const CreateTimetable = () => {
                         <div className='contentRow'>
                             <input type='text' value={title} onChange={(e)=>setTitle(e.target.value)}/>
                             <select className='TimeTabConCon-daySelect' name="daySort" onChange={handleSelectChange} >
+                                <option value=''>선택하세요.</option>
                                 <option value='1'>토요일(1일)</option>
                                 <option value='2'>토요일 ~ 일요일(2일)</option>
                                 <option value='5'>월요일 ~ 금요일(5일)</option>
