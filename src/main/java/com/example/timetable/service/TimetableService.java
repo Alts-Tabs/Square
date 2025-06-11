@@ -2,9 +2,7 @@ package com.example.timetable.service;
 
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
-import com.example.timetable.dto.TimecontentsDto;
-import com.example.timetable.dto.TimetableDto;
-import com.example.timetable.dto.TimetableRequestDto;
+import com.example.timetable.dto.*;
 import com.example.timetable.entity.TimecontentsEntity;
 import com.example.timetable.entity.TimetableEntity;
 import com.example.timetable.entity.TimeusersEntity;
@@ -130,5 +128,115 @@ public class TimetableService {
                 })
                 .collect(Collectors.toList());
     }
+    
+    /** 시간표 편집 페이지에 노출시킬 정보들*/
+    public TimetableResponseDto getTimetableDetail(int timetableId){
+        TimetableEntity timetable=timetableRepository.findById(timetableId).
+                orElseThrow(()->new IllegalArgumentException("해당 시간표가 존재하지 않습니다. ID: "+timetableId));
+        List<TimecontentsEntity> contents = timecontentsRepository.findByTimetable_TimetableId(timetableId);
+        List<TimeusersEntity> users = timeusersRepository.findByTimetable_timetableId(timetableId);
+
+        List<TimecontentsDto> contentsDtoList=contents.stream()
+                .map(entity->{
+                    ClassesEntity classes = entity.getClasses();//null 가능
+                    return TimecontentsDto.builder()
+                            .startTime(entity.getStartTime())
+                            .endTime(entity.getEndTime())
+                            .classId(classes != null ? classes.getClassId() : null)
+                            .className(classes != null ? classes.getName() : null)
+                            .dayOfWeek(entity.getDayOfWeek())
+                            .type(entity.getType())
+                            .description(entity.getDescription())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        List<TimeusersDto> usersDtoList=users.stream()
+                .map(entity->TimeusersDto.builder()
+                        .studentId(entity.getStudent().getStudentId())
+                        .studentName(entity.getStudent().getUser().getName())
+                        .className(entity.getClass().getName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return TimetableResponseDto.builder()
+                .timetableId(timetable.getTimetableId())
+                .title(timetable.getTitle())
+                .daySort(timetable.getDaySort())
+                .startDate(timetable.getStartDate())
+                .endDate(timetable.getEndDate())
+                .contents(contentsDtoList)
+                .users(usersDtoList)
+                .dayList(convertDaySortToDayList(timetable.getDaySort()))
+                .build();
+    }
+
+    /** updateTimetable > 오른쪽 표에 노출될 요일 목록*/
+    private List<String> convertDaySortToDayList(int daySort){
+        return switch (daySort){
+            case 1 -> List.of("토요일");
+            case 2 -> List.of("토요일", "일요일");
+            case 5 -> List.of("월요일", "화요일", "수요일", "목요일", "금요일");
+            case 6 -> List.of("월요일", "화요일", "수요일", "목요일", "금요일", "토요일");
+            case 7 -> List.of("월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일");
+            default -> List.of("요일 미정");
+        };
+    }
+
+    /** 수정된 내용 저장*/
+    @Transactional
+    public void updateTimetable(int timetableId, TimetableRequestDto dto){
+        //timetable 조회 및 갱신
+        TimetableEntity timetable = timetableRepository.findById(timetableId)
+                .orElseThrow(()->new RuntimeException("Timetable not found"));
+
+        AcademiesEntity academy=academiesRepository.getReferenceById(dto.getAcademyId());
+        timetable.setAcademy(academy);
+        timetable.setTitle(dto.getTitle());
+        timetable.setDaySort(dto.getDaySort());
+        timetable.setStartDate(dto.getStartDate());
+        timetable.setEndDate(dto.getEndDate());
+
+        timetableRepository.save(timetable); //생략 가능하지만 명시적 호출
+
+        //기존 contents와 users 삭제
+        timecontentsRepository.deleteByTimetable_timetableId(timetableId);
+        timeusersRepository.deleteByTimetable_TimetableId(timetableId);
+
+        // 새로 저장할 timecontents 준비
+        List<TimecontentsEntity> contentsEntities = new ArrayList<>();
+        Set<Integer> studentIds = new HashSet<>();
+        
+        for(TimecontentsDto contentDto:dto.getContentsDtoList()){
+            TimecontentsEntity.TimecontentsEntityBuilder builder=TimecontentsEntity.builder()
+                    .timetable(timetable)
+                    .startTime(contentDto.getStartTime().truncatedTo(ChronoUnit.MINUTES))
+                    .endTime(contentDto.getEndTime().truncatedTo(ChronoUnit.MINUTES))
+                    .type(contentDto.getType())
+                    .dayOfWeek(contentDto.getDayOfWeek())
+                    .description(contentDto.getDescription());
+            
+            //classId가 존자할 경우 클래스 정보 및 학생정보 수집
+            if(contentDto.getClassId()!=null){
+                builder.classes(ClassesEntity.builder().classId(contentDto.getClassId()).build());
+                List<Integer> classStudentIds=classUsersRepository.findStudentIdsByClassId(contentDto.getClassId());
+                studentIds.addAll(classStudentIds);
+            }
+            contentsEntities.add(builder.build());
+        }
+        timecontentsRepository.saveAll(contentsEntities);
+
+        //새로운 timeusers 저장
+        List<TimeusersEntity> timeusers=studentIds.stream()
+                .map(studentId ->TimeusersEntity.builder()
+                        .student(StudentsEntity.builder().studentId(studentId).build())
+                        .timetable(timetable)
+                        .build())
+                .toList();
+        timeusersRepository.saveAll(timeusers);
+    }
+
+
+
 
 }

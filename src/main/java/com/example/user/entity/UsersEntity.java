@@ -40,6 +40,9 @@ public class UsersEntity {
     @Column(length = 100)
     private String email;
 
+    @Column(length = 100)
+    private String userProfile; // 추가용
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

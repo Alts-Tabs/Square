@@ -123,3 +123,34 @@
     width: 100%;
     display: block; /* span을 block으로 바꿔야 text-align 적용됨 */
 }
+
+tbody tr td button {
+    color: #79D7BE;
+    font-size: 20px;
+    font-weight: 500;
+    border: 2px solid #79D7BE;
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.selectParentClass select {
+    border: 1px solid rgba(125, 138, 138, 0.4);
+    color: rgba(125, 138, 138, 0.8);
+    font-weight: 500;
+    font-size:15px; 
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.selectParentClass .classLabel {
+    width: 20%;
+    height: 42px;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(125, 138, 138, 0.8);
+    border: 1px solid rgba(125, 138, 138, 0.4);
+    border-radius: 10px;
+    cursor: pointer;
+}

@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';  // 추가
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './referenceWrite.css';
 
 const MAX_TITLE_LENGTH = 50;
 
-const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) => {
+const ReferenceWrite = ({ initialData = null, onCancel }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [files, setFiles] = useState([]);
   const [fileAttachOpen, setFileAttachOpen] = useState(true);
   const fileInputRef = useRef(null);
-
-  const navigate = useNavigate(); // 추가
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData) {
@@ -43,14 +43,29 @@ const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) =>
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit && onSubmit({
-      id: initialData?.id || null,
-      title,
-      content,
-      files,
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    files.forEach((file) => {
+      formData.append('files', file);
     });
+
+    try {
+      const res = await axios.post('/api/references', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('등록 성공:', res.data);
+      navigate('/main/reference');
+    } catch (err) {
+      console.error('등록 실패:', err);
+      alert('글 등록 중 오류가 발생했습니다.');
+    }
   };
 
   const handleCancel = () => {
@@ -61,14 +76,8 @@ const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) =>
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      onDelete && onDelete(initialData?.id);
-    }
-  };
-
   return (
-     <div className="board-wrap">
+    <div className="board-wrap">
       <div className="board-header">
         <span className="board-title">글작성</span>
       </div>
@@ -162,10 +171,10 @@ const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) =>
                 <option>맑은전청조체</option>
               </select>
               <select className="toolbar-fontsize">
-              <option>15</option>
-              <option>14</option>
-              <option>16</option>
-            </select>
+                <option>15</option>
+                <option>14</option>
+                <option>16</option>
+              </select>
               <button type="button" className="toolbar-btn bold"><b>B</b></button>
               <button type="button" className="toolbar-btn underline"><u>U</u></button>
               <button type="button" className="toolbar-btn align-left"><i className="bi bi-text-left"></i></button>
@@ -174,14 +183,13 @@ const ReferenceWrite = ({ initialData = null, onSubmit, onCancel, onDelete }) =>
             </div>
 
             <textarea
-            className="input content"
-            placeholder="내용을 입력해 주세요."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+              className="input content"
+              placeholder="내용을 입력해 주세요."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
           </div>
-            
-          {/* 버튼 그룹 - 폼 맨 아래, 우측에 배치 */}
+
           <div className="reference-button-group">
             <button type="submit" className="btn-submit">
               {initialData ? '수정완료' : '등록'}

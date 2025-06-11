@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const PaymentPayCheck = () => {
     //라우팅 경로 상에서 받아 낼 파라미터
@@ -50,6 +51,7 @@ const PaymentPayCheck = () => {
         .then(res => {
             alert("신청이 완료되었습니다!");
             /* enroll 리스트 추가 등 */
+            fetchEnrollList();
         })
             .catch(err => alert('신청 실패'));
     };
@@ -75,10 +77,12 @@ const PaymentPayCheck = () => {
     // acaId(학원) 바뀔 때 1번만 부르기
     useEffect(() => {
         fetchClassSelect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [acaId]);
     // 장바구니 한번만 부르기
     useEffect(() => {
         fetchEnrollList();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roleId]);
 
     return (
@@ -145,7 +149,7 @@ const PaymentPayCheck = () => {
                 <div className='rightPCContainer'>
                     {/* 수업료 변경 */}
                     <div className='selectParentClass'>
-                        <select className='classFilter' style={{ width: '100%' }}
+                        <select className='classLabel' style={{ width: '100%' }}
                         value={selClass} onChange={(e) => setSelClass(e.target.value)}>
                             <option value=''> 수업 선택 </option>
                             {classes.map(cls => (
@@ -242,13 +246,21 @@ const PaymentPayCheck = () => {
                                             </tr>
                                             <tr>
                                                 <td>{el.className}</td>
-                                                <td>---</td>
+                                                <td>
+                                                    <button>
+                                                        결제
+                                                    </button>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><b>
                                                     {el.tuition}원
                                                 </b></td>
-                                                <td>---</td>
+                                                <td>
+                                                    <button>
+                                                        삭제
+                                                    </button>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>학생명 {el.studentName}</td>

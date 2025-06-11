@@ -3,6 +3,8 @@ package com.example.mypage.dto;
 import com.example.user.entity.UsersEntity;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class MypageInfoDto {
 
@@ -12,6 +14,10 @@ public class MypageInfoDto {
     private String email;
     private String role;
     private String academyName;
+
+    private List<String> students;
+    private String subject;
+    private String className;
 
     public MypageInfoDto(UsersEntity user) {
         this.username = user.getUsername();

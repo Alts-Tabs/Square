@@ -3,7 +3,7 @@ import bgImg from "../image/background.png";
 import logo from "../image/SquareLogo.png";
 import "./Memberstyle.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -45,8 +45,9 @@ const LoginPage = () => {
         </form>
 
         <div className="qbox">
-          <p>아이디와 비밀번호를 잊으셨나요?</p>
-          <br />
+          <Link to="/searchuser"
+           className="searchUserInfo">아이디와 비밀번호를 잊으셨나요?</Link>
+          <br /><br />
           <button type="button" onClick={()=>navi("/join")}>가입하기</button>
           <button type="button" onClick={()=>navi("/subcode")}>코드 입력</button>
         </div>

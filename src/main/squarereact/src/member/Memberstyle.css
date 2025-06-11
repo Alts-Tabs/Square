@@ -106,13 +106,15 @@
     margin-bottom: 10px;
 }
 
-.qbox p {
+.qbox .searchUserInfo {
     margin-bottom: 0;
+    padding-bottom: 20px;
     color: #7D8A8A;
     cursor: pointer;
     font-family: 'NanumSquareNeo', sans-serif;
+    text-decoration: none;
 }
-.qbox p:hover {
+.qbox .searchUserInfo:hover {
     color: #2E5077;
     font-size: 1.05em;
     font-family: 'NanumSquareNeoBold', sans-serif;

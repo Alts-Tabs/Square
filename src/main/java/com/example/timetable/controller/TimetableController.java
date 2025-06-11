@@ -3,6 +3,7 @@ package com.example.timetable.controller;
 import com.example.timetable.dto.TimecontentsDto;
 import com.example.timetable.dto.TimetableDto;
 import com.example.timetable.dto.TimetableRequestDto;
+import com.example.timetable.dto.TimetableResponseDto;
 import com.example.timetable.service.TimetableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,25 @@ public class TimetableController {
     public ResponseEntity<List<TimecontentsDto>> getTimecontents(@PathVariable int timetableId){
         List<TimecontentsDto> contents = timetableService.getContentsByTimetableId(timetableId);
         return ResponseEntity.ok(contents);
+    }
+
+    /** 시간표 상세 조회 (편집용): timetable + contents + users + 요일리스트 */
+    @GetMapping("/public/timetable/{timetableId}/detail")
+    public ResponseEntity<TimetableResponseDto> getTimetableDetail(@PathVariable int timetableId) {
+        TimetableResponseDto responseDto = timetableService.getTimetableDetail(timetableId);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    /**시간표 수정
+     * @param timetableId 수정할 시간표의 ID
+     * @param dto 클리이언트로부터 전달받은 시간표 수정 정보
+     * */
+    @PutMapping("/public/updateTimetab/{timetableId}")
+    public ResponseEntity<String> updateTimetable(
+            @PathVariable int timetableId,
+            @RequestBody TimetableRequestDto dto){
+        timetableService.updateTimetable(timetableId, dto);
+        return ResponseEntity.ok("시간표가 정상적으로 수정되었습니다.");
     }
 
 }

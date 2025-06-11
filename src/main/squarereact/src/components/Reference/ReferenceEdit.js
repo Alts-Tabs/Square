@@ -4,18 +4,18 @@ import './referenceEdit.css';
 
 const PostForm = () => {
   const navigate = useNavigate();
-
-  const [category, setCategory] = useState('공지사항');
-  const [division, setDivision] = useState('구분');
+//빌드테스트 미사용 warnging 제거용 주석
+  // const [category, setCategory] = useState('공지사항');
+  // const [division, setDivision] = useState('구분');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [file, setFile] = useState(null);
-  const [isMemberOnly, setIsMemberOnly] = useState(false);
-  const [allowComments, setAllowComments] = useState(true);
-  const [isSecret, setIsSecret] = useState(false);
+  // const [file, setFile] = useState(null);
+  // const [isMemberOnly, setIsMemberOnly] = useState(false);
+  // const [allowComments, setAllowComments] = useState(true);
+  // const [isSecret, setIsSecret] = useState(false);
 
-  const photoInputRef = useRef(null);
-  const videoInputRef = useRef(null);
+  // const photoInputRef = useRef(null);
+  // const videoInputRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const MAX_TITLE_LENGTH = 50;

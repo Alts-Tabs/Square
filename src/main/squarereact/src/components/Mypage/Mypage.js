@@ -14,11 +14,14 @@ const MyPage = () => {
 
   const [userInfo, setUserInfo] = useState({
     name: "",
-    birthDate: "",
     role: "",
     username: "",
     phone: "",
     email: "",
+    academyName: "", // 원장용
+    childrenNames: [], // 학부모용
+    subject: "", // 강사용
+    className: "", // 학생용
   });
 
   const [modalInput, setModalInput] = useState("");
@@ -35,6 +38,10 @@ const MyPage = () => {
           username: data.username,
           phone: data.phone,
           email: data.email,
+          academyName: data.academyName,
+          childrenNames: data.childrenNames,
+          subject: data.subject,
+          className: data.className,
         });
       } catch (error) {
         alert("기본 정보 불러오기 실패");
@@ -58,11 +65,53 @@ const MyPage = () => {
     setModalError("");
   };
 
+  const formatPhoneNumber = (value) => {
+    // 숫자만 추출
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length < 4) return digits;
+    if (digits.length < 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    if (digits.length <= 11)
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+
+    return digits;
+  };
+
+  const handleModalInputChange = (e) => {
+    const value = e.target.value;
+    if (editType === "phone") {
+      const formatted = formatPhoneNumber(value);
+      setModalInput(formatted);
+    } else {
+      setModalInput(value);
+    }
+  };
+
   const handleSave = async () => {
     if (!modalInput) {
       setModalError("값을 입력해주세요.");
       return;
     }
+
+    if (editType === "phone") {
+      // 숫자만 추출해서 길이 검사 (10~11자리)
+      const onlyDigits = modalInput.replace(/\D/g, "");
+      if (!/^\d{10,11}$/.test(onlyDigits)) {
+        setModalError("휴대폰 번호는 숫자만 입력하며, 10~11자리여야 합니다.");
+        return;
+      }
+    }
+
+    if (editType === "email") {
+      // 간단 이메일 유효성 검사
+      const emailRegex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(modalInput)) {
+        setModalError("올바른 이메일 형식이 아닙니다.");
+        return;
+      }
+    }
+
     try {
       if (editType === "phone") {
         await updatePhone(modalInput);
@@ -124,10 +173,40 @@ const MyPage = () => {
                     <div className="info-label">이름</div>
                     <div className="info-value">{userInfo.name}</div>
                   </div>
-                  <div className="info-line">
-                    <div className="info-label">생년월일</div>
-                    <div className="info-value">{userInfo.birthDate}</div>
-                  </div>
+
+                  {/* 역할별 정보 */}
+                  {userInfo.role === "원장" && (
+                    <div className="info-line">
+                      <div className="info-label">학원이름</div>
+                      <div className="info-value">{userInfo.academyName || "학원이름 없음"}</div>
+                    </div>
+                  )}
+
+                  {userInfo.role === "학부모" && (
+                    <div className="info-line">
+                      <div className="info-label">자녀</div>
+                      <div className="info-value">
+                        {userInfo.childrenNames?.length > 0
+                          ? userInfo.childrenNames.join(", ")
+                          : "자녀 정보 없음"}
+                      </div>
+                    </div>
+                  )}
+
+                  {userInfo.role === "강사" && (
+                    <div className="info-line">
+                      <div className="info-label">담당 과목</div>
+                      <div className="info-value">{userInfo.subject || "과목 정보 없음"}</div>
+                    </div>
+                  )}
+
+                  {userInfo.role === "학생" && (
+                    <div className="info-line">
+                      <div className="info-label">소속 클래스</div>
+                      <div className="info-value">{userInfo.className || "없음"}</div>
+                    </div>
+                  )}
+
                   <div className="info-line">
                     <div className="info-label">회원 등급</div>
                     <div className="info-value">{userInfo.role}</div>
@@ -180,10 +259,10 @@ const MyPage = () => {
             <h3>{editType === "phone" ? "휴대폰 번호 변경" : "이메일 변경"}</h3>
             <label>{editType === "phone" ? "새 휴대폰 번호" : "새 이메일"}</label>
             <input
-              type={editType === "phone" ? "text" : "email"}
+              type="text"
               placeholder="입력해주세요"
               value={modalInput}
-              onChange={(e) => setModalInput(e.target.value)}
+              onChange={handleModalInputChange}
             />
             {modalError && <div className="pw-error">{modalError}</div>}
             <div className="modal-buttons">

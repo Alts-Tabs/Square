@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +39,9 @@ public class PaymentService {
         return paymentChildrenRepository.getChildrenByParentId(parentId);
     }
 
-    //장바구니에 해당하는 enroll DB 에 insert 하는 방법
-    //jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
-    //save 를 사용한다.
-    //
+   /* 장바구니에 해당하는 enroll DB 에 insert 하는 방법
+    jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
+    save 를 사용한다. */
     @Transactional
     public PaymentEnrollDto insertEnrollClass(int academyId, int parentId, int studentId, PaymentEnrollDto dto) {
         ParentsEntity parent = parentsRepository.findById(dto.getParentId())
@@ -71,9 +71,18 @@ public class PaymentService {
                 .build();
     }
 
+    //원장이 수강신청한 학부모와 학생의 정보를 확인
+    @Transactional
+    public List<EnrollEntity> getDirEnrollList(int academyId) {
+        return paymentEnrollRepository.getAllEnroll(academyId);
+    }
+
     //학부모가 장바구니에 수업을 신청하고 자신의 학부모 id를 이용해서 결제해야 할 부분을 select
     @Transactional
     public List<EnrollEntity> getEnrollByParentId(int parentId) {
         return paymentEnrollRepository.getEnrollByParentId(parentId);
     }
+
+    //학부모가 장바구니 목록에서 선택 삭제
+
 }
