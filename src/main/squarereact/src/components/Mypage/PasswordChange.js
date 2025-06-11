@@ -7,7 +7,6 @@ const PasswordChange = () => {
   const [checkPw, setCheckPw] = useState("");
   const [error, setError] = useState("");
 
-  // 눈 아이콘 토글용 (필드별로 개별 상태)
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
@@ -16,32 +15,56 @@ const PasswordChange = () => {
     return pw.length >= 6 && pw.length <= 12 && /[a-zA-Z]/.test(pw) && /\d/.test(pw);
   };
 
-  const handleSubmit = () => {
-    if (!currentPw || !newPw || !checkPw) {
+  const handleSubmit = async () => {
+    const trimmedCurrent = currentPw.trim();
+    const trimmedNew = newPw.trim();
+    const trimmedCheck = checkPw.trim();
+
+    if (!trimmedCurrent || !trimmedNew || !trimmedCheck) {
       setError("모든 항목을 입력해주세요.");
       return;
     }
 
-    if (!validatePassword(newPw)) {
+    if (!validatePassword(trimmedNew)) {
       setError("비밀번호는 6~12자 영문/숫자를 포함해야 합니다.");
       return;
     }
 
-    if (newPw !== checkPw) {
+    if (trimmedNew !== trimmedCheck) {
       setError("변경할 비밀번호가 일치하지 않습니다.");
       return;
     }
 
     setError("");
-    console.log("비밀번호 변경 요청:", { currentPw, newPw });
 
-    alert("비밀번호가 성공적으로 변경되었습니다!");
-    setCurrentPw("");
-    setNewPw("");
-    setCheckPw("");
-    setShowCurrent(false);
-    setShowNew(false);
-    setShowCheck(false);
+    try {
+      const res = await fetch("/api/mypage/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: trimmedCurrent,
+          newPassword: trimmedNew,
+          confirmPassword: trimmedCheck, // ✅ confirmPassword 추가
+        }),
+      });
+
+      if (res.ok) {
+        alert("비밀번호가 성공적으로 변경되었습니다!");
+        setCurrentPw("");
+        setNewPw("");
+        setCheckPw("");
+        setShowCurrent(false);
+        setShowNew(false);
+        setShowCheck(false);
+      } else {
+        const msg = await res.text();
+        setError(msg || "비밀번호 변경 실패");
+      }
+    } catch (err) {
+      setError("오류가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -49,7 +72,6 @@ const PasswordChange = () => {
       <h2 className="pw-title">비밀번호 변경</h2>
 
       <div className="shadow-box pw-box">
-        {/* 현재 비밀번호 */}
         <div className="pw-field">
           <label>현재 비밀번호</label>
           <div className="pw-input-wrapper">
@@ -64,7 +86,6 @@ const PasswordChange = () => {
           </div>
         </div>
 
-        {/* 새 비밀번호 */}
         <div className="pw-field">
           <label>비밀번호 변경</label>
           <div className="pw-input-wrapper">
@@ -80,7 +101,6 @@ const PasswordChange = () => {
           <div className="pw-hint">영문/숫자 포함 6~12자 입력해주세요.</div>
         </div>
 
-        {/* 비밀번호 확인 */}
         <div className="pw-field">
           <label>변경한 비밀번호 확인</label>
           <div className="pw-input-wrapper">
