@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const PaymentPayCheck = () => {
     //라우팅 경로 상에서 받아 낼 파라미터
