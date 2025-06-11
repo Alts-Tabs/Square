@@ -1,10 +1,12 @@
 package com.example.mypage.controller;
 
+import com.example.mypage.dto.EmailUpdateDto;
 import com.example.mypage.dto.MypageInfoDto;
 import com.example.mypage.dto.PasswordChangeDto;
 import com.example.mypage.dto.WithdrawalDto;
 import com.example.mypage.service.MypageService;
 import com.example.security.CustomUserDetails;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,29 +28,34 @@ public class MypageController {
 
     // 휴대폰 번호 변경
     @PutMapping("/phone")
-    public ResponseEntity<Void> updatePhone(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                            @RequestParam String phone) {
-        mypageService.updatePhone(userDetails.getUserId(), phone);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MypageInfoDto> updatePhone(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestBody PhoneUpdateDto dto) {
+        MypageInfoDto updatedInfo = mypageService.updatePhone(userDetails.getUserId(), dto.getPhone());
+        return ResponseEntity.ok(updatedInfo);
     }
 
     // 이메일 변경
     @PutMapping("/email")
-    public ResponseEntity<Void> updateEmail(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                            @RequestParam String email) {
-        mypageService.updateEmail(userDetails.getUserId(), email);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<MypageInfoDto> updateEmail(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestBody EmailUpdateDto dto) {
+        MypageInfoDto updatedInfo = mypageService.updateEmail(userDetails.getUserId(), dto.getEmail());
+        return ResponseEntity.ok(updatedInfo);
     }
+
 
     // 비밀번호 변경
     @PutMapping("/password")
     public ResponseEntity<String> changePassword(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                  @RequestBody PasswordChangeDto dto) {
-        boolean success = mypageService.changePassword(userDetails.getUserId(), dto);
-        if (success) {
-            return ResponseEntity.ok("비밀번호 변경 성공");
-        } else {
-            return ResponseEntity.badRequest().body("현재 비밀번호가 일치하지 않습니다.");
+        try {
+            boolean success = mypageService.changePassword(userDetails.getUserId(), dto);
+            if (success) {
+                return ResponseEntity.ok("비밀번호 변경 성공");
+            } else {
+                return ResponseEntity.badRequest().body("현재 비밀번호가 일치하지 않습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -62,5 +69,10 @@ public class MypageController {
         } else {
             return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    @Data
+    public static class PhoneUpdateDto {
+        private String phone;
     }
 }
