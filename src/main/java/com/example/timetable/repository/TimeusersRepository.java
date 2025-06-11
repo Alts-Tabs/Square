@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface TimeusersRepository extends JpaRepository<TimeusersEntity,Integer> {
     List<TimeusersEntity> findByTimetable_timetableId(int timetableId);
+
+    void deleteByTimetable_TimetableId(int timetableId);
+
 }

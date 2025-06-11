@@ -10,4 +10,6 @@ public interface TimecontentsRepository extends JpaRepository<TimecontentsEntity
 
     /**timetableId 기준으로 조회*/
     List<TimecontentsEntity> findByTimetable_TimetableId(int timetableId);
+
+    void deleteByTimetable_timetableId(int timetableId);
 }
