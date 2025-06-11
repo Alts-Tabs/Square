@@ -1,190 +1,287 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './ChatbotPage.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// 안전하게 객체를 문자열로 변환
+function safeStringify(obj) {
+  try {
+    if (obj instanceof Error) {
+      const errorObj = {};
+      Object.getOwnPropertyNames(obj).forEach((key) => {
+        errorObj[key] = obj[key];
+      });
+      return JSON.stringify(errorObj);
+    }
+    const str = JSON.stringify(obj);
+    if (!str || str === '{}' || str === '[]') {
+      return "응답을 파싱할 수 없습니다.";
+    }
+    return str;
+  } catch {
+    return "응답을 파싱할 수 없습니다.";
+  }
+}
+
+// 챗봇 응답에서 텍스트 및 버튼 추출
+const extractBotText = (resp) => {
+  if (!resp) return { text: "응답이 없습니다.", buttons: [] };
+
+  if (resp.error) return { text: resp.error, buttons: [] };
+
+  if (typeof resp === 'object' && resp !== null) {
+    if (resp.text && resp.text.trim()) {
+      return { text: resp.text.trim(), buttons: resp.buttons || [] };
+    }
+    if (resp.data?.cover?.data?.description && resp.data.cover.data.description.trim()) {
+      return { text: resp.data.cover.data.description.trim(), buttons: resp.buttons || [] };
+    }
+    return { text: safeStringify(resp), buttons: [] };
+  }
+
+  if (typeof resp === 'string') {
+    try {
+      const obj = JSON.parse(resp);
+      if (obj.error) return { text: obj.error, buttons: [] };
+      if (obj.text && obj.text.trim()) return { text: obj.text.trim(), buttons: obj.buttons || [] };
+      if (obj.data?.cover?.data?.description && obj.data.cover.data.description.trim()) {
+        return { text: obj.data.cover.data.description.trim(), buttons: obj.buttons || [] };
+      }
+      return { text: safeStringify(obj), buttons: [] };
+    } catch (e) {
+      return { text: resp.trim() || "응답 파싱 오류", buttons: [] };
+    }
+  }
+
+  return { text: safeStringify(resp) || "알 수 없는 응답 형식", buttons: [] };
+};
+
+const parseNaturalDate = (text) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const regex = /(\d{1,2})월(\d{1,2})일\s*(오전|오후)?(\d{1,2})시/g;
+  const match = regex.exec(text);
+
+  if (!match) return null;
+
+  const [, month, day, ampm, hour] = match;
+  let hourNum = parseInt(hour, 10) || 0;
+  if (ampm === '오후' && hourNum < 12) hourNum += 12;
+  if (ampm === '오전' && hourNum === 12) hourNum = 0;
+
+  const date = new Date(year, parseInt(month, 10) - 1, parseInt(day, 10), hourNum, 0, 0);
+  return date.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm" 형식
+};
+
 const ChatbotPage = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, text: '안녕하세요! 상담 예약 챗봇입니다. "상담 예약"이라고 입력하여 예약을 시작하세요.', isBot: true },
-  ]);
+  const navigate = useNavigate();
+  const messagesEndRef = useRef(null);
+
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isBooking, setIsBooking] = useState(false);
-  const [bookingData, setBookingData] = useState({
-    date: '',
-    time: ''
-  });
-  const [userInfo, setUserInfo] = useState({
-    name: '',
-    role: '',
-    username: '',
-    acaId: '',
-    userId: ''
-  });
-  const messagesEndRef = useRef(null);
-  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState(null);
+  const [consultations, setConsultations] = useState([]);
+  const [consultationDate, setConsultationDate] = useState('');
+  const [acaId, setAcaId] = useState('');
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get('/public/user', { withCredentials: true });
-        const { name, role, username, acaId, userId } = response.data;
-        setUserInfo({ name, role, username, acaId, userId });
-      } catch (error) {
-        console.error('User Info Error:', error);
-        alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+  const addMessage = useCallback((text, isBot, buttons = []) => {
+    const safeText = typeof text === 'string' ? text : safeStringify(text ?? '[empty]');
+    setMessages((prev) => [...prev, { id: prev.length + 1, text: safeText, isBot, buttons }]);
+  }, []);
+
+  const callApi = useCallback(async (url, method = 'get', data = {}, params = {}) => {
+    try {
+      const response = await axios({
+        method,
+        url,
+        data,
+        params,
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
+      });      
+      return response.data;
+    } catch (error) {      
+      throw error;
+    }
+  }, []);
+
+  const fetchUserInfo = useCallback(async () => {
+    try {
+      const data = await callApi('/public/user');
+      setUserInfo(data);
+      setAcaId(data.acaId || '');
+    } catch (error) {
+      const status = error.response?.status;
+      const message = status === 401 ? '인증이 만료되었습니다. 다시 로그인해주세요.' : '사용자 정보를 불러오지 못했습니다.';
+      addMessage(message, true);
+      if (status === 401) {
+        localStorage.removeItem('token');
         navigate('/login');
       }
-    };
-
-    fetchUserInfo();
-    scrollToBottom();
-  }, [navigate]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const addMessage = (text, isBot) => {
-    setMessages((prev) => [...prev, { id: prev.length + 1, text, isBot }]);
-  };
-
-  // 수정: 날짜와 시간 형식 검증
-  const validateDateTime = (date, time) => {
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-    
-    if (!dateRegex.test(date)) {
-      addMessage('날짜 형식이 올바르지 않습니다. 예: 2025-05-30', true);
-      return false;
     }
-    if (!timeRegex.test(time)) {
-      addMessage('시간 형식이 올바르지 않습니다. 예: 14:30', true);
-      return false;
+  }, [callApi, navigate, addMessage]);
+
+  const fetchConsultations = useCallback(async () => {
+    try {
+      const data = await callApi('/public/api/consultation');
+      setConsultations(data);
+    } catch (err) {      
+      addMessage('상담 목록을 불러오지 못했습니다.', true);
     }
+  }, [callApi, addMessage]);
 
-    const dateTimeStr = `${date}T${time}:00`;
-    const dateTime = new Date(dateTimeStr);
-    return dateTime > new Date();
-  };
-
-  const handleBookingStart = () => {
-    setIsBooking(true);
-    addMessage('상담 예약을 시작합니다. 원하시는 날짜를 입력해주세요. (예: 2025-05-30)', true);
-  };
-
-  const handleBookingComplete = async () => {
-    if (!bookingData.date || !bookingData.time) {
-      addMessage('날짜와 시간을 모두 입력해주세요.', true);
-      return;
-    }
-
-    if (!validateDateTime(bookingData.date, bookingData.time)) {
-      setIsBooking(false);
-      setBookingData({ date: '', time: '' });
-      return;
-    }
-
+  const fetchWelcomeMessage = useCallback(async () => {
     try {
       setIsLoading(true);
-      const consultationDateTime = `${bookingData.date}T${bookingData.time}:00`;
-
-      await axios.post(
-        '/api/consultation',
-        { consultationDateTime },
-        { withCredentials: true }
-      );
-
-      addMessage(`상담 예약이 완료되었습니다! (${bookingData.date} ${bookingData.time})`, true);
-      setIsBooking(false);
-      setBookingData({ date: '', time: '' });
-    } catch (error) {
-      console.error('Booking Error:', error);
-      addMessage('예약 중 오류가 발생했습니다. 다시 시도해주세요.', true);
+      const data = await callApi('/public/api/chatbot', 'post', { message: '' }, { eventType: 'open', acaId });
+      const { text: botText, buttons } = extractBotText(data);
+      addMessage(botText, true, buttons || [{ title: '상담예약', action: '상담 예약' }]);
+    } catch (error) {      
+      addMessage('웰컴 메시지를 불러오는 데 실패했습니다.', true);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [acaId, addMessage, callApi]);
 
-  const handleSendMessage = async () => {
-    const trimmedInput = inputText.trim();
-    if (!trimmedInput) return;
+  const handleSendMessage = useCallback(
+    async (messageText = inputText) => {
+      const content = messageText.trim();
+      if (!content) return;
 
-    try {
-      setIsLoading(true);
-      addMessage(trimmedInput, false);
+      addMessage(content, false);
       setInputText('');
 
-      if (isBooking) {
-        if (!bookingData.date) {
-          setBookingData({ ...bookingData, date: trimmedInput });
-          addMessage(`날짜: ${trimmedInput}\n원하시는 시간을 입력해주세요. (예: 14:30)`, true);
-        } else if (!bookingData.time) {
-          setBookingData({ ...bookingData, time: trimmedInput });
-          addMessage(
-            `예약 정보 확인:\n` +
-            `날짜: ${bookingData.date}\n` +
-            `시간: ${trimmedInput}\n` +
-            `예약을 완료하시겠습니까? (예/아니오)`, 
-            true
-          );
-        } else if (trimmedInput.toLowerCase() === '예') {
-          await handleBookingComplete();
-        } else {
-          addMessage('예약이 취소되었습니다. 다시 시작하려면 "상담 예약"이라고 입력해주세요.', true);
-          setIsBooking(false);
-          setBookingData({ date: '', time: '' });
+      try {
+        setIsLoading(true);
+        let formattedDate = consultationDate;
+
+        // 자연어로 날짜 파싱 시도
+        if (!formattedDate && content.match(/(\d{1,2})월(\d{1,2})일/)) {
+          const parsedDate = parseNaturalDate(content);
+          if (parsedDate) {
+            formattedDate = parsedDate;
+            setConsultationDate(parsedDate); // 상태 업데이트
+            addMessage(`날짜가 ${new Date(parsedDate).toLocaleString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}로 설정되었습니다.`, true);
+          } else {
+            addMessage('날짜 형식이 올바르지 않습니다. 예: "7월2일 오전11시"', true);
+            setIsLoading(false);
+            return;
+          }
         }
-      } else {
-        if (trimmedInput.includes('상담 예약') || trimmedInput.includes('예약')) {
-          handleBookingStart();
+
+        const data = await callApi(
+          '/public/api/chatbot',
+          'post',
+          { message: content },
+          {
+            acaId,
+            consultationDate: formattedDate,
+            eventType: 'send',
+          }
+        );
+
+        const { text: botText, buttons } = extractBotText(data);
+        if (formattedDate && !botText.includes('완료')) {
+          const selectedDate = new Date(formattedDate).toLocaleString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+          addMessage(`${selectedDate}로 예약하시겠습니까?`, true, [
+            { title: '네', action: '네' },
+            { title: '아니오', action: '아니오' },
+          ]);
         } else {
-          // Clova Chatbot API 호출
-          const response = await axios.post(
-            '/public/api/chatbot',
-            { message: trimmedInput },
-            { withCredentials: true }
-          );
-          addMessage(response.data, true);
+          addMessage(botText, true, buttons);
         }
-      }
-    } catch (error) {
-      console.error('ChatBot Error:', error);
-      const errorMessage =
-        error.response?.status === 401
+
+        if (botText.includes('상담 예약이 완료되었습니다')) {
+          await fetchConsultations();
+        }
+      } catch (error) {        
+        const status = error.response?.status;
+        const errorMessage = status === 401
           ? '인증이 만료되었습니다. 다시 로그인해주세요.'
           : error.response?.data?.message || '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-      addMessage(errorMessage, true);
-      if (error.response?.status === 401) {
-        navigate('/login');
+        addMessage(errorMessage, true);
+        if (status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [inputText, consultationDate, acaId, addMessage, callApi, navigate, fetchConsultations]
+  );
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const handleButtonClick = useCallback(
+    (action) => {
+      if (action === '상담 예약') {
+        addMessage('날짜 및 시간 선택 후 예약 확인으로 답변 부탁드립니다.', true);
+        return;
+      } else if (action === '네' || action === '아니오') {
+        handleSendMessage(action);
+      } else if (new Date(action).toString() !== 'Invalid Date') {
+        setConsultationDate(action);
+        handleSendMessage(action);
+      } else {
+        handleSendMessage(action);
+      }
+    },
+    [handleSendMessage, consultationDate]
+  );
+
+  const handleKeyPress = useCallback(
+    (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
+
+  useEffect(() => {
+    fetchUserInfo();
+    fetchConsultations();
+  }, [fetchUserInfo, fetchConsultations]);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchWelcomeMessage();
     }
-  };
+  }, [userInfo, fetchWelcomeMessage]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   return (
     <div className="chatbotMainContainer">
       <div className="chatbotMainTitle">챗봇 상담</div>
-      {userInfo.name && (
-        <div className="userGreeting">환영합니다, {userInfo.name}님!</div>
-      )}
+      {userInfo?.name && <div className="userGreeting">환영합니다, {userInfo.name}님!</div>}
       <div className="chatbotMessagesContainer">
-        {messages.map((message) => (
-          <div key={message.id} className={`chatMessage ${message.isBot ? 'bot' : 'user'}`}>
-            {message.isBot && <div className="botIcon">🤖</div>}
-            <div className="messageContent">{message.text}</div>
+        {messages.map((msg) => (
+          <div key={msg.id} className={`chatMessage ${msg.isBot ? 'bot' : 'user'}`}>
+            {msg.isBot && <div className="botIcon">🤖</div>}
+            <div className="messageContent">
+              {msg.text}
+              {msg.buttons?.length > 0 && (
+                <div className="buttonContainer">
+                  {msg.buttons.map((button, index) => (
+                    <button
+                      key={index}
+                      className="chatbotButton"
+                      onClick={() => handleButtonClick(button.action)}
+                    >
+                      {button.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
         {isLoading && (
@@ -195,24 +292,26 @@ const ChatbotPage = () => {
         )}
         <div ref={messagesEndRef} />
       </div>
+
       <div className="chatbotInputContainer">
+        <input
+          type="datetime-local"
+          value={consultationDate}
+          onChange={(e) => setConsultationDate(e.target.value)}
+          className="chatbotDateInput"
+          placeholder="상담 날짜를 선택하세요"
+        />
         <textarea
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder={isBooking ? 
-            (bookingData.date ? 
-              (bookingData.time ? 
-                "예약을 완료하시겠습니까? (예/아니오)" : 
-                "원하시는 시간을 입력해주세요 (예: 14:30)") : 
-              "원하시는 날짜를 입력해주세요 (예: 2025-05-30)") : 
-            "메시지를 입력하세요..."}
+          placeholder="메시지를 입력하세요."
           className="chatbotInput"
           disabled={isLoading}
         />
         <button
-          onClick={handleSendMessage}
           className="chatbotSendButton"
+          onClick={() => handleSendMessage()}
           disabled={isLoading || !inputText.trim()}
         >
           전송
