@@ -39,10 +39,9 @@ public class PaymentService {
         return paymentChildrenRepository.getChildrenByParentId(parentId);
     }
 
-    //장바구니에 해당하는 enroll DB 에 insert 하는 방법
-    //jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
-    //save 를 사용한다.
-    //
+   /* 장바구니에 해당하는 enroll DB 에 insert 하는 방법
+    jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
+    save 를 사용한다. */
     @Transactional
     public PaymentEnrollDto insertEnrollClass(int academyId, int parentId, int studentId, PaymentEnrollDto dto) {
         ParentsEntity parent = parentsRepository.findById(dto.getParentId())
