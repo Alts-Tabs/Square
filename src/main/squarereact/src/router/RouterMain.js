@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Root, Main } from '../frame';
 import { Attend, AttendHistory, AttendStu } from '../attendBook';
-import { JoinPage, LoginPage, SubCode, SubUserRegistry } from '../member';
+import { JoinPage, LoginPage, SearchUser, SubCode, SubUserRegistry } from '../member';
 import { PaymentManagement, NonPayCheck, PaymentPayCheck, PaymentCheck } from '../payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
@@ -12,8 +12,8 @@ import ChatbotPage from '../ChatBot/ChatbotPage';
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
-import { AcademyCaller } from '../academycaller';
-import { Timetable, CreateTimetable } from '../timetable';
+import { AcademyCaller, Consultation } from '../academycaller';
+import { Timetable, CreateTimetable, UpdateTimetable } from '../timetable';
 import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
@@ -51,6 +51,7 @@ const RouterMain = () => {
                     <Route path="post/qna/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
                     <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
+                    <Route path='consultation' element={<Consultation />} />
 
 
                     {/* 수강료 ===================================================================================== */}
@@ -63,6 +64,7 @@ const RouterMain = () => {
                     {/* 학습 관리 ================================================================================== */}
                     <Route path="timetable" element={<Timetable />} /> {/* 시간표 */}
                     <Route path="timetable/create-timetable" element={<CreateTimetable />} /> {/* 시간표 생성 */}
+                    <Route path="timetable/update-timetable" element={<UpdateTimetable/>} /> {/*시간표 수정 */}
 
 
                     {/* 학원 정보 ================================================================================== */}
@@ -86,6 +88,7 @@ const RouterMain = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/join" element={<JoinPage />} />
                     <Route path="/subcode" element={<SubCode />} />
+                    <Route path='/searchuser' element={<SearchUser />} />
 
                     <Route path="*" element={<Error404 />} /> {/* 404 Error */}
 

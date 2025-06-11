@@ -273,7 +273,15 @@ const Main = () => {
                         <span className='naviContent'>
                             <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
                             <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                상담 신청 및 Q&A
+                                Q&A 게시판
+                            </Link>
+                        </span> <br />
+                        <span className='naviContent'>
+                            <i className="bi bi-calendar2-check"></i>&nbsp;&nbsp;
+                            <Link to="consultation"
+                             state={{ acaId: userInfo.acaId, role: userInfo.role }}
+                             style={{ textDecoration: 'none', color: 'inherit' }}>
+                                상담 일정
                             </Link>
                         </span> <br />
                     </div>

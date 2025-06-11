@@ -1,0 +1,58 @@
+.searchUser-box {
+  width: 364px;
+  background-color: #FAF9F7;
+  box-shadow: 2px 2px 15px #0000001a;
+  display: inline-flex;
+  flex-direction: column;
+  padding: 25px;
+  font-family: 'NanumSquareNeo', sans-serif;
+  border-radius: 10px;
+  gap: 10px;
+}
+
+.searchUser-box h2 {
+  font-size: 1.2em;
+  color: #2E5077;
+  font-family: 'NanumSquareNeoBold', sans-serif;
+}
+
+.searchUser-box form {
+  width: 100%;
+  height: auto;
+  /* display: flex;
+  flex-direction: column; */
+}
+.searchUser-box form button {
+  height: 35px;
+  background-color: #2E5077;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+}
+
+
+.searchUser-modebox {
+  text-align: center;
+  align-content: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.searchUser-modebox button {
+    background-color: white;
+    border: 1px solid #7D8A8A;
+    border-radius: 5px;
+    width: 123px;
+    height: 35px;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: 0;
+}
+
+.searchUser-modebox button:hover {
+  background-color: #2E5077;
+  color: white;
+}
