@@ -7,6 +7,7 @@ build/
 
 # static 내부의 모든 파일/디렉토리를 무시
 /src/main/resources/static/*
+/logs/
 
 # static 폴더 자체는 Git에 포함되게 허용
 !src/main/resources/static/.gitkeep
