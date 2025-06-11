@@ -106,7 +106,23 @@
 
 .chatbotInput:focus {
   outline: none;
-  border-color: #79d7be;
+  border-color: #f6f4f0;
+}
+
+.chatbotDateInput {
+  flex-grow: 1;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+  height: 50px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.chatbotDateInput:focus {
+  outline: none;
+  border-color: #f6f4f0;
 }
 
 .chatbotSendButton {
@@ -123,6 +139,71 @@
 
 .chatbotSendButton:hover {
   background: #4da1a9;
+}
+
+.chatbotSendButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.chatbotSendButton:hover:not(:disabled) {
+  background-color: #007bb5;
+}
+
+.buttonContainer {
+  margin-top: 10px;
+}
+
+.chatbotButton {
+  margin: 5px;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chatbotButton:hover {
+  background-color: #45a049;
+}
+
+.typing-indicator::after {
+  content: '...';
+  animation: dots 1s infinite;
+}
+
+.consultationListContainer {
+  margin-bottom: 20px;
+}
+
+.consultationListContainer h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.consultationListContainer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.consultationListContainer li {
+  padding: 5px 0;
+}
+
+.consultationDateInput {
+  margin-bottom: 10px;
+}
+
+.consultationDateInput label {
+  margin-right: 10px;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60% { content: '...'; }
+  80%, 100% { content: ''; }
 }
 
 /* 반응형 스타일 */
@@ -191,4 +272,4 @@
   .chatbotMainContainer {
     max-width: calc(100vw - 80px - 70px);
   }
-} 
+}

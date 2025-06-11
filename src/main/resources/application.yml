@@ -27,3 +27,10 @@ clova:
       url: "https://abojx4r1k1.apigw.ntruss.com/custom/v1/17521/7eeed375c76eb2b5366e7b05ca9f66b298a0c6f621c910f79c3aef28a807dd11"
       key: "amVBbUpFc052dm5yeUh1VmlQcURlUXJTSml0a1ZNd08=" # 확인: 올바른 Secret Key인지 네이버 콘솔에서 확인
       apiGatewayKey: "BIIfgoXMHs0fyyCJoSwMgzoai5ovWULluFQwgfLK" # 확인: 올바른 API Gateway Key인지 확인
+
+# 로그 설정 추가
+logging:
+  level:
+    com.example.chatbot.service: DEBUG
+  file:
+    name: logs/app.log

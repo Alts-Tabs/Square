@@ -1,37 +1,39 @@
 package com.example.chatbot.entity;
 
+import com.example.user.entity.AcademiesEntity;
 import com.example.user.entity.UsersEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "consultations")
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "ChatbotConsultations")
+@Builder @NoArgsConstructor @AllArgsConstructor
 public class ChatBotEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private UsersEntity user;
 
-    @Column(nullable = false)
-    private Timestamp consultationDate; // 상담 예약 날짜와 시간
+    @ManyToOne
+    @JoinColumn(name = "academy_id")
+    private AcademiesEntity acaId;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdAt; // 메시지 생성 시간
+    @Column(name = "consultation_date")
+    private LocalDateTime consultationDate;
 
-    @Column(length = 500)
-    private String message; // 사용자 메시지 또는 챗봇 응답
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column
-    private Boolean isBot; // 챗봇 응답인지 여부 (true: 챗봇, false: 사용자)
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
