@@ -16,3 +16,13 @@ export const updateEmail = async (email) => {
   const response = await axios.put(`${API_BASE_URL}/email`, { email });
   return response.data;
 };
+
+export const updateProfileImage = async (formData) => {
+  const response = await axios.put(`${API_BASE_URL}/profile`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};

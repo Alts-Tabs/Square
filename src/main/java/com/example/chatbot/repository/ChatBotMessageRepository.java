@@ -15,7 +15,7 @@ public interface ChatBotMessageRepository extends JpaRepository<ChatBotEntity, L
     List<ChatBotEntity> findByUserOrderByCreatedAtAsc(UsersEntity user);
 
     // 상담일정 출력
-    @Query("SELECT new com.example.chatbot.Dto.ConsultationDto(c.user.name, c.consultationDate) " +
+    @Query("SELECT new com.example.chatbot.Dto.ConsultationDto(c.id, c.user.name, c.consultationDate) " +
             "FROM ChatBotEntity c " +
             "WHERE c.acaId = :academy")
     List<ConsultationDto> findByAcaId(AcademiesEntity academy);
