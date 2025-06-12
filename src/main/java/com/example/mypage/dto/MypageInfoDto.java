@@ -13,6 +13,7 @@ public class MypageInfoDto {
     private String phone;
     private String email;
     private String role;
+    private String userProfile;
     private String academyName;
 
     private List<String> students;
@@ -24,6 +25,7 @@ public class MypageInfoDto {
         this.name = user.getName();
         this.phone = user.getPhone();
         this.email = user.getEmail();
+        this.userProfile = user.getUserProfile();
         this.role = user.getRole().toString();
     }
 }

@@ -1,16 +1,13 @@
 package com.example.mypage.controller;
 
-import com.example.mypage.dto.EmailUpdateDto;
-import com.example.mypage.dto.MypageInfoDto;
-import com.example.mypage.dto.PasswordChangeDto;
-import com.example.mypage.dto.WithdrawalDto;
+import com.example.mypage.dto.*;
 import com.example.mypage.service.MypageService;
 import com.example.security.CustomUserDetails;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -42,6 +39,13 @@ public class MypageController {
         return ResponseEntity.ok(updatedInfo);
     }
 
+    // 프로필 변경
+    @PutMapping("/profile")
+    public ResponseEntity<MypageInfoDto> updateProfileImage(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                            MultipartFile file) {
+        MypageInfoDto updatedInfo = mypageService.updateProfileImage(userDetails.getUserId(), file);
+        return ResponseEntity.ok(updatedInfo);
+    }
 
     // 비밀번호 변경
     @PutMapping("/password")
@@ -71,8 +75,4 @@ public class MypageController {
         }
     }
 
-    @Data
-    public static class PhoneUpdateDto {
-        private String phone;
-    }
 }

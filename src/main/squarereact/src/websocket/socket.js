@@ -1,27 +1,23 @@
+import { io } from 'socket.io-client';
+
 let socket;
 
 export const connectSocket = () => {
-    // https 배포 시 wss://가 됨.
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const host = window.location.hostname;
-    const port = 8090; // server.js에서 정한 포트를 여기서도 명시 필요
-
-    socket = new WebSocket(`${protocol}://${host}:${port}`);
+    socket = io('http://localhost:8090', {
+        withCredentials: true
+    });
 
     return socket;
 };
 
-export const sendMessage = (data) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(data));
+export const sendMessage = (event, data) => {
+    if (socket) {
+        socket.emit(event, data);
     }
 };
 
-export const onMessage = (callback) => {
+export const onMessage = (event, callback) => {
     if (socket) {
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            callback(data);
-        };
+        socket.on(event, callback);
     }
 };

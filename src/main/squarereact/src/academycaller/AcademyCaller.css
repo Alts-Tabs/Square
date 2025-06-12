@@ -225,7 +225,7 @@
 }
 
 .schedule-form-label {
-  width: 60px;
+  width: auto;
   font-weight: 600;
   margin-right: 10px;
   display: block;
