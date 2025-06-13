@@ -214,6 +214,7 @@ public class PaymentController {
         catch (ParseException e) {
             throw new RuntimeException(e);
         };
+
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
         obj.put("amount", amount);
@@ -221,7 +222,7 @@ public class PaymentController {
 
         // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
         // 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
-        String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+        String widgetSecretKey = "test_sk_DLJOpm5QrlLNgNNRkngPrPNdxbWn";
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes);
@@ -249,7 +250,6 @@ public class PaymentController {
 
         return ResponseEntity.status(code).body(jsonObject);
     }
-
     //장바구니 단일 제거
 //    @DeleteMapping("/parent/{parentId}/deleteEnrollList")
 //    public ResponseEntity<?> removeEnrollList(@PathVariable int parentId) {

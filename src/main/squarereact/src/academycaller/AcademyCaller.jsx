@@ -507,7 +507,7 @@ const AcademyCaller = () => {
             <div className='schedule-button-group'>
               <button className='schedule-btn-save'
                onClick={handleEditSaveSchedule}>
-                저장
+                수정
               </button>
               <button className='schedule-btn-del'
                onClick={handleDeleteSchedule}>삭제</button>

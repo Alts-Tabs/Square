@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 const PaymentPayCheck = () => {
     //라우팅 경로 상에서 받아 낼 파라미터
@@ -21,6 +21,19 @@ const PaymentPayCheck = () => {
     //결제 직전 학부모가 결제할 장바구니 내역 데이터 - 배열로 받아와야 함
     const [enrollList, setEnrollList] = useState([]);
 
+    //toss payment 에 필요한 결제정보
+    const clientKey= "test_ck_24xLea5zVAaJyNK2GBd0VQAMYNwW";
+    const secretKey="test_sk_DLJOpm5QrlLNgNNRkngPrPNdxbWn";
+    const totalAmount = enrollList.reduce((sum, item) => sum + Number(item.tuition), 0);
+    const orderId = `order_${Date.now()}`;
+    const orderName =  enrollList.length > 0 ?
+        `${enrollList[0].parentName} 학부모님의
+        ${enrollList[0].studentName} 학생의
+        ${enrollList[0].duration} 기간 내의
+        ${enrollList[0].className} 수업 신청 내역` :
+        '';
+    const customerName = enrollList.length > 0 ? `${enrollList[0].parentName} 학부모`:'';
+
     useEffect(() => {
         if (!roleId) {
             alert('학부모 정보가 없습니다!');    
@@ -35,6 +48,8 @@ const PaymentPayCheck = () => {
     const handleEnrollDuration = (e) => {
         setDuration(e.target.value);
     }
+
+    //장바구니 신청 이벤트
     const handleEnroll = () => {
         if (!selClass || !selStudent) 
             return alert('수업/자녀를 선택하세요');
@@ -53,7 +68,7 @@ const PaymentPayCheck = () => {
             /* enroll 리스트 추가 등 */
             fetchEnrollList();
         })
-            .catch(err => alert('신청 실패'));
+        .catch(err => alert('신청 실패'));
     };
 
     // 장바구니 목록 불러오기
@@ -73,6 +88,33 @@ const PaymentPayCheck = () => {
         .then(res => {setClasses(res.data)})
         .catch(err => {alert('클래스 호출 실패')});
     }
+
+    //토스 결제로 이어지는 이벤트 함수
+    const handleTossPay = () => {
+        if (enrollList.length === 0) {
+            alert("결제할 내역이 없습니다.");
+            return;
+        }
+        loadTossPayments(clientKey).then((tossPayments) => {
+            tossPayments.requestPayment(
+                "카드",
+                {
+                    amount: totalAmount,
+                    currency: 'KRW',
+                    orderId: orderId,
+                    orderName: orderName,
+                    customerName: customerName,
+                    successUrl: `${window.location.origin}/payment/success`,
+                    failUrl: `${window.location.origin}/payment/fail`
+                }
+            )
+            .catch(error => {
+                // 에러 처리
+                alert('결제 실패!');
+            });
+        });
+    };
+
 
     // acaId(학원) 바뀔 때 1번만 부르기
     useEffect(() => {
@@ -180,7 +222,10 @@ const PaymentPayCheck = () => {
                                             </b></td>
                                         </tr>
                                         <tr>
-                                            {/* 똑같이 value와 내용을 맞춰줘야 jackson 직렬화 문제 방지 */}
+                                            {/*
+                                            똑같이 value와 내용을 맞춰줘야 jackson 직렬화 문제 방지
+                                            기간은 학원의 수업의 재량에 따라 천차만별이다.
+                                            */}
                                             <select
                                                 style={{ width:'70%', textAlign: 'center' }}
                                                 value={duration}
@@ -247,15 +292,17 @@ const PaymentPayCheck = () => {
                                             <tr>
                                                 <td>{el.className}</td>
                                                 <td>
-                                                    <button>
+                                                    <button onClick={handleTossPay}>
                                                         결제
                                                     </button>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td><b>
-                                                    {el.tuition}원
-                                                </b></td>
+                                                <td>
+                                                    <b>
+                                                        {el.tuition}원
+                                                    </b>
+                                                </td>
                                                 <td>
                                                     <button>
                                                         삭제
