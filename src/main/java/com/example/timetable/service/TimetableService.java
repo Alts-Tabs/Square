@@ -1,5 +1,7 @@
 package com.example.timetable.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.example.classes.entity.ClassUsersEntity;
 import com.example.classes.entity.ClassesEntity;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.timetable.dto.*;
@@ -9,20 +11,24 @@ import com.example.timetable.entity.TimeusersEntity;
 import com.example.timetable.repository.TimecontentsRepository;
 import com.example.timetable.repository.TimetableRepository;
 import com.example.timetable.repository.TimeusersRepository;
+import com.example.user.dto.JoinDto;
 import com.example.user.entity.AcademiesEntity;
 import com.example.user.entity.StudentsEntity;
+import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.AcademiesRepository;
+import com.example.user.jpa.StudentsRepository;
+import com.example.user.jpa.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import static java.time.DayOfWeek.*;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +39,8 @@ public class TimetableService {
     private final TimeusersRepository timeusersRepository;
     private final ClassUsersRepository classUsersRepository;
     private final AcademiesRepository academiesRepository;
+    private final UsersRepository usersRepository;
+    private final StudentsRepository studentsRepository;
 
     /**시간표 등록
      * timetable > timecontents > timeusers 순으로 등록*/
@@ -104,6 +112,154 @@ public class TimetableService {
                         .startDate(t.getStartDate())
                         .endDate(t.getEndDate())
                         .build())
+                .collect(Collectors.toList());
+    }
+
+//    [출석부] ================================================================================
+    /** 로그인된 강사와 학생의 현재 수업 정보를 조회 */
+    public Optional<TimecontentsDto> getCurrentClassForTeacher(Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime currentTime = now.toLocalTime();
+        int today = now.getDayOfWeek().getValue(); // 월=1 ~ 일=7
+
+        // user 역할 찾고 학생 classesUser 에 속해 있는지 찾아서 -> classId
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
+
+        // 역할 확인
+        switch (user.getRole()) {
+            case ROLE_TEACHER -> {
+                // 강사일 경우 기존 로직 그대로 사용
+                return timecontentsRepository.findAll().stream()
+                        .filter(tc ->
+                                tc.getDayOfWeek() == today &&
+                                        !currentTime.isBefore(tc.getStartTime()) &&
+                                        !currentTime.isAfter(tc.getEndTime()) &&
+                                        tc.getClasses() != null &&
+                                        tc.getClasses().getTeacher() != null &&
+                                        tc.getClasses().getTeacher().getUser() != null &&
+                                        userId != null &&
+                                        tc.getClasses().getTeacher().getUser().getUser_id() == userId
+                        )
+                        .findFirst()
+                        .map(tc -> TimecontentsDto.builder()
+                                .startTime(tc.getStartTime())
+                                .endTime(tc.getEndTime())
+                                .classId(tc.getClasses().getClassId())
+                                .className(tc.getClasses().getName())
+                                .type(tc.getType())
+                                .dayOfWeek(tc.getDayOfWeek())
+                                .description(tc.getDescription())
+                                .build());
+            }
+            case ROLE_STUDENT -> {
+                // 학생일 경우
+                StudentsEntity student = studentsRepository.findByUserId(userId);
+                List<ClassUsersEntity> classUsers = classUsersRepository.findByStudent(student);
+
+                for (ClassUsersEntity cu : classUsers) {
+                    ClassesEntity classEntity = cu.getClassEntity();
+
+                    Optional<TimecontentsEntity> match = timecontentsRepository.findAll().stream()
+                            .filter(tc ->
+                                    tc.getClasses() != null &&
+                                            tc.getClasses().getClassId() == classEntity.getClassId() &&
+                                            tc.getDayOfWeek() == today &&
+                                            !currentTime.isBefore(tc.getStartTime()) &&
+                                            !currentTime.isAfter(tc.getEndTime())
+                            )
+                            .findFirst();
+
+                    if (match.isPresent()) {
+                        TimecontentsEntity tc = match.get();
+                        return Optional.of(TimecontentsDto.builder()
+                                .startTime(tc.getStartTime())
+                                .endTime(tc.getEndTime())
+                                .classId(tc.getClasses().getClassId())
+                                .className(tc.getClasses().getName())
+                                .type(tc.getType())
+                                .dayOfWeek(tc.getDayOfWeek())
+                                .description(tc.getDescription())
+                                .build());
+                    }
+                }
+
+                return Optional.empty(); // 일치하는 시간표 없음
+            }
+            default -> {
+                return Optional.empty();
+            }
+        }
+    }
+
+
+    /** 현재 강사의 수업에 해당하는 학생들 조회 */
+    private final ClassUsersRepository classusersRepository;
+
+    public List<JoinDto> getStudentsOfCurrentClass(Integer userId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime currentTime = now.toLocalTime();
+        int today = now.getDayOfWeek().getValue(); // 월=1 ~ 일=7
+
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
+
+        // 현재 시간대 수업 찾기 (해당 강사의)
+        Optional<TimecontentsEntity> currentContentOpt = switch (user.getRole()) {
+            case ROLE_TEACHER -> timecontentsRepository.findAll().stream()
+                        .filter(tc ->
+                                tc.getDayOfWeek() == today &&
+                                        !currentTime.isBefore(tc.getStartTime()) &&
+                                        !currentTime.isAfter(tc.getEndTime()) &&
+                                        tc.getClasses() != null &&
+                                        tc.getClasses().getTeacher() != null &&
+                                        tc.getClasses().getTeacher().getUser() != null &&
+                                        tc.getClasses().getTeacher().getUser().getUser_id() == userId
+                        )
+                        .findFirst();
+            case ROLE_STUDENT -> {
+                StudentsEntity student = studentsRepository.findByUserId(userId);
+                if (student == null) {
+                    yield Optional.empty();
+                }
+
+                List<ClassUsersEntity> classUserList = classUsersRepository.findByStudent(student);
+                Optional<TimecontentsEntity> result = classUserList.stream()
+                        .map(ClassUsersEntity::getClassEntity)
+                        .filter(Objects::nonNull)
+                        .flatMap(cls -> timecontentsRepository.findAll().stream()
+                                .filter(tc ->
+                                        tc.getClasses() != null &&
+                                                tc.getClasses().getClassId() == cls.getClassId() &&
+                                                tc.getDayOfWeek() == today &&
+                                                !currentTime.isBefore(tc.getStartTime()) &&
+                                                !currentTime.isAfter(tc.getEndTime())
+                                )
+                        )
+                        .findFirst();
+                yield result;
+            }
+            default -> Optional.empty();
+        };
+
+        if (currentContentOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int classId = currentContentOpt.get().getClasses().getClassId(); // 현재 시간대의 class_id
+        List<ClassUsersEntity> classUsers = classusersRepository.findByClassEntity_ClassId(classId); // 해당 class_id에 등록된 학생들 조회 (classusers 테이블)
+
+        // 학생 user 정보 가져오기
+        return classUsers.stream()
+                .filter(cu -> cu.getStudent() != null && cu.getStudent().getUser() != null)
+                .map(cu -> {
+                    UsersEntity userDto = cu.getStudent().getUser();
+                    JoinDto dto = new JoinDto();
+                    dto.setName(userDto.getName());
+                    dto.setEmail(userDto.getEmail());
+                    dto.setUsername(userDto.getUsername());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

@@ -49,7 +49,7 @@ const AttendStu = () => {
     
     const [userInfo, setUserInfo] = useState(() => { // userInfo 상태 정의
         const stored = localStorage.getItem('userInfo');
-        return passedUserInfo || (stored ? JSON.parse(stored) : null);
+        return stored ? JSON.parse(stored) : null;
     });
 
     useEffect(() => { // 새로 받아온 userInfo가 있으면 localStorage에 저장
@@ -66,12 +66,14 @@ const AttendStu = () => {
         if (!userInfo?.userId) return;
 
         axios.get('/public/current-class', {
-            params: { userId: userInfo.userId },
+            withCredentials: true
         }).then(res => {
             if (res.data) {
                 setCurrentClass(res.data);
+                console.log(res.data);
             } else {
                 setCurrentClass(null);
+                console.log(res.data);
             }
         }).catch(err => {
             console.error('현재 수업 정보를 불러오는 중 오류 발생:', err);
@@ -79,7 +81,7 @@ const AttendStu = () => {
     }, [userInfo]);
 
     console.log("userInfo:", userInfo);
-    console.log('렌더링 currentClass:', currentClass);
+    console.log('현 수업 currentClass:', currentClass);
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
@@ -90,7 +92,7 @@ const AttendStu = () => {
         if (!userInfo?.userId) return;
 
         axios.get('/public/current-students', {
-        params: { userId: userInfo.userId }
+        withCredentials: true
         })
         .then(res => {
             setStudents(Array.isArray(res.data) ? res.data : []);
