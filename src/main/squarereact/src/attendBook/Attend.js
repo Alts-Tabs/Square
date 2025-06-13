@@ -17,7 +17,7 @@ const Attend = () => {
 
             // 언마운트 시 chart 파괴
             return () => chart.destroy();
-        }
+        } 
     }, []);
 
     
