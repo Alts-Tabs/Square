@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PasswordChange from "./PasswordChange";
 import DeleteId from "./DeleteId";
-import { getBasicInfo, updatePhone, updateEmail } from "../../api/mypageApi";
+import { getBasicInfo, updatePhone, updateEmail, updateProfileImage } from "../../api/mypageApi";
 import "./mypage.css";
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [showModal, setShowModal] = useState(false);
   const [editType, setEditType] = useState("");
-  const [profileImg, setProfileImg] = useState(
-    "https://cdn-icons-png.flaticon.com/512/147/147144.png"
-  );
+  const defaultImg = "https://cdn-icons-png.flaticon.com/512/147/147144.png";
+  const [profileImg, setProfileImg] = useState(defaultImg);
 
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -18,6 +17,7 @@ const MyPage = () => {
     username: "",
     phone: "",
     email: "",
+    userProfile: "",
     academyName: "", // 원장용
     childrenNames: [], // 학부모용
     subject: "", // 강사용
@@ -38,11 +38,17 @@ const MyPage = () => {
           username: data.username,
           phone: data.phone,
           email: data.email,
+          userProfile: data.userProfile,
           academyName: data.academyName,
           childrenNames: data.childrenNames,
           subject: data.subject,
           className: data.className,
         });
+
+        setProfileImg(data.userProfile && data.userProfile.trim() !== "" 
+          ? `https://kr.object.ncloudstorage.com/square/mypage/${data.userProfile}`
+          : defaultImg);
+
       } catch (error) {
         alert("기본 정보 불러오기 실패");
       }
@@ -50,11 +56,20 @@ const MyPage = () => {
     fetchBasicInfo();
   }, []);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const preview = URL.createObjectURL(file);
-      setProfileImg(preview);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const data = await updateProfileImage(formData);
+        const imageUrl = `https://kr.object.ncloudstorage.com/square/mypage/${data.userProfile}`;
+        setProfileImg(imageUrl);
+        setUserInfo((prev) => ({ ...prev, userProfile: imageUrl }));
+      } catch(error) {
+        alert("프로필 이미지 업로드 실패");
+      }
     }
   };
 
@@ -128,6 +143,7 @@ const MyPage = () => {
     }
   };
 
+
   return (
     <div className="mypage-container">
       <div className="mypage-wrapper">
@@ -163,7 +179,7 @@ const MyPage = () => {
                 <div className="info-box">
                   <h3 className="info-title">기본 정보</h3>
                   <div className="profile-section">
-                    <img src={profileImg} alt="프로필" />
+                    <img src={profileImg} alt={defaultImg} />
                     <label className="btn-photo">
                       사진 변경
                       <input type="file" hidden onChange={handleImageChange} />

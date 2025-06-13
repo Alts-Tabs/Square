@@ -3,12 +3,14 @@ package com.example.mypage.service;
 import com.example.mypage.dto.MypageInfoDto;
 import com.example.mypage.dto.PasswordChangeDto;
 import com.example.mypage.dto.WithdrawalDto;
+import com.example.naver.storage.NcpObjectStorageService;
 import com.example.user.entity.*;
 import com.example.user.jpa.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,11 +26,13 @@ public class MypageService {
     private final StudentsRepository studentsRepository;
     private final TeachersRepository teachersRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final NcpObjectStorageService storageService;
+    private String bucketName = "square";
 
     // 기본 정보 조회
     public MypageInfoDto getUserInfo(int userId) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
 
         MypageInfoDto dto = new MypageInfoDto(user);
 
@@ -87,7 +91,7 @@ public class MypageService {
     // 휴대폰 번호 변경 후 최신 정보 반환
     public MypageInfoDto updatePhone(int userId, String phone) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
         user.setPhone(phone);
         usersRepository.save(user);
         return getUserInfo(userId);
@@ -96,23 +100,43 @@ public class MypageService {
     // 이메일 변경 후 최신 정보 반환
     public MypageInfoDto updateEmail(int userId, String email) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
         user.setEmail(email);
         usersRepository.save(user);
         return getUserInfo(userId);
     }
 
+    // 프로필 변경 후 최신정보 반환
+    public MypageInfoDto updateProfileImage(int userId, MultipartFile file) {
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
+
+        // 이전 프로필 삭제
+        if(user.getUserProfile() != null) {
+            String fileName = user.getUserProfile();
+            storageService.deleteFile(bucketName, "mypage", fileName);
+        }
+
+        String fileUrl = storageService.uploadFile(bucketName, "mypage", file);
+
+        user.setUserProfile(fileUrl);
+        usersRepository.save(user);
+
+        return getUserInfo(userId);
+    }
+
+
     // 비밀번호 변경
     public boolean changePassword(int userId, PasswordChangeDto dto) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
 
         if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             return false;
         }
 
         if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
-            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("INVALID NEw PASSWORD");
         }
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -124,7 +148,7 @@ public class MypageService {
     // 회원 탈퇴
     public boolean withdrawUser(int userId, WithdrawalDto dto) {
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("NOT FOUND USER"));
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             usersRepository.delete(user);
