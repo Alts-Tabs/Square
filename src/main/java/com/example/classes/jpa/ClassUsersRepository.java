@@ -33,4 +33,9 @@ public interface ClassUsersRepository extends JpaRepository<ClassUsersEntity, In
             "WHERE cu.classEntity.academy.academyId = :academyId " +
             "GROUP BY cu.classEntity.classId")
     List<ClassCountProjection> countStudentsByAcademy(@Param("academyId") int academyId);
+
+//    [출석부]
+    List<ClassUsersEntity> findByClassEntity_ClassId(int classId);
+    List<ClassUsersEntity> findByStudent(StudentsEntity student);
+
 }

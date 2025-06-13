@@ -76,7 +76,7 @@ const Attend = () => {
         if (!userInfo?.userId) return;
 
         axios.get('/public/current-class', {
-            params: { userId: userInfo.userId },
+            withCredentials: true
         }).then(res => {
             if (res.data) {
                 setCurrentClass(res.data);
@@ -100,7 +100,7 @@ const Attend = () => {
         if (!userInfo?.userId) return;
 
         axios.get('/public/current-students', {
-        params: { userId: userInfo.userId }
+        withCredentials: true
         })
         .then(res => {
             setStudents(Array.isArray(res.data) ? res.data : []);
