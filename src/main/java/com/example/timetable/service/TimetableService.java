@@ -131,7 +131,7 @@ public class TimetableService {
             case ROLE_TEACHER -> {
                 // 강사일 경우 기존 로직 그대로 사용
                 return timecontentsRepository.findAll().stream()
-                        .filter(tc ->
+                        .filter(tc -> // 조건
                                 tc.getDayOfWeek() == today &&
                                         !currentTime.isBefore(tc.getStartTime()) &&
                                         !currentTime.isAfter(tc.getEndTime()) &&
@@ -141,8 +141,8 @@ public class TimetableService {
                                         userId != null &&
                                         tc.getClasses().getTeacher().getUser().getUser_id() == userId
                         )
-                        .findFirst()
-                        .map(tc -> TimecontentsDto.builder()
+                        .findFirst() // 위 조건을 만족하는 첫 번째 데이터가 있으면
+                        .map(tc -> TimecontentsDto.builder() // 그 데이터를 TimecontentsDto 형태로 바꿔 반환
                                 .startTime(tc.getStartTime())
                                 .endTime(tc.getEndTime())
                                 .classId(tc.getClasses().getClassId())
@@ -184,7 +184,7 @@ public class TimetableService {
                     }
                 }
 
-                return Optional.empty(); // 일치하는 시간표 없음
+                return Optional.empty(); // 일치하는 시간표 없으면 이걸 반환
             }
             default -> {
                 return Optional.empty();

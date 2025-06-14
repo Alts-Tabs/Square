@@ -9,6 +9,10 @@ import { attendanceChartOptions  } from './attendanceChartOptions';
 
 const AttendStu = () => {
     const [isEditable, setIsEditable] = useState(false);
+    const [attendanceCode, setAttendanceCode] = useState(null); // 출석코드 상태 추가
+    const [socket, setSocket] = useState(null);  // socket 객체 상태로 저장
+    const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
+    
     const chartRef = useRef(null);
 
     // 누적 출석 차트
@@ -85,7 +89,6 @@ const AttendStu = () => {
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
-    const [checkedStudents, setCheckedStudents] = useState([]);
     const [students, setStudents] = useState([]); // 학생 목록 상태 추가
 
     useEffect(() => {
