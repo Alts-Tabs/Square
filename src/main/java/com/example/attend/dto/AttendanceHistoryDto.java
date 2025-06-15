@@ -1,25 +1,14 @@
 package com.example.attend.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class AttendanceHistoryDto {
-    private String date;
-    private int presentCount;
-    private int lateCount;
-    private int absentCount;
-    private List<StudentStatus> studentStatuses;
-
-    @Data
-    @AllArgsConstructor
-    public static class StudentStatus {
-        private String name;
-        private String status; // "PRESENT", "LATE", "ABSENT"
-    }
+    private String dateOnly;  // Ex) "25.05.09 금요일"
+    private long present;
+    private long late;
+    private long absent;
+    private int timetableId; // 어떤 수업의 출석인지 프론트에서 구분용
 }
