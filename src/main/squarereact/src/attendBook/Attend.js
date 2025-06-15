@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
 import { attendanceChartOptions  } from './attendanceChartOptions';
-import { io } from 'socket.io-client';
 
 const Attend = () => {
     const chartRef = useRef(null);
@@ -21,41 +20,8 @@ const Attend = () => {
     }, []);
 
     
-    // Web Socket 같은 class_id 유저끼리 방 입장 ====================================
-    const [currentClass, setCurrentClass] = useState(null);  
-    const [socket, setSocket] = useState(null);
-    
-    useEffect(() => {
-        if (!currentClass || !currentClass.classId) return;
-
-        const newSocket = io('http://localhost:8090');
-        setSocket(newSocket);
-
-        newSocket.emit('join-class', currentClass.classId);
-
-        newSocket.on('start', ({ code }) => {
-            setRandomNumber(code);
-            setAttending(true);
-            setAttendanceEnded(false);
-        });
-
-        newSocket.on('stop', () => {
-            setRandomNumber(null);
-            setAttending(false);
-            setAttendanceEnded(true);
-        });
-
-        newSocket.on('check', ({ studentName }) => {
-            // handle check
-        });
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [currentClass]);
-    
-
     // 현재 수업 출력 ============================================================
+    const [currentClass, setCurrentClass] = useState(null);  
     const location = useLocation();
     const passedUserInfo = location.state?.userInfo; // Main.js의 state에서 받은 userInfo
     
@@ -138,13 +104,33 @@ const Attend = () => {
     }, []);
 
     // 2. 출석 시작 / 종료 요청
-    const handleAttendanceClick = () => {
-        if (!socket || !currentClass?.classId) return;
+    const handleAttendanceClick = async () => {
+    if (!userInfo?.userId || !currentClass?.classId) return;
 
+    try {
         if (!attending) {
-            socket.emit('start-attendance', currentClass.classId);
+            // 출석 시작 요청
+            const response = await axios.post(`/th/attendance-start?userId=${userInfo.userId}`, null, {
+                withCredentials: true
+            });
+
+            const { code } = response.data;
+            setRandomNumber(code);
+            setAttending(true);
+            localStorage.setItem('attendanceNumber', code.toString());
         } else {
-            socket.emit('stop-attendance', currentClass.classId);
+            // 출석 종료 요청 
+            await axios.post(`/th/attendance-end?timetableIdx=${currentClass.classId}`, null, {
+                withCredentials: true
+            });
+
+            setAttending(false);
+            setAttendanceEnded(true);
+            setRandomNumber(null);
+            localStorage.removeItem('attendanceNumber');
+        }
+        } catch (err) {
+            console.error('출석 시작/종료 중 오류 발생:', err);
         }
     };
 
@@ -210,7 +196,6 @@ const Attend = () => {
                         {/* 출석 시작 & 출석 종료 버튼 */}
                         {!attendanceEnded ? (
                         <>
-                            {/* 출석 중일 때만 랜덤 숫자 출력 */}
                             {attending && randomNumber && (
                                 <div style={{
                                     fontSize: '60px',
