@@ -764,3 +764,42 @@ Caused by: org.springframework.data.mapping.PropertyReferenceException: No prope
 	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:101) ~[spring-data-jpa-3.4.5.jar:3.4.5]
 	... 63 common frames omitted
 
+2025-06-15T15:18:04.771+09:00  INFO 24340 --- [restartedMain] com.example.demo.SquareApplication       : Starting SquareApplication using Java 21.0.5 with PID 24340 (C:\BitcampFinal\Square\build\classes\java\main started by drago in C:\BitcampFinal\Square)
+2025-06-15T15:18:04.775+09:00  INFO 24340 --- [restartedMain] com.example.demo.SquareApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-06-15T15:18:04.909+09:00  INFO 24340 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-15T15:18:04.910+09:00  INFO 24340 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-15T15:18:06.591+09:00  INFO 24340 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-15T15:18:07.261+09:00  INFO 24340 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 654 ms. Found 22 JPA repository interfaces.
+2025-06-15T15:18:08.857+09:00  INFO 24340 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-15T15:18:08.886+09:00  INFO 24340 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-15T15:18:08.887+09:00  INFO 24340 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-06-15T15:18:09.027+09:00  INFO 24340 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-15T15:18:09.028+09:00  INFO 24340 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4117 ms
+2025-06-15T15:18:09.601+09:00  INFO 24340 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-15T15:18:09.759+09:00  INFO 24340 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.13.Final
+2025-06-15T15:18:09.848+09:00  INFO 24340 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-15T15:18:10.570+09:00  INFO 24340 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-15T15:18:10.646+09:00  INFO 24340 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-15T15:18:10.964+09:00  INFO 24340 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@21236c32
+2025-06-15T15:18:10.968+09:00  INFO 24340 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-15T15:18:11.055+09:00  WARN 24340 --- [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-15T15:18:11.089+09:00  INFO 24340 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.40
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-06-15T15:18:12.873+09:00  INFO 24340 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-15T15:18:13.613+09:00  INFO 24340 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-15T15:18:14.058+09:00  INFO 24340 --- [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-15T15:18:18.026+09:00  WARN 24340 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-15T15:18:18.068+09:00  INFO 24340 --- [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-06-15T15:18:18.249+09:00  INFO 24340 --- [restartedMain] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-15T15:18:19.294+09:00  INFO 24340 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-06-15T15:18:19.355+09:00  INFO 24340 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-06-15T15:18:19.366+09:00  INFO 24340 --- [restartedMain] com.example.demo.SquareApplication       : Started SquareApplication in 15.523 seconds (process running for 16.596)
+2025-06-15T15:18:27.712+09:00  INFO 24340 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-15T15:18:27.713+09:00  INFO 24340 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-15T15:18:27.715+09:00  INFO 24340 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
