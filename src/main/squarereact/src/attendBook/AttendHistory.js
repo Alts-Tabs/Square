@@ -7,7 +7,7 @@ import axios from 'axios';
 const AttendHistory = () => {
     // 해당 출석 날짜 Title
     const location = useLocation();
-    const { date, present, late, absent } = location.state || {};
+    const { date, present, late, absent, students = [] } = location.state || {};
 
 
     // 출석 상태 관리 (임시) =======================================================
@@ -53,15 +53,15 @@ const AttendHistory = () => {
 
                 {/* 이전으로 돌아가기 */}
                 <div className='attendbookHeader'>
-                <Link to={`/main/attend/${userInfo.acaId}`}>
-                    <i className="bi bi-chevron-left"></i>
-                    <span>이전</span>
-                </Link>
+                    <Link to={`/main/attend/${userInfo.acaId}`}>
+                        <i className="bi bi-chevron-left"></i>
+                        <span>이전</span>
+                    </Link>
                 </div>
 
                 <div className='attendbookBody'>
                 <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '700' }}>
-                    (수업명) 총 인원 {(present + late + absent)}명
+                    (수업명) 총 인원 {present + late + absent}명
                 </span>
                 <br />
 

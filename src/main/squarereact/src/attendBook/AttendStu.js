@@ -64,35 +64,60 @@ const AttendStu = () => {
     console.log("userInfo:", userInfo);
     console.log('현 수업 currentClass:', currentClass);
 
+    
+    // 출석 입력란 활성화 여부 =========================================================
+    useEffect(() => {
+        if (!userInfo?.userId) return;
+
+        // 출석 활성 여부 확인
+        axios.get('/student/attendance-active', {
+            params: { userId: userInfo.userId },
+            withCredentials: true
+        })
+        .then(res => {
+            setIsEditable(res.data); // true이면 출석창 활성화
+        })
+        .catch(err => {
+            console.error("출석 활성 상태 확인 실패:", err);
+            setIsEditable(false);
+        });
+    }, [userInfo]);
+
 
     // 출석 코드 제출 ==================================================================
     const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-        const inputCode = parseInt(e.target.value);
-        if (isNaN(inputCode)) {
-            alert("숫자만 입력해주세요.");
-            return;
-        }
+        if (e.key === 'Enter') {
+            const inputCode = parseInt(e.target.value);
+            if (isNaN(inputCode)) {
+                alert("숫자만 입력해주세요.");
+                return;
+            }
 
-        axios.post('/stu/attendance-submit', null, {
-            params: {
-                studentId: userInfo.roleId, // 계정 students 테이블의 PK
-                idx: currentClass?.timetableIdx, // 서버에서 반환한 timetableIdx 필요 - 이 부분 현재 
-                inputCode: inputCode
-            },
-            withCredentials: true
-        })
-        .then(() => {
-            alert("출석이 완료되었습니다.");
-            setCheckedStudents(prev => [...prev, userInfo.userId]); // 출석한 학생 목록에 추가
-            setIsEditable(false); // 출석창 비활성화
-        })
-        .catch(err => {
-            console.error("출석 제출 실패:", err);
-            alert("출석 코드가 일치하지 않습니다.");
-        });
+            axios.post('/student/attendance-submit', null, {
+                params: {
+                    userId: userInfo.userId,
+                    submittedCode: inputCode
+                },
+                withCredentials: true
+            })
+            .then((res) => {
+                if (res.data === true) {
+                    alert("출석이 완료되었습니다.");
+                    setCheckedStudents(prev => [...prev, userInfo.userId]);
+                    setIsEditable(false); // 출석창 비활성화
+                } else {
+                    alert("출석 코드가 유효하지 않습니다.");
+                }
+            })
+            .catch(err => {
+                console.error("출석 제출 실패:", err);
+                const msg = err?.response?.data || "출석 처리 중 오류가 발생했습니다.";
+                alert(msg);
+            });
         }
     };
+
+    console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================

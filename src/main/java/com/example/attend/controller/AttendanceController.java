@@ -2,11 +2,16 @@ package com.example.attend.controller;
 
 import com.example.attend.dto.AttendanceHistoryDto;
 import com.example.attend.dto.StartAttendanceResponseDto;
+import com.example.attend.service.AttendanceHistoryService;
 import com.example.attend.service.AttendanceService;
 import com.example.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
+    private final AttendanceHistoryService attendanceHistoryService;
 
     // 출석 시작 ========================================================================================================
     @PostMapping("/th/attendance-start")
@@ -25,23 +31,39 @@ public class AttendanceController {
     // 출석 종료 ========================================================================================================
     @PostMapping("/th/{timetableAttendIdx}/attendance-end")
     public void endAttendance(@PathVariable int timetableAttendIdx) {
+        System.out.println("출석 종료 요청 들어옴: " + timetableAttendIdx);
         attendanceService.endAttendance(timetableAttendIdx);
+    }
+
+    // 출석 취소 ========================================================================================================
+    @PostMapping("/th/{timetableAttendIdx}/attendance-cancel")
+    public void cancelAttendance(@PathVariable int timetableAttendIdx) {
+        System.out.println("출석 취소 요청 들어옴: " + timetableAttendIdx);
+        attendanceService.cancelAttendance(timetableAttendIdx);
+    }
+
+    // 지난 출석 출력 ====================================================================================================
+    @GetMapping("/public/attendance-history")
+    public List<AttendanceHistoryDto> getAttendanceHistory() {
+        return attendanceHistoryService.getAllAttendanceSummary();
+    }
+
+
+    // 출석 입력란 활성화 여부 ============================================================================================
+    @GetMapping("/student/attendance-active")
+    public ResponseEntity<Boolean> isAttendanceActive(@RequestParam Integer userId) {
+        boolean isActive = attendanceService.isAttendanceActive(userId);
+        return ResponseEntity.ok(isActive);
     }
 
 
     // 출석 제출 ========================================================================================================
-//    @PostMapping("/stu/attendance-submit")
-//    public void submitAttendance(
-//            @RequestParam int studentId,
-//            @RequestParam int idx,
-//            @RequestParam int inputCode
-//    ) {
-//        attendanceService.submitAttendance(studentId, idx, inputCode);
-//    }
-
-    // 이전 출석 조회 ====================================================================================================
-//    @GetMapping("/attendance-history/{codeIdx}")
-//    public AttendanceHistoryDto getAttendanceHistory(@PathVariable int codeIdx) {
-//        return attendanceService.getAttendanceHistory(codeIdx);
-//    }
+    @PostMapping("/student/attendance-submit")
+    public ResponseEntity<Boolean> submitAttendanceCode(
+            @RequestParam Integer userId,
+            @RequestParam int submittedCode
+    ) {
+        boolean result = attendanceService.submitAttendanceCode(userId, submittedCode);
+        return ResponseEntity.ok(result);
+    }
 }

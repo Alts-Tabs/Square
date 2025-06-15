@@ -1,18 +1,18 @@
 package com.example.attend.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
-import com.example.attend.dto.AttendanceHistoryDto;
 import com.example.attend.dto.StartAttendanceResponseDto;
 import com.example.attend.entity.*;
 import com.example.attend.repository.*;
-import com.example.classes.entity.ClassUsersEntity;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.timetable.entity.TimecontentsEntity;
 import com.example.timetable.entity.TimetableEntity;
 import com.example.timetable.entity.TimeusersEntity;
 import com.example.timetable.repository.TimecontentsRepository;
 import com.example.timetable.repository.TimeusersRepository;
+import com.example.user.entity.StudentsEntity;
 import com.example.user.entity.UsersEntity;
+import com.example.user.jpa.StudentsRepository;
 import com.example.user.jpa.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +34,7 @@ public class AttendanceService {
     private final TimetableAttendRepository timetableAttendRepository;
     private final AttendanceCodeRepository attendanceCodeRepository;
     private final AttendancesRepository attendancesRepository;
+    private final StudentsRepository studentsRepository;
 
     // 출석 시작: 출석코드 생성 + 출석부 초기화 =============================================================================
     @Transactional
@@ -116,63 +115,101 @@ public class AttendanceService {
     }
 
 
-    // 학생이 출석 코드를 입력하고 본인의 출석을 등록하는 메서드 ===============================================================
-//    @Transactional
-//    public void submitAttendance(int studentId, int idx, int inputCode) {
-//        AttendanceCodeEntity codeEntity = attendanceCodeRepository.findByIdx(idx);
-//
-//        if (codeEntity == null) {
-//            throw new IllegalArgumentException("출석 코드가 존재하지 않습니다.");
-//        }
-//
-//        if (codeEntity.getCode() != inputCode) {
-//            throw new IllegalArgumentException("출석 코드가 일치하지 않습니다.");
-//        }
-//
-//        AttendancesEntity attendance = attendancesRepository.findByIdxAndStudent_StudentId(idx, studentId);
-//        if (attendance == null) {
-//            throw new IllegalArgumentException("해당 학생의 출석 정보가 없습니다.");
-//        }
-//
-//        attendance.setStatus(AttendancesEntity.Status.PRESENT);
-//        attendance.setVerified_at(LocalDateTime.now().withSecond(0).withNano(0));
-//        attendancesRepository.save(attendance);
-//    }
+    // 출석 취소 ========================================================================================================
+    @Transactional
+    public void cancelAttendance(int timetableAttendIdx) {
+        TimetableAttendEntity timetableAttend = timetableAttendRepository.findById(timetableAttendIdx)
+                .orElseThrow(() -> new NotFoundException("NOT FOUND TimetableAttend"));
+
+        // 출석 코드 삭제 (가장 최근 생성된 코드 기준)
+        AttendanceCodeEntity code = attendanceCodeRepository.findTopByTimetableAttend_IdxOrderByCreatedAtDesc(timetableAttendIdx);
+        if (code != null) {
+            attendanceCodeRepository.delete(code);
+        }
+
+        timetableAttendRepository.delete(timetableAttend); // 출결 기록 삭제는 Cascade에 의해 자동으로 지워짐
+    }
 
 
-    // 특정 시간표(idx)의 출석부 리스트를 반환하는 메서드 ====================================================================
-//    public AttendanceHistoryDto getAttendanceHistory(int codeIdx) {
-//        AttendanceCodeEntity codeEntity = attendanceCodeRepository.findByIdx(codeIdx);
-//        if (codeEntity == null) throw new IllegalArgumentException("출석 코드 없음");
-//
-//        TimetableAttendEntity timetable = timetableAttendRepository.findByAttendanceCode_Idx(codeIdx);
-//        if (timetable == null) throw new IllegalArgumentException("해당 출석 기록 없음");
-//
-//        List<AttendancesEntity> records = attendancesRepository.findByTimetableAttend_Idx(timetable.getIdx());
-//
-//        int present = 0, late = 0, absent = 0;
-//        List<AttendanceHistoryDto.StudentStatus> studentList = new ArrayList<>();
-//
-//        for (AttendancesEntity record : records) {
-//            String status = record.getStatus().toString();
-//            switch (status) {
-//                case "PRESENT" -> present++;
-//                case "LATE" -> late++;
-//                case "ABSENT" -> absent++;
-//            }
-//
-//            String studentName = record.getStudent().getUser().getName();
-//
-//            studentList.add(new AttendanceHistoryDto.StudentStatus(
-//                    studentName,
-//                    status
-//            ));
-//        }
-//
-//        String formattedDate = codeEntity.getCreated_at().format(
-//                DateTimeFormatter.ofPattern("yy.MM.dd E요일", Locale.KOREAN)
-//        ) + " 출석";
-//
-//        return new AttendanceHistoryDto(formattedDate, present, late, absent, studentList);
-//    }
+    // 학생 출석 입력란 활성화 여부 ========================================================================================
+    @Transactional
+    public boolean isAttendanceActive(Integer userId) {
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        int today = now.getDayOfWeek().getValue() % 7;
+
+        // 현재 수업 시간대 찾기
+        Optional<TimecontentsEntity> currentClassOpt = timecontentsRepository.findAll().stream()
+                .filter(tc -> {
+                    LocalTime start = tc.getStartTime().withSecond(0).withNano(0);
+                    LocalTime end = tc.getEndTime().withSecond(0).withNano(0);
+                    return tc.getDayOfWeek() == today &&
+                            !now.toLocalTime().isBefore(start) &&
+                            !now.toLocalTime().isAfter(end);
+                }).findFirst();
+
+        if (currentClassOpt.isEmpty()) return false;
+
+        TimetableEntity timetable = currentClassOpt.get().getTimetable();
+
+        // 가장 최근의 timetable_attend 가져오기
+        Optional<TimetableAttendEntity> attendOpt = timetableAttendRepository.findTopByTimetableOrderByIdxDesc(timetable);
+        if (attendOpt.isEmpty()) return false;
+
+        TimetableAttendEntity attend = attendOpt.get();
+
+        // 출석 코드 존재 여부 확인
+        AttendanceCodeEntity code = attendanceCodeRepository
+                .findTopByTimetableAttend_IdxOrderByCreatedAtDesc(attend.getIdx());
+
+        return code != null;
+    }
+
+
+    // 학생 출석  =======================================================================================================
+    @Transactional
+    public boolean submitAttendanceCode(Integer userId, int submittedCode) {
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        int today = now.getDayOfWeek().getValue() % 7;
+
+        // 1. 학생 정보 확인
+        StudentsEntity student = studentsRepository.findByUserId(userId);
+        if (student == null) return false;
+
+        // 2. 현재 수업 시간대 찾기
+        Optional<TimecontentsEntity> currentClassOpt = timecontentsRepository.findAll().stream()
+                .filter(tc -> {
+                    LocalTime start = tc.getStartTime().withSecond(0).withNano(0);
+                    LocalTime end = tc.getEndTime().withSecond(0).withNano(0);
+                    return tc.getDayOfWeek() == today &&
+                            !now.toLocalTime().isBefore(start) &&
+                            !now.toLocalTime().isAfter(end);
+                }).findFirst();
+
+        if (currentClassOpt.isEmpty()) return false;
+
+        TimetableEntity timetable = currentClassOpt.get().getTimetable();
+
+        // 3. timetable_attend 찾기
+        Optional<TimetableAttendEntity> attendOpt = timetableAttendRepository.findTopByTimetableOrderByIdxDesc(timetable);
+        if (attendOpt.isEmpty()) return false;
+
+        TimetableAttendEntity attend = attendOpt.get();
+
+        // 4. 출석 코드 검증
+        AttendanceCodeEntity code = attendanceCodeRepository
+                .findTopByTimetableAttend_IdxOrderByCreatedAtDesc(attend.getIdx());
+
+        if (code == null || code.getCode() != submittedCode) return false;
+
+        // 5. 출석 상태 갱신
+        AttendancesEntity attendance = attendancesRepository.findByTimetableAttendAndStudent(attend, student);
+        if (attendance == null) return false;
+
+        attendance.setStatus(AttendancesEntity.Status.PRESENT);
+        attendance.setVerified_at(now);
+        attendancesRepository.save(attendance);
+
+        return true;
+    }
+
 }

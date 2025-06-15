@@ -39,7 +39,7 @@ public class AttendancesEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Status status = Status.ABSENT;
+    private Status status = Status.ABSENT; // 디폴트 출석 상태는 '결석'
 
     private LocalDateTime verified_at;
 
