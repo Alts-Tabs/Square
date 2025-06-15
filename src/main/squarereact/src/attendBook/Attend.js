@@ -110,7 +110,7 @@ const Attend = () => {
     try {
         if (!attending) {
             // 출석 시작 요청
-            const response = await axios.post(`/attendance-start?userId=${userInfo.userId}`, null, {
+            const response = await axios.post(`/th/attendance-start?userId=${userInfo.userId}`, null, {
                 withCredentials: true
             });
 
@@ -120,7 +120,7 @@ const Attend = () => {
             localStorage.setItem('attendanceNumber', code.toString());
         } else {
             // 출석 종료 요청 
-            await axios.post(`/attendance-end?timetableIdx=${currentClass.classId}`, null, {
+            await axios.post(`/th/attendance-end?timetableIdx=${currentClass.classId}`, null, {
                 withCredentials: true
             });
 
@@ -196,7 +196,6 @@ const Attend = () => {
                         {/* 출석 시작 & 출석 종료 버튼 */}
                         {!attendanceEnded ? (
                         <>
-                            {/* 출석 중일 때만 랜덤 숫자 출력 */}
                             {attending && randomNumber && (
                                 <div style={{
                                     fontSize: '60px',

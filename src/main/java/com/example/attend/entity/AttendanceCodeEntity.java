@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Builder
-@Table(name = "attendanceCode")
+@Table(name = "attendance_code")
 public class AttendanceCodeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int attendanceCodeId;
+    private int attendance_code_id;
 
     @Column(nullable = false)
     private int idx;
@@ -27,6 +27,6 @@ public class AttendanceCodeEntity {
     private int code;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime created_at = LocalDateTime.now();
 }
 

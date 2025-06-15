@@ -35,7 +35,7 @@ public class AttendanceService {
     @Transactional
     public StartAttendanceResponseDto startAttendance(Integer userId) {
         // 현재 수업 정보 가져오기 (기존 TimetableService 로직 활용)
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
 
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
@@ -56,13 +56,13 @@ public class AttendanceService {
         int code = (int) (Math.random() * 900 + 100);
         AttendanceCodeEntity codeEntity = AttendanceCodeEntity.builder()
                 .code(code)
-                .createdAt(now)
+                .created_at(now)
                 .build();
         attendanceCodeRepository.save(codeEntity);
 
         // timetable_attend 등록
         TimetableAttendEntity timetable = TimetableAttendEntity.builder()
-                .timecontents(currentClass)
+                .timecontents_id(currentClass)
                 .attendanceCode(codeEntity)
                 .build();
         timetableAttendRepository.save(timetable);
@@ -116,7 +116,7 @@ public class AttendanceService {
         }
 
         attendance.setStatus(AttendancesEntity.Status.PRESENT);
-        attendance.setVerifiedAt(LocalDateTime.now());
+        attendance.setVerified_at(LocalDateTime.now().withSecond(0).withNano(0));
         attendancesRepository.save(attendance);
     }
 
@@ -150,7 +150,7 @@ public class AttendanceService {
             ));
         }
 
-        String formattedDate = codeEntity.getCreatedAt().format(
+        String formattedDate = codeEntity.getCreated_at().format(
                 DateTimeFormatter.ofPattern("yy.MM.dd E요일", Locale.KOREAN)
         ) + " 출석";
 

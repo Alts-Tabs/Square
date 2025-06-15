@@ -3620,3 +3620,6 @@ Caused by: java.sql.SQLException: Referencing column 'attendance_id' and referen
 2025-06-14T23:02:24.568+09:00  INFO 14552 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
 2025-06-14T23:02:24.593+09:00  INFO 14552 --- [restartedMain] com.example.demo.SquareApplication       : Started SquareApplication in 10.79 seconds (process running for 2658.879)
 2025-06-14T23:02:24.596+09:00  INFO 14552 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-06-14T23:13:59.219+09:00  INFO 14552 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-14T23:13:59.219+09:00  INFO 14552 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-14T23:13:59.221+09:00  INFO 14552 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms

@@ -19,10 +19,10 @@ public class AttendancesEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int attendancesId;
+    private int attendances_id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private StudentsEntity student;
 
     @Column(nullable = false)
@@ -35,7 +35,7 @@ public class AttendancesEntity {
     @Column(nullable = false)
     private Status status = Status.ABSENT;
 
-    private LocalDateTime verifiedAt;
+    private LocalDateTime verified_at;
 
     public enum Status {
         PRESENT, ABSENT, LATE

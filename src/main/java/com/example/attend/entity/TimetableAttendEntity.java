@@ -18,15 +18,13 @@ public class TimetableAttendEntity {
     private int idx;
 
     @ManyToOne
-    @JoinColumn(name = "timetable_id", nullable = false)
-    private TimetableEntity timetable;
+    private TimetableEntity timetable_id;
 
     @ManyToOne
-    @JoinColumn(name = "attendance_id", nullable = false)
+    @JoinColumn(name = "attendance_code_id")
     private AttendanceCodeEntity attendanceCode;
 
     @ManyToOne
-    @JoinColumn(name = "timecontents_id", nullable = false)
-    private TimecontentsEntity timecontents;
+    private TimecontentsEntity timecontents_id;
 
 }

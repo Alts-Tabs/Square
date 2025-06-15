@@ -12,20 +12,22 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    // 출석 시작 ======================================================================
+    // 출석 시작 ========================================================================================================
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-    @PostMapping("/attendance-start")
+    @PostMapping("/th/attendance-start")
     public StartAttendanceResponseDto startAttendance(@RequestParam Integer userId) {
+        System.out.println("startAttendance");
         return attendanceService.startAttendance(userId);
     }
 
-    // 출석 종료 ======================================================================
-    @PostMapping("/attendance-end")
+    // 출석 종료 ========================================================================================================
+    @PostMapping("/th/attendance-end")
     public void endAttendance(@RequestParam int timetableIdx) {
         attendanceService.endAttendance(timetableIdx);
     }
 
-    // 출석 제출 ======================================================================
+
+    // 출석 제출 ========================================================================================================
     @PostMapping("/stu/attendance-submit")
     public void submitAttendance(
             @RequestParam int studentId,
@@ -35,7 +37,7 @@ public class AttendanceController {
         attendanceService.submitAttendance(studentId, idx, inputCode);
     }
 
-    // 출석 히스토리 조회 ===============================================================
+    // 이전 출석 조회 ====================================================================================================
     @GetMapping("/attendance-history/{codeIdx}")
     public AttendanceHistoryDto getAttendanceHistory(@PathVariable int codeIdx) {
         return attendanceService.getAttendanceHistory(codeIdx);
