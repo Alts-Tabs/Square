@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -19,20 +21,24 @@ public class AttendancesEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int attendances_id;
+    @Column(name = "attendance_id")
+    private int attendancesId;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private StudentsEntity student;
 
-    @Column(nullable = false)
-    private int idx;  // timetableAttend와 연동
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idx", nullable = false)
+    private TimetableAttendEntity timetableAttend;
 
     @Column(columnDefinition = "TEXT")
     private String memo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Status status = Status.ABSENT;
 
     private LocalDateTime verified_at;
@@ -40,10 +46,5 @@ public class AttendancesEntity {
     public enum Status {
         PRESENT, ABSENT, LATE
     }
-
-    @ManyToOne
-    @JoinColumn(name = "timetable_attend_id")
-    private TimetableAttendEntity timetableAttend;
-
 }
 

@@ -1,5 +1,6 @@
 package com.example.user.entity;
 
+import com.example.attend.entity.AttendancesEntity;
 import com.example.classes.entity.ClassUsersEntity;
 import com.example.schedule.entity.SchoolsEntity;
 import jakarta.persistence.*;
@@ -49,4 +50,9 @@ public class StudentsEntity {
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ClassUsersEntity> classUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AttendancesEntity> attendances = new ArrayList<>();
+
 }

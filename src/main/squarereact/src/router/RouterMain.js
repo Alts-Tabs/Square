@@ -19,6 +19,7 @@ import Error404 from '../error/Error404';
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
 import { MyPage } from '../components/Mypage';
 import { StudentsManage } from '../studentsManage';
+import { MobileCalendar, MobileNavi } from '../mobile';
 
 
 const RouterMain = () => {
@@ -80,18 +81,22 @@ const RouterMain = () => {
                         <Route path="write" element={<ReferenceWrite />} /> {/*자료실 글쓰기 */}
                         <Route path=":fileId" element={<ReferenceDetail />} /> {/*자료실 상세보기 */}
                         <Route path=":fileId/edit" element={<ReferenceEdit />} /> {/*자료실 글수정 */}
-                     </Route>
+                    </Route>
 
-                     <Route path="mypage" element={<MyPage />} /> {/*마이페이지 */}
+                    <Route path="mypage" element={<MyPage />} /> {/*마이페이지 */}
                 </Route>
 
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/join" element={<JoinPage />} />
-                    <Route path="/subcode" element={<SubCode />} />
-                    <Route path='/searchuser' element={<SearchUser />} />
+                {/* 404 Error & 로그인 */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/join" element={<JoinPage />} />
+                <Route path="/subcode" element={<SubCode />} />
+                <Route path='/searchuser' element={<SearchUser />} />
+                <Route path="*" element={<Error404 />} />
 
-                    <Route path="*" element={<Error404 />} /> {/* 404 Error */}
-
+                {/* 모바일 */}
+                <Route path="/m/" element={<MobileNavi />}>
+                    <Route path='calendar' element={<MobileCalendar />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     );

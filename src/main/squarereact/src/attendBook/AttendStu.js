@@ -76,8 +76,8 @@ const AttendStu = () => {
 
         axios.post('/stu/attendance-submit', null, {
             params: {
-                studentId: userInfo.userId,
-                idx: currentClass?.timetableIdx, // 서버에서 반환한 timetableIdx 필요
+                studentId: userInfo.roleId, // 계정 students 테이블의 PK
+                idx: currentClass?.timetableIdx, // 서버에서 반환한 timetableIdx 필요 - 이 부분 현재 
                 inputCode: inputCode
             },
             withCredentials: true
