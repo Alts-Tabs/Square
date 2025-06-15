@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AttendanceCodeRepository extends JpaRepository<AttendanceCodeEntity, Integer> {
-    AttendanceCodeEntity findByIdx(int idx);
-    void deleteByIdx(int idx);
+    // 최신 코드 하나만 조회 (created_at 기준 내림차순)
+    AttendanceCodeEntity findTopByTimetableAttend_IdxOrderByCreatedAtDesc(int idx);
+//    AttendanceCodeEntity findByIdx(int idx);
+//    void deleteByIdx(int idx);
 }

@@ -104,29 +104,32 @@ const Attend = () => {
     }, []);
 
     // 2. 출석 시작 / 종료 요청
+    const [timetableAttendIdx, setTimetableAttendIdx] = useState();
     const handleAttendanceClick = async () => {
     if (!userInfo?.userId || !currentClass?.classId) return;
 
     try {
         if (!attending) {
             // 출석 시작 요청
-            const response = await axios.post(`/th/attendance-start?userId=${userInfo.userId}`, null, {
+            const response = await axios.post(`/th/attendance-start`, {
                 withCredentials: true
             });
 
             const { code } = response.data;
             setRandomNumber(code);
+            setTimetableAttendIdx(response.data.idx); // 현재 출석 search 값(timetableAttend PK)
             setAttending(true);
             localStorage.setItem('attendanceNumber', code.toString());
         } else {
             // 출석 종료 요청 
-            await axios.post(`/th/attendance-end?timetableIdx=${currentClass.classId}`, null, {
+            await axios.post(`/th/${timetableAttendIdx}/attendance-end`, {
                 withCredentials: true
             });
 
             setAttending(false);
             setAttendanceEnded(true);
             setRandomNumber(null);
+            setTimetableAttendIdx(null);
             localStorage.removeItem('attendanceNumber');
         }
         } catch (err) {

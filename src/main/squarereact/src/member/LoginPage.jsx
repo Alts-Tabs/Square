@@ -4,6 +4,7 @@ import logo from "../image/SquareLogo.png";
 import "./Memberstyle.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -24,7 +25,12 @@ const LoginPage = () => {
       sessionStorage.username = username;
       sessionStorage.name = name;
       sessionStorage.role = role;
-      navi("/main");
+
+      if(isMobile) {
+        navi("/m");
+      } else {
+        navi("/main");
+      }
     } catch(err) {
       alert("Login Failed: 아이디 또는 비밀번호를 확인");
     }

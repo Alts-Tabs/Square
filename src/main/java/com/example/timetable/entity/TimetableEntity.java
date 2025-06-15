@@ -1,5 +1,6 @@
 package com.example.timetable.entity;
 
+import com.example.attend.entity.TimetableAttendEntity;
 import com.example.user.entity.AcademiesEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -14,6 +15,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="timetables")
@@ -48,4 +51,8 @@ public class TimetableEntity {
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Timestamp created_at;
+
+    @OneToMany(mappedBy = "timetable", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<TimetableAttendEntity> timetableAttendList = new ArrayList<>();
 }

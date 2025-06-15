@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TimetableAttendRepository extends JpaRepository<TimetableAttendEntity, Integer> {
-    TimetableAttendEntity findByAttendanceCode_Idx(int codeIdx);
+//    TimetableAttendEntity findByAttendanceCode_Idx(int codeIdx);
 }

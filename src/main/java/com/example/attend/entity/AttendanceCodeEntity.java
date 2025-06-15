@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -18,15 +20,18 @@ public class AttendanceCodeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int attendance_code_id;
+    private int attendanceCodeId;
 
-    @Column(nullable = false)
-    private int idx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idx", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private TimetableAttendEntity timetableAttend;
 
     @Column(nullable = false)
     private int code;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
 
