@@ -158,8 +158,24 @@
 }
 
 /* 오른쪽 일정 박스 */
+.TimeTabTableScroll {
+  /* margin-top: -20px; */
+  height: 100%; /* 원하는 높이 지정 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  border-radius: 10px;
+}
+/* 스크롤바 숨기기 (크로스 브라우징) */
+.TimeTabTableScroll::-webkit-scrollbar {
+  display: none;
+}
+.TimeTabTableScroll {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none;    /* Firefox */
+}
 .timeTable {
-  margin-top: -25px;
+  margin-top: 1px;
   width: 100%;
   height: 95%;
   border-collapse: collapse;

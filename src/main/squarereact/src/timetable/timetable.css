@@ -133,8 +133,25 @@
     align-items: flex-end;
 }
 
-/* 편집 버튼 */
+/* 삭제 버튼 */
 .buttonsWrapper :first-child {
+    width: 75px;
+    height: 42px;
+    margin-right: 12px;
+    color:  rgba(216, 88, 88, 0.7);
+    font-size: 17px;
+    font-weight: 500;
+    background-color: white;
+    border: 2px solid rgba(216, 88, 88, 0.7);
+    border-radius: 10px;
+}
+
+.buttonsWrapper :first-child:hover {
+    color: white;
+    background-color: #D85858;
+}
+/* 편집 버튼 */
+.buttonsWrapper button:nth-child(2) {
     width: 75px;
     height: 42px;
     margin-right: 12px;
@@ -145,14 +162,12 @@
     border: 2px solid rgba(125, 138, 138, 0.7);
     border-radius: 10px;
 }
-
-.buttonsWrapper :first-child:hover {
+.buttonsWrapper button:nth-child(2):hover  {
     color: white;
     background-color: #7D8A8A;
 }
-
 /* 시간표 생성 버튼 */
-.buttonsWrapper button:nth-child(2) {
+.buttonsWrapper button:nth-child(3) {
     width: 125px;
     height: 42px;
     color: rgba(121, 215, 190, 0.7);
@@ -163,7 +178,7 @@
     border-radius: 10px;
 }
 
-.buttonsWrapper button:nth-child(2):hover  {
+.buttonsWrapper button:nth-child(3):hover  {
     color: white;
     background-color: #79D7BE;
 }
@@ -212,17 +227,33 @@
     color: #2E5077;
     font-weight: 500;
 }
+
+.fc-event {
+    height:98%;
+    position: relative; /* 기본 position 확인 */
+    white-space: normal;
+  text-align: left;
+}
+
 .fc-event-main { /*일정있는 경우 css 지정*/
+    width: 93%;
+    height: 98%;
+    margin-left: 2px;
     border:none;
     border-radius: 5px;
     background-color:  rgba(121, 215, 190,0.7);
+    /* visibility: hidden; */
 }
+
+
 .fc-event-main-frame{/*일정있는 경우 css 지정*/
-    padding-top: 5px;
-    background-color:  rgba(121, 215, 190, 0.7);
-    border:none;
+    height: 95%;
+    padding: 5px 4px 0 4px;
+    background-color: rgba(121, 215, 190, 0.7);
+    border: none;
     color: white;
     font-weight: 500;
+    /* visibility: hidden; */
 }
 
 /*일정 목록에 기본으로 노출되던 border 제거*/
