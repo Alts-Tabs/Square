@@ -51,8 +51,8 @@ public class AttendanceController {
 
     // 출석 입력란 활성화 여부 ============================================================================================
     @GetMapping("/student/attendance-active")
-    public ResponseEntity<Boolean> isAttendanceActive(@RequestParam Integer userId) {
-        boolean isActive = attendanceService.isAttendanceActive(userId);
+    public ResponseEntity<Boolean> isAttendanceActive(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        boolean isActive = attendanceService.isAttendanceActive(userDetails.getUserId());
         return ResponseEntity.ok(isActive);
     }
 
@@ -60,10 +60,10 @@ public class AttendanceController {
     // 출석 제출 ========================================================================================================
     @PostMapping("/student/attendance-submit")
     public ResponseEntity<Boolean> submitAttendanceCode(
-            @RequestParam Integer userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam int submittedCode
     ) {
-        boolean result = attendanceService.submitAttendanceCode(userId, submittedCode);
+        boolean result = attendanceService.submitAttendanceCode(userDetails.getUserId(), submittedCode);
         return ResponseEntity.ok(result);
     }
 }

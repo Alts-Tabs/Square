@@ -43,9 +43,10 @@ const AttendStu = () => {
 
     const [currentClass, setCurrentClass] = useState(null);
 
-    useEffect(() => { // 로그인 상태의 강사 = 시간표 수업일 시 수업명 출력
+    useEffect(() => { 
         if (!userInfo?.userId) return;
 
+        // 로그인 상태의 강사 = 시간표 수업일 시 수업명 출력
         axios.get('/public/current-class', {
             withCredentials: true
         }).then(res => {
@@ -61,8 +62,8 @@ const AttendStu = () => {
         });
     }, [userInfo]);
 
-    console.log("userInfo:", userInfo);
-    console.log('현 수업 currentClass:', currentClass);
+    // console.log("userInfo:", userInfo);
+    // console.log('현 수업 currentClass:', currentClass);
 
     
     // 출석 입력란 활성화 여부 =========================================================
@@ -70,10 +71,7 @@ const AttendStu = () => {
         if (!userInfo?.userId) return;
 
         // 출석 활성 여부 확인
-        axios.get('/student/attendance-active', {
-            params: { userId: userInfo.userId },
-            withCredentials: true
-        })
+        axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
             setIsEditable(res.data); // true이면 출석창 활성화
         })
@@ -95,7 +93,6 @@ const AttendStu = () => {
 
             axios.post('/student/attendance-submit', null, {
                 params: {
-                    userId: userInfo.userId,
                     submittedCode: inputCode
                 },
                 withCredentials: true

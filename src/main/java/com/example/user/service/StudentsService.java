@@ -1,8 +1,11 @@
 package com.example.user.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.example.user.dto.StudentDto;
 import com.example.user.entity.StudentsEntity;
+import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.StudentsRepository;
+import com.example.user.jpa.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StudentsService {
+    private final UsersRepository usersRepository;
     private final StudentsRepository studentsRepository;
 
     /** 임시 전체 학생 목록 가져오기 */
@@ -33,6 +37,9 @@ public class StudentsService {
 
         return students.stream().map(s -> {
             var user = s.getUser();
+            var userProfile = user.getUserProfile() != null
+                    ? "https://kr.object.ncloudstorage.com/square/mypage/" + user.getUserProfile()
+                    : "https://cdn-icons-png.flaticon.com/512/147/147144.png";
             var parent = s.getParent();
             var school = s.getSchool();
 
@@ -61,9 +68,11 @@ public class StudentsService {
             }
 
             return StudentDto.builder()
+                    .userId(user.getUser_id())
                     .studentId(s.getStudentId())
                     .username(user.getUsername())
                     .name(user.getName())
+                    .userProfile(userProfile)
                     .phone(formattedPhone)
                     .grade(s.getGrade())
                     .room(s.getRoom())
@@ -90,6 +99,9 @@ public class StudentsService {
 
         return entities.stream().map(s -> {
             var user = s.getUser();
+            var userProfile = user.getUserProfile() != null
+                    ? "https://kr.object.ncloudstorage.com/square/mypage/" + user.getUserProfile()
+                    : "https://cdn-icons-png.flaticon.com/512/147/147144.png";
             var parent = s.getParent();
             var school = s.getSchool();
 
@@ -118,9 +130,11 @@ public class StudentsService {
             }
 
             return StudentDto.builder()
+                    .userId(user.getUser_id())
                     .studentId(s.getStudentId())
                     .username(user.getUsername())
                     .name(user.getName())
+                    .userProfile(userProfile)
                     .phone(formattedPhone)
                     .grade(s.getGrade())
                     .room(s.getRoom())
@@ -160,5 +174,10 @@ public class StudentsService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteStudentByUserId(int userId) {
+        UsersEntity user = usersRepository.findById(userId)
+                        .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
+        usersRepository.delete(user);
+    }
 
 }

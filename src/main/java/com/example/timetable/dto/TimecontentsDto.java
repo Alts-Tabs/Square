@@ -23,6 +23,7 @@ public class TimecontentsDto {
     private LocalTime endTime;
 
     private Integer classId;
+    private Integer timetableId;
     private int dayOfWeek;
     private String type;//현재 "CLASS" 고정
     private String description; //텍스트 입력 시 저장될 항목
