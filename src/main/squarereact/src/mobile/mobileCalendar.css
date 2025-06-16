@@ -4,21 +4,21 @@
   height: 100%; /* 내부 스크롤 필요 시 대응 */
 }
 
-.fc {
+.mobile-calendar-wrapper .fc {
   font-size: 8px;
   background-color: #f9f9f9;
 }
 
-.fc-view-harness {
+.mobile-calendar-wrapper .fc-view-harness {
   overflow-y: auto;
 }
 
-.fc-toolbar-title {
+.mobile-calendar-wrapper .fc-toolbar-title {
   font-size: 14px;
   font-weight: 600;
 }
 
-.fc-button {
+.mobile-calendar-wrapper .fc-button {
   font-size: 12px !important;
   padding: 4px 8px !important;
   background-color: #79D7BE !important;
@@ -26,16 +26,16 @@
   border-radius: 6px !important;
 }
 
-.fc-button:hover {
+.mobile-calendar-wrapper .fc-button:hover {
   background-color: #62c2a9 !important;
 }
 
-.fc-daygrid-day-number {
+.mobile-calendar-wrapper .fc-daygrid-day-number {
   font-size: 12px;
   padding: 2px;
 }
 /* 요일 헤더 (일~토) 글자 크기 조정 및 정렬 */
-.fc .fc-col-header-cell {
+.mobile-calendar-wrapper .fc .fc-col-header-cell {
   font-size: 12px;
   border: none;
   background-color: #79D7BE;
@@ -48,7 +48,7 @@
 
 
 /* ✅ 날짜 셀 내 날짜 숫자(1,2,3...) 위치 조정 */
-.fc .fc-daygrid-day-frame {
+.mobile-calendar-wrapper .fc .fc-daygrid-day-frame {
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* 날짜 숫자는 위쪽 정렬 */
@@ -57,7 +57,7 @@
 }
 
 /* ✅ 날짜 텍스트만 중앙 정렬되게 */
-.fc .fc-daygrid-day-top {
+.mobile-calendar-wrapper .fc .fc-daygrid-day-top {
   display: flex;
   justify-content: center;
   align-items: center;

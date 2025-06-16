@@ -11,14 +11,13 @@ import ChatbotPage from '../ChatBot/ChatbotPage';
 
 import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
-import ClassStudentsManage from '../studentsManage/ClassStudentsManage';
 import { AcademyCaller, Consultation } from '../academycaller';
 import { Timetable, CreateTimetable, UpdateTimetable } from '../timetable';
 import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
 import { MyPage } from '../components/Mypage';
-import { StudentsManage } from '../studentsManage';
+import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
 import { MobileCalendar, MobileNavi } from '../mobile';
 
 
@@ -31,6 +30,7 @@ const RouterMain = () => {
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
                     {/* 수강생 ===================================================================================== */}
                     <Route path="studentsManage" element={<StudentsManage />} />
+                    <Route path="teachersManage" element={<TeachersManage />} /> {/* 원장 - 강사들 관리 */}
                     <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
                     <Route path="attend/:acaId" element={<Attend />} /> {/* 출석 관리 */}
