@@ -308,7 +308,8 @@ const ClassStudentsManage = () => {
           <div className='studentCard' key={student.studentId}>
             <i className="bi bi-x-lg" onClick={() => handleRemoveStudent(student)}></i> {/* X 삭제 아이콘 */}
             
-            <div className='studentPhoto'></div> {/* 학생 프로필 이미지란 */}
+            <img src={student.userProfile} alt={student.userProfile}
+             className='studentPhoto' /> {/* 학생 프로필 이미지란 */}
 
             {/* 학생명, Role, 등록일자 */}
             <div className='nameBox'>

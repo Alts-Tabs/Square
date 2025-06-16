@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name="evaluations")
@@ -29,10 +31,12 @@ public class EvaluationsEntity {
 	//StudentEntity랑 추후 연결 예정
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="student_id",nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private StudentsEntity student;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="teacher_id",nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private TeachersEntity teacher;
 	
 	@Column(length = 200)

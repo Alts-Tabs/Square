@@ -26,4 +26,10 @@ public class AcademyController {
         List<StudentDto> students = studentsService.searchStudentByName(academyId, keyword);
         return ResponseEntity.ok(students);
     }
+
+    @DeleteMapping("/th/{userId}/student")
+    public ResponseEntity<?> deleteStudentByUserId(@PathVariable int userId) {
+        studentsService.deleteStudentByUserId(userId);
+        return ResponseEntity.ok().build();
+    }
 }

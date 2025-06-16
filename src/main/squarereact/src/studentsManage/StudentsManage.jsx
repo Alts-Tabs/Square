@@ -51,6 +51,16 @@ const StudentsManage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleDeleteStudent = async (userId) => {
+    try {
+      await axios.delete(`/th/${userId}/student`, {withCredentials: true});
+      alert("삭제 성공");
+      fetchAllStudents();
+    } catch(err) {
+      alert("해당 학생 삭제 실패");
+    }
+  }
+
   return (
     <div className='studentsManageWrapper'>
       <span className='attendTitle'> 수강생 관리 </span>
@@ -90,7 +100,8 @@ const StudentsManage = () => {
       <div className='student-manage-list'>
       {selectedStudent ? (
         <div className='studentCard'>
-          <div className='studentPhoto'></div> {/* 학생 프로필 이미지란 */}
+          <img src={selectedStudent.userProfile} alt={selectedStudent.userProfile}
+           className='studentPhoto' /> {/* 학생 프로필 이미지란 */}
 
           {/* 학생명, Role, 등록일자 */}
           <div className='nameBox'>
@@ -132,7 +143,8 @@ const StudentsManage = () => {
       ) : (
         filterdStudents.map((s) => (
           <div key={s.studentId} className='student-manage-item'>
-            <span className='student-profileCircle'></span>
+            <img src={s.userProfile} alt={s.userProfile}
+             className='student-profileCircle' />
             {/* 정보 */}
             <div className='student-manage-Info'>
               <div className='student-infoTop'>
@@ -154,7 +166,8 @@ const StudentsManage = () => {
             <div className='student-manage-buttons'>
               <button className='student-manageBtn'
                onClick={() => setSelectedStudent(s)}>관리</button>
-              <button className='student-deleteBtn'>삭제</button>
+              <button className='student-deleteBtn'
+               onClick={() => handleDeleteStudent(s.userId)}>삭제</button>
             </div>
           </div>
         ))

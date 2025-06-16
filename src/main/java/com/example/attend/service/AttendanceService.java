@@ -11,6 +11,7 @@ import com.example.timetable.entity.TimeusersEntity;
 import com.example.timetable.repository.TimecontentsRepository;
 import com.example.timetable.repository.TimeusersRepository;
 import com.example.user.entity.StudentsEntity;
+import com.example.user.entity.UserRole;
 import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.StudentsRepository;
 import com.example.user.jpa.UsersRepository;
@@ -56,7 +57,7 @@ public class AttendanceService {
                             !now.toLocalTime().isBefore(startTime) &&
                             !now.toLocalTime().isAfter(endTime) &&
                             tc.getClasses() != null &&
-                            tc.getClasses().getTeacher().getUser().getUser_id() == userId;
+                            tc.getClasses().getTeacher().getUser() == user;
                 })
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("현재 수업이 없음"));
@@ -137,14 +138,28 @@ public class AttendanceService {
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         int today = now.getDayOfWeek().getValue() % 7;
 
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
+
         // 현재 수업 시간대 찾기
         Optional<TimecontentsEntity> currentClassOpt = timecontentsRepository.findAll().stream()
                 .filter(tc -> {
                     LocalTime start = tc.getStartTime().withSecond(0).withNano(0);
                     LocalTime end = tc.getEndTime().withSecond(0).withNano(0);
-                    return tc.getDayOfWeek() == today &&
+
+                    // 기본 요일 및 시간대 조건
+                    boolean timeMatch = tc.getDayOfWeek() == today &&
                             !now.toLocalTime().isBefore(start) &&
-                            !now.toLocalTime().isAfter(end);
+                            !now.toLocalTime().isAfter(end) &&
+                            tc.getClasses() != null;
+
+                    if(!timeMatch) return false;
+
+
+                    // 사용자 검증
+                    return tc.getClasses().getClassUsers().stream()
+                            .anyMatch(classUser -> classUser.getStudent().getUser().equals(user));
+
                 }).findFirst();
 
         if (currentClassOpt.isEmpty()) return false;
@@ -180,11 +195,16 @@ public class AttendanceService {
                 .filter(tc -> {
                     LocalTime start = tc.getStartTime().withSecond(0).withNano(0);
                     LocalTime end = tc.getEndTime().withSecond(0).withNano(0);
-                    return tc.getDayOfWeek() == today &&
+                    boolean timeMatch = tc.getDayOfWeek() == today &&
                             !now.toLocalTime().isBefore(start) &&
-                            !now.toLocalTime().isAfter(end);
-                }).findFirst();
+                            !now.toLocalTime().isAfter(end) &&
+                            tc.getClasses() != null;
+                    if(!timeMatch) return false;
 
+                    return tc.getClasses().getClassUsers().stream()
+                            .anyMatch(classUser -> classUser.getStudent().equals(student));
+
+                }).findFirst();
         if (currentClassOpt.isEmpty()) return false;
 
         TimetableEntity timetable = currentClassOpt.get().getTimetable();
@@ -198,6 +218,9 @@ public class AttendanceService {
         // 4. 출석 코드 검증
         AttendanceCodeEntity code = attendanceCodeRepository
                 .findTopByTimetableAttend_IdxOrderByCreatedAtDesc(attend.getIdx());
+
+        System.out.println("submit requset: student=" + student.getUser().getName() + ", timetableAttendIdx=" + attend.getIdx());
+        System.out.println("search code=" + (code != null ? code.getCode() : "null") + ", submitcode= "+ submittedCode);
 
         if (code == null || code.getCode() != submittedCode) return false;
 
