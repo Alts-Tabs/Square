@@ -406,7 +406,11 @@ const Main = () => {
 
                                 <span className='naviContent'>
                                     <i className="bi bi-person-check"></i>&nbsp;&nbsp;
-                                    멤버 관리
+                                    <Link to="teachersManage"
+                                     state={{acaId: userInfo.acaId}}
+                                     style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        멤버 관리
+                                    </Link>
                                 </span> <br />
                             </div>
                         )
