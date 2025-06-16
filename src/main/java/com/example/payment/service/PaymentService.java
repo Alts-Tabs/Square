@@ -39,37 +39,39 @@ public class PaymentService {
         return paymentChildrenRepository.getChildrenByParentId(parentId);
     }
 
-   /* 장바구니에 해당하는 enroll DB 에 insert 하는 방법
-    jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
-    save 를 사용한다. */
-    @Transactional
-    public PaymentEnrollDto insertEnrollClass(int academyId, int parentId, int studentId, PaymentEnrollDto dto) {
-        ParentsEntity parent = parentsRepository.findById(dto.getParentId())
-                .orElseThrow(() -> new RuntimeException("Parent not found"));
-        StudentsEntity student = studentsRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        ClassesEntity classes = classesRepository.findById(dto.getClassId())
-                .orElseThrow(() -> new RuntimeException("Class not found"));
+       /* 장바구니에 해당하는 enroll DB 에 insert 하는 방법
+        jpql 에서는 EntityManager 를 활용해서 insert 를 구현하기 때문에
+        save 를 사용한다. */
+        @Transactional
+        public PaymentEnrollDto insertEnrollClass(int academyId, int parentId, int studentId, PaymentEnrollDto dto) {
+            ParentsEntity parent = parentsRepository.findById(dto.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent not found"));
+            StudentsEntity student = studentsRepository.findById(dto.getStudentId())
+                    .orElseThrow(() -> new RuntimeException("Student not found"));
+            ClassesEntity classes = classesRepository.findById(dto.getClassId())
+                    .orElseThrow(() -> new RuntimeException("Class not found"));
 
-        EnrollEntity enroll = EnrollEntity.builder()
-                .enrollId(dto.getEnrollId())
-                .parent(parent)
-                .student(student)
-                .classes(classes)
-                .duration(dto.getDuration())
-                .academyId(classes.getAcademy().getAcademyId())
-                .build();
+            EnrollEntity enroll = EnrollEntity.builder()
+                    .enrollId(dto.getEnrollId())
+                    .parent(parent)
+                    .student(student)
+                    .classes(classes)
+                    .duration(dto.getDuration())
+                    .academyId(classes.getAcademy().getAcademyId())
+                    .isPay("F")
+                    .build();
 
-        EnrollEntity saved = paymentEnrollRepository.save(enroll);
+            EnrollEntity saved = paymentEnrollRepository.save(enroll);
 
-        return PaymentEnrollDto.builder()
-                .enrollId(saved.getEnrollId())
-                .parentId(parentId)
-                .studentId(studentId)
-                .classId(dto.getClassId())
-                .duration(dto.getDuration())
-                .build();
-    }
+            return PaymentEnrollDto.builder()
+                    .enrollId(saved.getEnrollId())
+                    .parentId(parentId)
+                    .studentId(studentId)
+                    .classId(dto.getClassId())
+                    .duration(dto.getDuration())
+                    .isPay(saved.getIsPay()) //렌더링에 필요한 값? 미정
+                    .build();
+        }
 
     //원장이 수강신청한 학부모와 학생의 정보를 확인
     @Transactional
@@ -83,6 +85,26 @@ public class PaymentService {
         return paymentEnrollRepository.getEnrollByParentId(parentId);
     }
 
-    //학부모가 장바구니 목록에서 선택 삭제
+    @Transactional
+    public List<EnrollEntity> getEnrollByParentIdForStu(int studentId) {
+        return paymentEnrollRepository.getEnrollByParentIdForStu(studentId);
+    }
+
+    //결제 성공 후 isPay T로 수정
+    @Transactional
+    public void updateEnrollIsPay(Long enrollId, String isPay) {
+        paymentEnrollRepository.updateIsPay(enrollId, isPay);
+    }
+    
+    //학부모의 기존에 결제한 내역을 받아오는 부분
+    @Transactional
+    public List<EnrollEntity> getPrevPayByParentId(int parentId) {
+        return paymentEnrollRepository.getPrevPayByParentId(parentId);
+    }
+
+    @Transactional
+    public List<EnrollEntity> getPrevPayByParentIdForStu(int studentId) {
+        return paymentEnrollRepository.getPrevPayByParentIdForStu(studentId);
+    }
 
 }

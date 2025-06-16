@@ -16,6 +16,7 @@ const NonPayCheck = () => {
 
     useEffect(()=>{
         fetchAllEnroll();
+        // eslint-disable-next-line
     }, [acaId]);
 
     //모든 신청 내역을 확인
@@ -76,7 +77,7 @@ const NonPayCheck = () => {
                                     </td>
                                     <td>학생명 {ae.studentName}</td>
                                     <td>학부모명 {ae.parentName}</td>
-                                    <td>납부</td>
+                                    <td>{ae.isPay === "T" ? "납부" : "미납"}</td>
                                 </tr>
                                 <tr>
                                     <td>&nbsp;&nbsp;&nbsp;[{ae.className}]</td>
@@ -85,6 +86,7 @@ const NonPayCheck = () => {
                                             .toString()
                                             .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원
                                     </td>
+                                    <td>{ae.duration}</td>
                                 </tr>
                             </React.Fragment>
                         ))

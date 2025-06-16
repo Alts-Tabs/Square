@@ -29,4 +29,5 @@ public class PaymentEnrollOutputDto {
     private String className;
     private String duration;
     private int tuition;
+    private String isPay; //원장이 납부 미납 확인하려고 후반에 추가했음
 }

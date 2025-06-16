@@ -15,4 +15,5 @@ public class PaymentEnrollDto {
     private int studentId;
     private int classId;
     private String duration;
+    private String isPay; //후반에 추가한 부분; EnrollEntity에서 isPay 받아오기 위해서
 }

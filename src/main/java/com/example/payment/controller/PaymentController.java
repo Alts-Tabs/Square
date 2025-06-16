@@ -7,6 +7,7 @@ import com.example.payment.dto.PaymentEnrollDto;
 import com.example.payment.dto.PaymentEnrollOutputDto;
 import com.example.payment.dto.PaymentGetChildrenDto;
 import com.example.payment.entity.EnrollEntity;
+import com.example.payment.jpa.PaymentEnrollRepository;
 import com.example.payment.service.PaymentService;
 import com.example.user.entity.StudentsEntity;
 
@@ -29,6 +30,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,7 @@ public class PaymentController {
     private final ClassesRepository classesRepository;
     private final PaymentService paymentService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass()); //학부모 결제 파트
+    private final PaymentEnrollRepository paymentEnrollRepository;
 
     @GetMapping("/dir/{academyId}/payment/getclass")
     public ResponseEntity<List<ClassResponse>> getPaymentClass(@PathVariable int academyId) {
@@ -148,7 +151,8 @@ public class PaymentController {
                         e.getClasses().getTeacher().getUser().getName(),
                         e.getClasses().getName(),
                         e.getDuration(),
-                        e.getClasses().getTuition()
+                        e.getClasses().getTuition(),
+                        e.getIsPay()
                 ))
                 .collect(Collectors.toList());
 
@@ -189,7 +193,45 @@ public class PaymentController {
                     e.getClasses().getTeacher().getUser().getName(),
                     e.getClasses().getName(),
                     e.getDuration(),
-                    e.getClasses().getTuition()
+                    e.getClasses().getTuition(),
+                    e.getIsPay()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/student/{studentId}/enrollList")
+    public ResponseEntity<List<PaymentEnrollOutputDto>> getEnrollListByParentIdForStu(@PathVariable int studentId) {
+        List<EnrollEntity> enrollList = paymentService.getEnrollByParentIdForStu(studentId);
+
+        /*
+        JSON 무한루프를 피하기 위해서 Dto 를 통해 2차적으로 response 로 받아와서 GET
+        자녀가 여러 명인 경우를 대비해 map()으로 반복적으로 묶어준다
+        EnrollEntity -->
+        PaymentEnrollRepository(select 문) -->
+        PaymentEnrollOutputDto 으로 묶어준다
+
+        1. 장바구니의 일련번호
+        2. 결제할 학부모의 이름
+        3. 자녀 학생의 이름
+        4. 클래스 이름
+        5. 수업 기간
+        6. 클래스 수업료
+
+        를 통해서 학부가 결제하기 전 확인해야 할 정보를 매핑한다.
+        */
+
+        List<PaymentEnrollOutputDto> response = enrollList.stream()
+                .map(e -> new PaymentEnrollOutputDto(
+                        e.getEnrollId(),
+                        e.getParent().getUser().getName(),
+                        e.getStudent().getUser().getName(),
+                        e.getClasses().getTeacher().getUser().getName(),
+                        e.getClasses().getName(),
+                        e.getDuration(),
+                        e.getClasses().getTuition(),
+                        e.getIsPay()
                 ))
                 .collect(Collectors.toList());
 
@@ -199,17 +241,23 @@ public class PaymentController {
     //토스페이먼츠로 장바구니 금액만큼 결제
     @RequestMapping(value = "/parent/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
-
         JSONParser parser = new JSONParser();
+        //결제에 필요한 주문id, 결제금액, 클라이언트 키
         String orderId;
         String amount;
         String paymentKey;
+        Long enrollId = null; //이 위치에 놓을 것 (수정 금지)
+
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
+            //enrollId 추가
+            if (requestData.get("enrollId") != null) {
+                enrollId = Long.parseLong(requestData.get("enrollId").toString());
+            }
         }
         catch (ParseException e) {
             throw new RuntimeException(e);
@@ -234,14 +282,16 @@ public class PaymentController {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
-
         OutputStream outputStream = connection.getOutputStream();
         outputStream.write(obj.toString().getBytes("UTF-8"));
-
+        //성공 코드 지정 (200)
         int code = connection.getResponseCode();
         boolean isSuccess = code == 200;
-
         InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
+
+        if (isSuccess && enrollId != null) {
+            paymentService.updateEnrollIsPay(enrollId, "T");
+        }
 
         // 결제 성공 및 실패 비즈니스 로직을 구현하세요.
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
@@ -250,9 +300,56 @@ public class PaymentController {
 
         return ResponseEntity.status(code).body(jsonObject);
     }
+
+
     //장바구니 단일 제거
-//    @DeleteMapping("/parent/{parentId}/deleteEnrollList")
-//    public ResponseEntity<?> removeEnrollList(@PathVariable int parentId) {
-//
-//    }
+    @DeleteMapping("/parent/deleteEnrollList/{enrollId}")
+    public ResponseEntity<?> removeEnrollList(@PathVariable int enrollId) {
+        if(!paymentEnrollRepository.existsById(enrollId)) {
+          return ResponseEntity.notFound().build();
+        }
+
+        paymentEnrollRepository.deleteById(enrollId);
+        return ResponseEntity.ok().build();
+    }
+
+    //학부모가 이미 결제한 내역
+    @GetMapping("/parent/{parentId}/PrevPay")
+    public ResponseEntity<List<PaymentEnrollOutputDto>> getPrevPayList(@PathVariable int parentId) {
+        List<EnrollEntity> prevpay = paymentService.getPrevPayByParentId(parentId);
+
+        List<PaymentEnrollOutputDto> response = prevpay.stream()
+                .map(e->new PaymentEnrollOutputDto(
+                        e.getEnrollId(),
+                        e.getParent().getUser().getName(),
+                        e.getStudent().getUser().getName(),
+                        e.getClasses().getTeacher().getUser().getName(),
+                        e.getClasses().getName(),
+                        e.getDuration(),
+                        e.getClasses().getTuition(),
+                        e.getIsPay()
+                )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
+
+    //학생 페이지에서 보는 학부모가 이미 결제한 내역
+    @GetMapping("/student/{studentId}/PrevPay")
+    public ResponseEntity<List<PaymentEnrollOutputDto>> getPrevPayListForStu(@PathVariable int studentId) {
+        List<EnrollEntity> prevpay = paymentService.getPrevPayByParentIdForStu(studentId);
+
+        List<PaymentEnrollOutputDto> response = prevpay.stream()
+                .map(e->new PaymentEnrollOutputDto(
+                        e.getEnrollId(),
+                        e.getParent().getUser().getName(),
+                        e.getStudent().getUser().getName(),
+                        e.getClasses().getTeacher().getUser().getName(),
+                        e.getClasses().getName(),
+                        e.getDuration(),
+                        e.getClasses().getTuition(),
+                        e.getIsPay()
+                )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
+    }
 }

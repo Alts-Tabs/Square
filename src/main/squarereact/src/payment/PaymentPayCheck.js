@@ -13,26 +13,20 @@ const PaymentPayCheck = () => {
     const [selClass, setSelClass] = useState([]);
     //select 상에서 수강신청할 수업과 수업의 기간
     const selectedClass = classes.find(cls => String(cls.id) === String(selClass));
-    const [duration, setDuration] = useState(); //([])로 넣으면 수업 기간이 배열로 들어가서 json 에러 발생
+    //([])로 넣으면 수업 기간이 배열로 들어가서 json 에러 발생
+    //()로 넣어도 JSON 직렬화 문제를 발생시켜서 403 error 나오게 함!
+    const [duration, setDuration] = useState(''); 
     //학부모의 전체 자녀와 그 중에서 셀렉트로 선택할 수업을 들을 자녀를 선택
     const [students, setStudents] = useState([]);
     const [selStudent, setSelStudent] = useState('');
 
     //결제 직전 학부모가 결제할 장바구니 내역 데이터 - 배열로 받아와야 함
     const [enrollList, setEnrollList] = useState([]);
+    //결제 이후 학부모가 이전에 결제한 내역을 확인할 수 있는 데이터
+    const [prevPay, setPrevPay] = useState([]);
 
     //toss payment 에 필요한 결제정보
     const clientKey= "test_ck_24xLea5zVAaJyNK2GBd0VQAMYNwW";
-    const secretKey="test_sk_DLJOpm5QrlLNgNNRkngPrPNdxbWn";
-    const totalAmount = enrollList.reduce((sum, item) => sum + Number(item.tuition), 0);
-    const orderId = `order_${Date.now()}`;
-    const orderName =  enrollList.length > 0 ?
-        `${enrollList[0].parentName} 학부모님의
-        ${enrollList[0].studentName} 학생의
-        ${enrollList[0].duration} 기간 내의
-        ${enrollList[0].className} 수업 신청 내역` :
-        '';
-    const customerName = enrollList.length > 0 ? `${enrollList[0].parentName} 학부모`:'';
 
     useEffect(() => {
         if (!roleId) {
@@ -67,6 +61,7 @@ const PaymentPayCheck = () => {
             alert("신청이 완료되었습니다!");
             /* enroll 리스트 추가 등 */
             fetchEnrollList();
+            fetchPrevList();
         })
         .catch(err => alert('신청 실패'));
     };
@@ -90,8 +85,9 @@ const PaymentPayCheck = () => {
     }
 
     //토스 결제로 이어지는 이벤트 함수
-    const handleTossPay = () => {
-        if (enrollList.length === 0) {
+    const handleTossPay = (el) => {
+        console.log(typeof(el.tuition));
+        if (!el || !el.tuition) {
             alert("결제할 내역이 없습니다.");
             return;
         }
@@ -99,22 +95,49 @@ const PaymentPayCheck = () => {
             tossPayments.requestPayment(
                 "카드",
                 {
-                    amount: totalAmount,
+                    amount: Number(el.tuition),
                     currency: 'KRW',
-                    orderId: orderId,
-                    orderName: orderName,
-                    customerName: customerName,
-                    successUrl: `${window.location.origin}/payment/success`,
-                    failUrl: `${window.location.origin}/payment/fail`
+                    orderId: `order_${el.enrollId}_${Date.now()}`, //중복 불가
+                    orderName: `${el.parentName} 학부모님의 ${el.studentName} 학생의 ${el.duration} 기간 내의 ${el.className} 수업 신청 내역`,
+                    customerName: el.parentName,
+                    successUrl: `${window.location.origin}/main/success`,
+                    failUrl: `${window.location.origin}/main/fail`
                 }
             )
             .catch(error => {
                 // 에러 처리
                 alert('결제 실패!');
+                console.error(error);
             });
         });
     };
 
+    //장바구니 목록 개별 삭제
+    const handleRemoveEnroll = (enrollId) => {
+        if (!window.confirm("정말 삭제하시겠습니까?"))
+            return;
+
+        axios.delete(`/parent/deleteEnrollList/${enrollId}`, { withCredentials: true })
+        .then(() => {
+            alert("삭제되었습니다.");
+            // 삭제 후 enrollList 다시 불러오기
+            fetchEnrollList();
+            fetchPrevList();
+        })
+        .catch(err => {
+            alert("삭제 실패");
+            console.error(err);
+        });
+    }
+
+    //학부모의 기존 결제 내역 불러오기
+    const fetchPrevList = () => {
+        if(!roleId) return;
+
+        axios.get(`/parent/${roleId}/PrevPay`, {withCredentials: true})
+        .then(res => {setPrevPay(res.data)})
+        .catch(err => {alert('기존 결제 내역 호출 실패')})
+    }
 
     // acaId(학원) 바뀔 때 1번만 부르기
     useEffect(() => {
@@ -126,6 +149,11 @@ const PaymentPayCheck = () => {
         fetchEnrollList();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roleId]);
+    // 장바구니 한번만 부르기
+    useEffect(() => {
+        fetchPrevList();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [roleId]);
 
     return (
         <div>
@@ -134,56 +162,33 @@ const PaymentPayCheck = () => {
                     {/* 오늘의 출석 */}
                     <span className='title'> 자녀 학원비 결제 </span>
                     <div className='PrevPayclassRead'>
-                        <table>
-                            <tr>
-                                <td rowspan="2">
-                                    <div className='ellipse'/>
-                                </td>
-                                <td>&nbsp;&nbsp;&nbsp;학생명 전상훈&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>2025년 4월</td>
-                                <td>수업료 400,000원</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;&nbsp;&nbsp;[국어]</td>
-                                <td></td>   
-                            </tr>
-                            <tr>
-                                <td rowspan="2">
-                                    <div className='ellipse'/>
-                                </td>
-                                <td>&nbsp;&nbsp;&nbsp;강사명 고영희&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>2025년 3월</td>
-                                <td>수업료 400,000원</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;&nbsp;&nbsp;[수학]</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td rowspan="2">
-                                    <div className='ellipse'/>
-                                </td>
-                                <td>&nbsp;&nbsp;&nbsp;강사명 고영희&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>2025년 2월</td>
-                                <td>수업료 400,000원</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;&nbsp;&nbsp;[사회]</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td rowspan="2">
-                                    <div className='ellipse'/>
-                                </td>
-                                <td>&nbsp;&nbsp;&nbsp;강사명 고영희&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>2025년 1월</td>
-                                <td>수업료 400,000원</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;&nbsp;&nbsp;[과학]</td>
-                                <td></td>
-                            </tr>
-                        </table>
+                        {prevPay.length === 0 ? (
+                                <div>결제한 클래스가 없습니다.</div>
+                            ):(
+                                <table border={0} className='enrollWaitTable'>
+                                    <tbody>
+                                    {prevPay.map(pp=>(
+                                        <React.Fragment key={pp.id}>
+                                            <tr>        
+                                                <td rowSpan={2}>
+                                                    <div className='ellipse'/>
+                                                </td>
+                                                <td>학생명 {pp.studentName}</td>
+                                                <td>{pp.duration}</td>
+                                                <td>{pp.tuition}원</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{pp.className}</td>
+                                                <td>
+                                                
+                                                </td>
+                                            </tr>
+                                        </React.Fragment>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            )
+                        }
                     </div>
                 </div>
 
@@ -292,7 +297,7 @@ const PaymentPayCheck = () => {
                                             <tr>
                                                 <td>{el.className}</td>
                                                 <td>
-                                                    <button onClick={handleTossPay}>
+                                                    <button onClick={() => handleTossPay(el)}>
                                                         결제
                                                     </button>
                                                 </td>
@@ -304,7 +309,7 @@ const PaymentPayCheck = () => {
                                                     </b>
                                                 </td>
                                                 <td>
-                                                    <button>
+                                                    <button onClick={() => handleRemoveEnroll(el.enrollId)}>
                                                         삭제
                                                     </button>
                                                 </td>

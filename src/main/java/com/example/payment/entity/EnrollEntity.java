@@ -42,4 +42,7 @@ public class EnrollEntity {
     //이걸 추가해줘야 원장이 수강신청 한 학생의 미납 여부를 관리할 수 있음
     @Column(name = "academy_id", nullable = false)
     private int academyId;
+
+    @Column(name = "is_pay", nullable = false)
+    private String isPay;
 }

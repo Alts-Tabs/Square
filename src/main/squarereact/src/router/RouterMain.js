@@ -17,9 +17,11 @@ import Error404 from '../error/Error404';
 
 import { Reference, ReferenceWrite, ReferenceDetail, ReferenceEdit, } from '../components/Reference';
 import { MyPage } from '../components/Mypage';
+
+import { SuccessPage } from '../payment/SuccessPage';
+import { FailPage } from '../payment/FailPage';
 import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
 import { MobileCalendar, MobileNavi } from '../mobile';
-
 
 const RouterMain = () => {
     return (
@@ -58,9 +60,11 @@ const RouterMain = () => {
                     {/* 수강료 ===================================================================================== */}
                     <Route path="paymentManagement/:acaId" element={<PaymentManagement />} /> {/* 원장의 수업 수강료 관리창 */}
                     <Route path="nonPayCheck/:acaId" element={<NonPayCheck />} /> {/* 원장의 미납자 관리 */}
-                    <Route path="paymentCheck/:userId" element={<PaymentCheck />} />
+                    <Route path="paymentCheck/:roleId" element={<PaymentCheck />} />
                     <Route path="paymentPayCheck/:acaId/:roleId" element={<PaymentPayCheck />} /> {/* 학부모의 결제와 확인 */}
                     <Route path="subuserregistry" element={<SubUserRegistry />} /> {/* 서브계정 등록 */}
+                    <Route path="success" element={<SuccessPage/>} />
+                    <Route path="fail" element={<FailPage/>} />
 
                     {/* 학습 관리 ================================================================================== */}
                     <Route path="timetable" element={<Timetable />} /> {/* 시간표 */}
