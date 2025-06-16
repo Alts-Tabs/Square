@@ -404,7 +404,9 @@ public class TimetableService {
         timeusersRepository.saveAll(timeusers);
     }
 
-
-
+    /**시간표 삭제*/
+    public void deleteTimetable(int timetableId){
+        timetableRepository.deleteById(timetableId);
+    }
 
 }

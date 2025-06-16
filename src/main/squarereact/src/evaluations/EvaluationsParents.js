@@ -90,12 +90,26 @@ const EvaluationsParents = () => {
         .catch(err => console.log(err));
     };
 
+    // 페이징 번호
+    const[currentPage,setCurrentPage]=useState(1);
+    const itemsPerPage = 10;
+    const totalPages=Math.ceil(evalData.length/itemsPerPage);
+    const currentItems=evalData.slice((currentPage-1)*itemsPerPage,currentPage* itemsPerPage);
+    const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const endPage = Math.min(startPage + 9, totalPages);
+    const pageNumbers=Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i); //페이지 번호 동적 생성
+    
+    //페이지 클릭 핸들러
+    const handlePageClick=(pageNumber)=>{
+        setCurrentPage(pageNumber);
+    }
+
     return (
         <div className='evaluationpContainer'>
             <div className='evalp-topContainer'>
                 <h2 className='evalTitle'>종합 평가</h2>
                 <div className='evalp-selectInfo'>
-                    <table>
+                    <table className='evalP-searchSort'>
                         <tr>
                             <th>학생</th>
                             <td colSpan='3'>
@@ -145,8 +159,6 @@ const EvaluationsParents = () => {
                         </tr>
                     </table>
                 </div>
-
-            </div>
             <div className='evalp-listContainer'>
                 <table className='evalp-listTable'>
                     <thead>
@@ -159,14 +171,14 @@ const EvaluationsParents = () => {
                       </tr>
                     </thead>
                     <tbody>
-                        {evalData.length===0? (
+                        {currentItems.length===0? (
                             <tr>
                                 <td colSpan="5" style={{textAlign:'center'}}>조회된 데이터가 없습니다.</td>
                             </tr>
                         ):(
-                        evalData.map((data,index)=>(
+                        currentItems.map((data,index)=>(
                             <tr key={index}>
-                                <td>{index+1}.</td>
+                                <td>{(currentPage-1) * itemsPerPage +index+1}</td>
                                 <td>{data.subject}</td>
                                 <td>{data.score}</td>
                                 <td>{data.contents}</td>
@@ -178,6 +190,25 @@ const EvaluationsParents = () => {
                 </table>
             </div>
 
+                {/* 페이징 + 검색 */}
+                <div className="evelP-pagination-container evalPPage" >
+                    <div className="boardMainPagination">
+                        <span onClick={() => {const newPage = Math.max(1, Math.floor((currentPage - 1) / 10) * 10);
+                            setCurrentPage(newPage);
+                        }}>&lt;</span>
+                        {pageNumbers.map((num) => (
+                            <span key={num} onClick={()=>handlePageClick(num)}
+                            className={num === currentPage ? 'active' : ''}>
+                            {num}
+                            </span>
+                        ))}
+                        <span onClick={() => {const newPage = Math.min(totalPages, (Math.floor((currentPage - 1) / 10) + 1) * 10 + 1);
+                            setCurrentPage(newPage);
+                        }}>&gt;</span>
+                    </div>
+                </div>
+                
+            </div>
         </div>
     );
 };

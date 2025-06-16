@@ -103,7 +103,7 @@ public class ClassesController {
     }
 
     /** userId로 student 이름 조회 - 종합평가 등록 페이지에서 사용*/
-    @GetMapping("/dir/{classId}/students")
+    @GetMapping("/th/{classId}/students")
     public ResponseEntity<List<StudentDto>> getStudentsByClass(@PathVariable int classId) {
         List<StudentDto> students = classesService.getStudentsByClassId(classId);
         return ResponseEntity.ok(students);

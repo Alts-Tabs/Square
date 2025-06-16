@@ -36,7 +36,7 @@ public class EvaluationsController {
     public ResponseEntity<List<TeacherDto>> getSubjectsByStudent(@RequestParam String userId){
         //userId로 studentId 찾기
         int studentId = studentsService.getStudentIdByUserId(Integer.parseInt(userId));
-        System.out.println("받은 userId: " + userId + ", 변환된 studentId: " + studentId);
+        //System.out.println("받은 userId: " + userId + ", 변환된 studentId: " + studentId);
         //studentId로 subject + teacher 정보 조회
         List<TeacherDto> subjects=evaluationsRepository.findSubjectsForStudentPage(studentId);
 

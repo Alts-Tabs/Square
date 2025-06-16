@@ -85,20 +85,35 @@ const TotalEvaluationsAdmin = () => {
         })
         .catch(error => console.error(error));
 
-}, []);
+    }, []);
 
     useEffect(() => {
-        if (!acaId) return;
+        //강사면 teacherId까지 준비된 후 실행, 아니면 acaId만 있으면 실행
+        if ((role === "강사" && !teacherId) || !acaId) return;
 
         axios.get(`/th/${acaId}/classes`, { withCredentials: true })
-            .then(res => setClassList(res.data))
+            .then(res =>{
+                 setClassList(res.data);
+
+                 //TEACHER일 경우, 본인 teacherId에 해당하는 class 선택
+                 if (role === "강사" && teacherId) {
+
+                    const teacherClass = res.data.find(cls => String(cls.teacherId) === String(teacherId));
+
+                    if (teacherClass) {
+                        setSelectedClassId(teacherClass.id.toString());
+                    } else {
+                        console.warn("해당 teacherId로 된 class를 찾지 못함.");
+                    }
+                }
+            })
             .catch(err => console.error(err));
-    }, [acaId]);
+    }, [acaId,role,teacherId]);
 
     useEffect(()=>{
         if(!selectedClassId) return;
 
-        axios(`/dir/${selectedClassId}/students`, {withCredentials:true})
+        axios(`/th/${selectedClassId}/students`, {withCredentials:true})
         .then(res=>setStudent(res.data))
         .catch(err=>console.error(err));
     },[selectedClassId])
