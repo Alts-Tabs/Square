@@ -8,18 +8,25 @@ export function SuccessPage() {
   useEffect(() => {
     // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
     // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
+    //orderId에서 enrollId 추출
+    const orderId = searchParams.get("orderId");
+    let enrollId = null;
+    if (orderId && orderId.startsWith("order_")) {
+      // orderId: order_{가져올값}_{시간}
+      enrollId = orderId.split('_')[1]; 
+    }
+    
     const requestData = {
-      orderId: searchParams.get("orderId"),
+      orderId,
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
+      enrollId, // 추가!
     };
 
     async function confirm() {
-      const response = await fetch("/confirm", {
+      const response = await fetch("/parent/confirm", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(requestData),
       });
 
@@ -30,8 +37,6 @@ export function SuccessPage() {
         navigate(`/fail?message=${json.message}&code=${json.code}`);
         return;
       }
-
-      // 결제 성공 비즈니스 로직을 구현하세요.
     }
     confirm();
   }, []);

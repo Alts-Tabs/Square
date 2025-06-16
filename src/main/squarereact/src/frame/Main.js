@@ -323,7 +323,7 @@ const Main = () => {
                                 <>
                                     <span className='naviContent'>
                                         <i className="bi bi-credit-card"></i>&nbsp;&nbsp;
-                                        <Link to={`paymentCheck/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Link to={`paymentCheck/${userInfo.roleId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                             수강료 확인
                                         </Link>
                                     </span>
