@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './attend.css';
 import './attendStu.css';
-import { connectSocket, onMessage, sendMessage } from '../websocket/socket';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
@@ -9,6 +8,8 @@ import { attendanceChartOptions  } from './attendanceChartOptions';
 
 const AttendStu = () => {
     const [isEditable, setIsEditable] = useState(false);
+    const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
+    
     const chartRef = useRef(null);
 
     // 누적 출석 차트
@@ -22,26 +23,6 @@ const AttendStu = () => {
         }
     }, []);
 
-
-    // WebSocket 연결 및 출석 시작 신호 처리 =====================================
-    useEffect(() => {
-        const socket = connectSocket();
-
-        onMessage((data) => {
-            if (data.type === 'start') {
-                setIsEditable(true); // 출석 입력창 활성화
-            }
-        });
-
-        return () => socket.close();
-    }, []);
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            sendMessage({ type: 'submit', studentName: '홍길동', code: e.target.value });
-            e.target.value = '';
-        }
-    };
 
     // 현재 수업 출력 ============================================================
     const location = useLocation();
@@ -62,9 +43,10 @@ const AttendStu = () => {
 
     const [currentClass, setCurrentClass] = useState(null);
 
-    useEffect(() => { // 로그인 상태의 강사 = 시간표 수업일 시 수업명 출력
+    useEffect(() => { 
         if (!userInfo?.userId) return;
 
+        // 로그인 상태의 강사 = 시간표 수업일 시 수업명 출력
         axios.get('/public/current-class', {
             withCredentials: true
         }).then(res => {
@@ -80,12 +62,62 @@ const AttendStu = () => {
         });
     }, [userInfo]);
 
-    console.log("userInfo:", userInfo);
-    console.log('현 수업 currentClass:', currentClass);
+    // console.log("userInfo:", userInfo);
+    // console.log('현 수업 currentClass:', currentClass);
+
+    
+    // 출석 입력란 활성화 여부 =========================================================
+    useEffect(() => {
+        if (!userInfo?.userId) return;
+
+        // 출석 활성 여부 확인
+        axios.get('/student/attendance-active', { withCredentials: true })
+        .then(res => {
+            setIsEditable(res.data); // true이면 출석창 활성화
+        })
+        .catch(err => {
+            console.error("출석 활성 상태 확인 실패:", err);
+            setIsEditable(false);
+        });
+    }, [userInfo]);
+
+
+    // 출석 코드 제출 ==================================================================
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            const inputCode = parseInt(e.target.value);
+            if (isNaN(inputCode)) {
+                alert("숫자만 입력해주세요.");
+                return;
+            }
+
+            axios.post('/student/attendance-submit', null, {
+                params: {
+                    submittedCode: inputCode
+                },
+                withCredentials: true
+            })
+            .then((res) => {
+                if (res.data === true) {
+                    alert("출석이 완료되었습니다.");
+                    setCheckedStudents(prev => [...prev, userInfo.userId]);
+                    setIsEditable(false); // 출석창 비활성화
+                } else {
+                    alert("출석 코드가 유효하지 않습니다.");
+                }
+            })
+            .catch(err => {
+                console.error("출석 제출 실패:", err);
+                const msg = err?.response?.data || "출석 처리 중 오류가 발생했습니다.";
+                alert(msg);
+            });
+        }
+    };
+
+    console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
-    const [checkedStudents, setCheckedStudents] = useState([]);
     const [students, setStudents] = useState([]); // 학생 목록 상태 추가
 
     useEffect(() => {

@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
 import { attendanceChartOptions  } from './attendanceChartOptions';
-import { io } from 'socket.io-client';
 
 const Attend = () => {
     const chartRef = useRef(null);
@@ -21,41 +20,8 @@ const Attend = () => {
     }, []);
 
     
-    // Web Socket 같은 class_id 유저끼리 방 입장 ====================================
-    const [currentClass, setCurrentClass] = useState(null);  
-    const [socket, setSocket] = useState(null);
-    
-    useEffect(() => {
-        if (!currentClass || !currentClass.classId) return;
-
-        const newSocket = io('http://localhost:8090');
-        setSocket(newSocket);
-
-        newSocket.emit('join-class', currentClass.classId);
-
-        newSocket.on('start', ({ code }) => {
-            setRandomNumber(code);
-            setAttending(true);
-            setAttendanceEnded(false);
-        });
-
-        newSocket.on('stop', () => {
-            setRandomNumber(null);
-            setAttending(false);
-            setAttendanceEnded(true);
-        });
-
-        newSocket.on('check', ({ studentName }) => {
-            // handle check
-        });
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [currentClass]);
-    
-
     // 현재 수업 출력 ============================================================
+    const [currentClass, setCurrentClass] = useState(null);  
     const location = useLocation();
     const passedUserInfo = location.state?.userInfo; // Main.js의 state에서 받은 userInfo
     
@@ -130,50 +96,80 @@ const Attend = () => {
 
     // 1. 컴포넌트 마운트 시 localStorage에 저장된 출석번호 복원
     useEffect(() => {
-        const savedNumber = localStorage.getItem('attendanceNumber');
+        if (!userInfo?.userId) return;
+
+        const savedNumber = localStorage.getItem(`attendanceNumber_${userInfo.userId}`);
         if (savedNumber) {
             setRandomNumber(Number(savedNumber));
-            setAttending(true); // 저장된 번호가 있다는 건 출석 중이라는 의미
+            setAttending(true);
         }
-    }, []);
+    }, [userInfo?.userId]); // userInfo가 로딩된 후 실행되도록
+
 
     // 2. 출석 시작 / 종료 요청
-    const handleAttendanceClick = () => {
-        if (!socket || !currentClass?.classId) return;
+    const [timetableAttendIdx, setTimetableAttendIdx] = useState();
+    const handleAttendanceClick = async () => {
+    if (!userInfo?.userId || !currentClass?.classId) return;
 
+    try {
         if (!attending) {
-            socket.emit('start-attendance', currentClass.classId);
+            // 출석 시작 요청
+            const response = await axios.post(`/th/attendance-start`, {
+                withCredentials: true
+            });
+
+            const { code } = response.data;
+            setRandomNumber(code);
+            setTimetableAttendIdx(response.data.idx); // 현재 출석 search 값(timetableAttend PK)
+            setAttending(true);
+            localStorage.setItem(`attendanceNumber_${userInfo.userId}`, code.toString());
         } else {
-            socket.emit('stop-attendance', currentClass.classId);
+            // 출석 종료 요청 
+            await axios.post(`/th/${timetableAttendIdx}/attendance-end`, {
+                withCredentials: true
+            });
+
+            setAttending(false);
+            setAttendanceEnded(true);
+            setRandomNumber(null);
+            setTimetableAttendIdx(null);
+            localStorage.removeItem(`attendanceNumber_${userInfo.userId}`);
+        }
+        } catch (err) {
+            console.error('출석 시작/종료 중 오류 발생:', err);
         }
     };
 
-    // 3. 출석 취소 기능
-    const handleCancelAttendance = () => {
+    
+    // 출석 취소 ================================================================
+    const handleCancelAttendance = async () => {
+    if (!timetableAttendIdx) {
+        console.warn("취소할 출석이 없습니다.");
+        return;
+    }
+
+    try {
+        await axios.post(`/th/${timetableAttendIdx}/attendance-cancel`, null, {
+            withCredentials: true
+        });
+
         setAttending(false);
+        setAttendanceEnded(false);
         setRandomNumber(null);
-        localStorage.removeItem('attendanceNumber');
-        setCheckedStudents([]);
+        setTimetableAttendIdx(null);
+        localStorage.removeItem(`attendanceNumber_${userInfo.userId}`);
+
+        alert("출석이 성공적으로 취소되었습니다.");
+        } catch (err) {
+            console.error("출석 취소 중 오류 발생:", err);
+            alert("출석 취소에 실패했습니다.");
+        }
     };
 
 
-    // 지난 출석 날짜 출력 (임시) ================================================
-    const attendList = [
-        {
-            dateText: '25.05.09 금요일 출석',
-            dateOnly: '25.05.09 금요일',
-            present: 12,
-            late: 2,
-            absent: 1,
-        },
-        {
-            dateText: '25.05.08 목요일 출석',
-            dateOnly: '25.05.08 목요일',
-            present: 13,
-            late: 1,
-            absent: 1,
-        }
-    ];
+    // 지난 출석 날짜 출력 ==============================================================
+    const [attendList, setAttendList] = useState([]);
+    // 아직 미작성
 
 
     return (
@@ -210,7 +206,6 @@ const Attend = () => {
                         {/* 출석 시작 & 출석 종료 버튼 */}
                         {!attendanceEnded ? (
                         <>
-                            {/* 출석 중일 때만 랜덤 숫자 출력 */}
                             {attending && randomNumber && (
                                 <div style={{
                                     fontSize: '60px',
@@ -324,22 +319,22 @@ const Attend = () => {
                         <div className='historyList' key={index}>
                         <div>
                             <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
-                            ({attend.dateText})
+                                ({attend.dateOnly})
                             </span>
 
                             <span style={{ display: 'inline-block', marginRight: '10px' }}>
-                            <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
-                            <span className='historyCount'> ({attend.present}) </span>
+                                <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
+                                <span className='historyCount'> ({attend.present}) </span>
                             </span>
 
                             <span style={{ display: 'inline-block', marginRight: '10px' }}>
-                            <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
-                            <span className='historyCount'> ({attend.late}) </span>
+                                <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
+                                <span className='historyCount'> ({attend.late}) </span>
                             </span>
-                            
+
                             <span style={{ display: 'inline-block' }}>
-                            <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
-                            <span className='historyCount'> ({attend.absent}) </span>
+                                <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
+                                <span className='historyCount'> ({attend.absent}) </span>
                             </span>
                         </div>
 

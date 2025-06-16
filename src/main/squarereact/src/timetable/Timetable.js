@@ -8,7 +8,7 @@ import './timetable.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import koLocale from '@fullcalendar/core/locales/ko';
-
+import { Tooltip } from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Timetable = () => {
     // 로그인 시 받은 사용자 정보 상태
@@ -81,6 +81,39 @@ const Timetable = () => {
         }
     }
 
+    // 시간표 삭제 이벤트
+    const handleDeleteClick=()=>{
+        if(selectedTimetable.length===0){
+            alert('삭제할 시간표를 선택해주세요.');
+            return;
+        }
+
+        //선택된 시간표 제목 모아서 출력용 문자열 생성
+        const titles = selectedTimetable.map(t=>t.title).join(',');
+        const confirmed=window.confirm(`'${ titles}' 시간표를 삭제하시겠습니까?`);
+
+        if(!confirmed) return
+
+        //선택된 시간표의 id 목록 추출
+        const idsToDelete=selectedTimetable.map(t=>t.timetableId);
+
+        //삭제
+        Promise.all(
+            idsToDelete.map(id=>
+                axios.delete(`/public/deleteTimetable?timetableId=${id}`)
+            )
+        )
+        .then(()=>{
+            alert('삭제가 완료되었습니다.');
+            //삭제된 시간표 제외하고 새로고침
+            setTimetableList(prev=>prev.filter(t=>!idsToDelete.includes(t.timetableId)));
+            setSelectedTimetable([]);
+        }).catch(err=>{
+            console.error('삭제 실패:',err);
+            alert('삭제 중 오류가 발생했습니다.');
+        })
+    }
+
     // 시간표 목록 조회 + 선택
     const [timetableList, setTimetableList] = useState([]);
     const [selectedTimetable, setSelectedTimetable]=useState([]);
@@ -145,8 +178,8 @@ const Timetable = () => {
                     title = tc.description;
                 }
 
-
                 events.push({
+                    id: `${dateStr}-${tc.startTime}-${tc.endTime}-${title}`, // 고유한 id 부여
                     title:title,
                     start: `${dateStr}T${tc.startTime}`,
                     end: `${dateStr}T${tc.endTime}`
@@ -248,6 +281,7 @@ const Timetable = () => {
                 {/* 학생 & 학부모는 아래 버튼 렌더링 X */}
                 {(userInfo.role !== '학생' && userInfo.role !== '학부모') && (
                     <div className='buttonsWrapper'>
+                        <button onClick={handleDeleteClick}> 삭제 </button>
                         <button onClick={handleEditClick}> 편집 </button>
                         <button onClick={handleCreateClick}> 시간표 생성 </button>
 
@@ -262,12 +296,17 @@ const Timetable = () => {
                       headerToolbar={false}
                       dayHeaders={true}
                       allDaySlot={false}
+                      eventOverlap={false}
+                      slotEventOverlap={false}
                       slotDuration= {'00:10:00'}
                       allDayClassNames={false}
                       nowIndicator={true}
-                      height='97%'
+                      height='98%'
+                      eventTimeFormat={false}
                       scrollTime={new Date().toTimeString().slice(0, 8)} //현재시간에 자동으로 포커스
                       locale={koLocale}
+                      eventDisplay="block"
+                      events={events}
                       dayHeaderContent={(args) => { //상단 dayHeader 커스텀
                         const date=args.date;
                         const option={weekday:'long',month:'2-digit',day:'2-digit'};
@@ -280,7 +319,92 @@ const Timetable = () => {
 
                         return `${weekday} (${month}/${day})`;
                       }}
-                      events={events}
+                      eventContent={(arg) => { // class 명만 노출되도록 수정
+                        return (
+                        <div className='fc-event-title'>{arg.event.title}</div>
+                        );
+                    }}
+                      eventDidMount={(info)=>{ //동일날짜 같은 시간대 여러 일정이 있는 경우 width 조정용
+                        const event = info.event;
+                        const el = info.el;
+                        const view = info.view;
+
+                        //console.log('>>> el', el);
+                        // null 체크 추가
+                        if (!(event.start instanceof Date) || !(event.end instanceof Date)) return;
+                        
+                        const start = new Date(event.start);
+                        const end = new Date(event.end);
+                        const dateStr = event.start.toISOString().split('T')[0];
+                        
+                        //툴팁 노출
+                        const formatTime = (date) =>
+                            date.toLocaleTimeString('ko-KR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            });
+
+                        if (!isNaN(start) && !isNaN(end)) {
+                            const timeRange = `${formatTime(start)} ~ ${formatTime(end)}`;
+                            const title = event.title;
+                            //innerHTML을 이용한 줄바꿈
+                            const tooltipHTML = `${timeRange}<br>${title}`;
+                            info.el.setAttribute('data-bs-toggle', 'tooltip');
+                            info.el.setAttribute('data-bs-placement', 'top');
+                            info.el.setAttribute('data-bs-html', 'true'); // HTML 허용
+                            info.el.setAttribute('title', tooltipHTML);
+
+                            // Bootstrap Tooltip 초기화
+                            new Tooltip(info.el);
+                        }
+
+                        const allInstances = Object.values(view.getCurrentData().eventStore.instances);
+
+                        const isTimeOverlap = (aStart, aEnd, bStart, bEnd) => {
+                            return aStart < bEnd && aEnd > bStart;
+                        };
+
+                        const sameTimeEvents = allInstances.filter((inst) => {
+                            const instStart = inst.range.start?.getTime?.();
+                            const instEnd = inst.range.end?.getTime?.();
+                            const instDateStr = inst.range.start?.toISOString?.().split('T')[0];
+
+                            return(
+                                instStart != null &&
+                                instEnd != null &&
+                                instDateStr === dateStr &&
+                                isTimeOverlap(start, end, instStart, instEnd) // 겹치는 시간
+                            );
+                        });
+
+                        // sameTimeEvents.forEach((e) => {
+                        //     console.log("시작", e.range.start?.getTime?.(), "종료", e.range.end?.getTime?.());
+                        // });
+
+                        // index 계산을 느슨하게 & fallback 보완
+                        const index = sameTimeEvents.findIndex((inst) => {
+                            const sDiff = Math.abs(inst.range.start.getTime() - start);
+                            const eDiff = Math.abs(inst.range.end.getTime() - end);
+                            return sDiff < 1000 && eDiff < 1000 && inst.def?.title === event.title;
+                        });
+
+                        const safeIndex = index !== -1 ? index : 0;
+
+                        //핵심 수정: mainDiv → el (전체 이벤트 DOM에 직접 스타일)
+                        if (sameTimeEvents.length >1){
+                            const width = 93 / sameTimeEvents.length; // 겹치는 이벤트 수로 나누기
+                            el.style.position = 'absolute';
+                            el.style.width = `${width}%`;
+                            el.style.left = `${width * safeIndex}%`;
+                            el.style.zIndex = '5';
+                        }else {
+                            el.style.position = 'absolute'; // 겹치지 않을 때는 기본 위치
+                            el.style.width = '95%'; // 단일 이벤트는 98% 유지
+                            el.style.left = '0'; // 좌측 정렬
+                            el.style.zIndex = '10';
+                        }
+                     }}
+                      
                     />
                 </div>
             </div>

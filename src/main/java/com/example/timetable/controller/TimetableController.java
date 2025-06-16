@@ -22,7 +22,7 @@ public class TimetableController {
     private final TimetableService timetableService;
 
     /** 시간표 등록*/
-    @PostMapping("/dir/saveTimetable")
+    @PostMapping("/public/saveTimetable")
     public ResponseEntity<String> saveTimetable(@RequestBody TimetableRequestDto dto){
         timetableService.saveTimetable(dto);
         return ResponseEntity.ok("시간표가 저장되었습니다.");
@@ -75,5 +75,12 @@ public class TimetableController {
     public ResponseEntity<List<JoinDto>> getStudentsOfCurrentClass(@AuthenticationPrincipal CustomUserDetails userDetails) {
         List<JoinDto> students = timetableService.getStudentsOfCurrentClass(userDetails.getUserId());
         return ResponseEntity.ok(students);
+    }
+
+    /**시간표 삭제*/
+    @DeleteMapping("/public/deleteTimetable")
+    public ResponseEntity<String> deleteTimetable(@RequestParam int timetableId){
+        timetableService.deleteTimetable(timetableId);
+        return ResponseEntity.ok("삭제 완료");
     }
 }

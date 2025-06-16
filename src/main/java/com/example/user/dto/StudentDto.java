@@ -10,9 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class StudentDto {
+    private int userId;
     private int studentId;
     private String username;
     private String name;
+    private String userProfile;
     private String phone;
     private Integer grade;
     private String room;

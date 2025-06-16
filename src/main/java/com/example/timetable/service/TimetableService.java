@@ -115,12 +115,12 @@ public class TimetableService {
                 .collect(Collectors.toList());
     }
 
-//    [출석부] ================================================================================
+//    [출석부] ==========================================================================================================
     /** 로그인된 강사와 학생의 현재 수업 정보를 조회 */
     public Optional<TimecontentsDto> getCurrentClassForTeacher(Integer userId) {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime currentTime = now.toLocalTime();
-        int today = now.getDayOfWeek().getValue(); // 월=1 ~ 일=7
+        LocalTime currentTime = now.toLocalTime().withSecond(0).withNano(0); // 나노초 버리기
+        int today = now.getDayOfWeek().getValue() % 7; // 월=1 ~ 일=7(DB는 일(0) ~ 토(6))
 
         // user 역할 찾고 학생 classesUser 에 속해 있는지 찾아서 -> classId
         UsersEntity user = usersRepository.findById(userId)
@@ -131,20 +131,23 @@ public class TimetableService {
             case ROLE_TEACHER -> {
                 // 강사일 경우 기존 로직 그대로 사용
                 return timecontentsRepository.findAll().stream()
-                        .filter(tc ->
-                                tc.getDayOfWeek() == today &&
-                                        !currentTime.isBefore(tc.getStartTime()) &&
-                                        !currentTime.isAfter(tc.getEndTime()) &&
-                                        tc.getClasses() != null &&
-                                        tc.getClasses().getTeacher() != null &&
-                                        tc.getClasses().getTeacher().getUser() != null &&
-                                        userId != null &&
-                                        tc.getClasses().getTeacher().getUser().getUser_id() == userId
-                        )
+                        .filter(tc -> {
+                            // 시간 비교 전 정밀도 정리
+                            LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
+                            LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
+                            return tc.getDayOfWeek() == today &&
+                                    !currentTime.isBefore(startTime) &&
+                                    !currentTime.isAfter(endTime) &&
+                                    tc.getClasses() != null &&
+                                    tc.getClasses().getTeacher() != null &&
+                                    tc.getClasses().getTeacher().getUser() != null &&
+                                    Objects.equals(tc.getClasses().getTeacher().getUser().getUser_id(), userId);
+                        })
                         .findFirst()
                         .map(tc -> TimecontentsDto.builder()
                                 .startTime(tc.getStartTime())
                                 .endTime(tc.getEndTime())
+                                .timetableId(tc.getTimetable().getTimetableId())
                                 .classId(tc.getClasses().getClassId())
                                 .className(tc.getClasses().getName())
                                 .type(tc.getType())
@@ -161,13 +164,16 @@ public class TimetableService {
                     ClassesEntity classEntity = cu.getClassEntity();
 
                     Optional<TimecontentsEntity> match = timecontentsRepository.findAll().stream()
-                            .filter(tc ->
-                                    tc.getClasses() != null &&
-                                            tc.getClasses().getClassId() == classEntity.getClassId() &&
-                                            tc.getDayOfWeek() == today &&
-                                            !currentTime.isBefore(tc.getStartTime()) &&
-                                            !currentTime.isAfter(tc.getEndTime())
-                            )
+                            .filter(tc -> {
+                                LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
+                                LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
+
+                                return tc.getClasses() != null &&
+                                        tc.getClasses().getClassId() == classEntity.getClassId() &&
+                                        tc.getDayOfWeek() == today &&
+                                        !currentTime.isBefore(startTime) &&
+                                        !currentTime.isAfter(endTime);
+                            })
                             .findFirst();
 
                     if (match.isPresent()) {
@@ -175,6 +181,7 @@ public class TimetableService {
                         return Optional.of(TimecontentsDto.builder()
                                 .startTime(tc.getStartTime())
                                 .endTime(tc.getEndTime())
+                                .timetableId(tc.getTimetable().getTimetableId())
                                 .classId(tc.getClasses().getClassId())
                                 .className(tc.getClasses().getName())
                                 .type(tc.getType())
@@ -198,8 +205,8 @@ public class TimetableService {
 
     public List<JoinDto> getStudentsOfCurrentClass(Integer userId) {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime currentTime = now.toLocalTime();
-        int today = now.getDayOfWeek().getValue(); // 월=1 ~ 일=7
+        LocalTime currentTime = now.toLocalTime().withSecond(0).withNano(0);
+        int today = now.getDayOfWeek().getValue() % 7;
 
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
@@ -207,16 +214,19 @@ public class TimetableService {
         // 현재 시간대 수업 찾기 (해당 강사의)
         Optional<TimecontentsEntity> currentContentOpt = switch (user.getRole()) {
             case ROLE_TEACHER -> timecontentsRepository.findAll().stream()
-                        .filter(tc ->
-                                tc.getDayOfWeek() == today &&
-                                        !currentTime.isBefore(tc.getStartTime()) &&
-                                        !currentTime.isAfter(tc.getEndTime()) &&
-                                        tc.getClasses() != null &&
-                                        tc.getClasses().getTeacher() != null &&
-                                        tc.getClasses().getTeacher().getUser() != null &&
-                                        tc.getClasses().getTeacher().getUser().getUser_id() == userId
-                        )
-                        .findFirst();
+                    .filter(tc -> {
+                        LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
+                        LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
+
+                        return tc.getDayOfWeek() == today &&
+                                !currentTime.isBefore(startTime) &&
+                                !currentTime.isAfter(endTime) &&
+                                tc.getClasses() != null &&
+                                tc.getClasses().getTeacher() != null &&
+                                tc.getClasses().getTeacher().getUser() != null &&
+                                tc.getClasses().getTeacher().getUser().getUser_id() == userId;
+                    })
+                    .findFirst();
             case ROLE_STUDENT -> {
                 StudentsEntity student = studentsRepository.findByUserId(userId);
                 if (student == null) {
@@ -228,13 +238,15 @@ public class TimetableService {
                         .map(ClassUsersEntity::getClassEntity)
                         .filter(Objects::nonNull)
                         .flatMap(cls -> timecontentsRepository.findAll().stream()
-                                .filter(tc ->
-                                        tc.getClasses() != null &&
-                                                tc.getClasses().getClassId() == cls.getClassId() &&
-                                                tc.getDayOfWeek() == today &&
-                                                !currentTime.isBefore(tc.getStartTime()) &&
-                                                !currentTime.isAfter(tc.getEndTime())
-                                )
+                                .filter(tc -> {
+                                    LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
+                                    LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
+                                    return tc.getClasses() != null &&
+                                            tc.getClasses().getClassId() == cls.getClassId() &&
+                                            tc.getDayOfWeek() == today &&
+                                            !currentTime.isBefore(startTime) &&
+                                            !currentTime.isAfter(endTime);
+                                })
                         )
                         .findFirst();
                 yield result;
@@ -392,7 +404,9 @@ public class TimetableService {
         timeusersRepository.saveAll(timeusers);
     }
 
-
-
+    /**시간표 삭제*/
+    public void deleteTimetable(int timetableId){
+        timetableRepository.deleteById(timetableId);
+    }
 
 }

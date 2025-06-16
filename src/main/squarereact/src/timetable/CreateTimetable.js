@@ -232,7 +232,7 @@ const CreateTimetable = () => {
         };
 
         //console.log('ACA ID 확인:', userInfo.acaId);
-        axios.post("/dir/saveTimetable",payload,{withCredentials:true})
+        axios.post("/public/saveTimetable",payload,{withCredentials:true})
         .then(res=>{
             alert("시간표가 저장되었습니다.");
             //console.log("응답:",res.data);
@@ -240,7 +240,7 @@ const CreateTimetable = () => {
             setTitle('');
             setSort('CLASS');
             setSelectedList([]);
-            setDayList(['토요일']);
+            setDayList(['']);
             setStartTime('');
             setEndTime('');
             setStartDate('');
@@ -350,6 +350,7 @@ const CreateTimetable = () => {
             <div className='TimeTab-rightContainer'>
                 <div className="createTimeTabContents">
                     
+                    <div className="TimeTabTableScroll">
                     <table className='timeTable'>
                         <thead>
                             <tr>
@@ -430,6 +431,7 @@ const CreateTimetable = () => {
                         )}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

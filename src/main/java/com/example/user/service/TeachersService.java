@@ -1,20 +1,25 @@
 package com.example.user.service;
 
 import com.example.user.dto.TeacherDto;
+import com.example.user.dto.TeacherListDto;
 import com.example.user.entity.TeachersEntity;
+import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.TeachersRepository;
+import com.example.user.jpa.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TeachersService {
+    private final UsersRepository usersRepository;
     private final TeachersRepository teachersRepository;
-
 
     /**
      * userId로 teachers 테이블에서 teacherId 검색 - 종합평가 페이지에서 필요
@@ -44,5 +49,36 @@ public class TeachersService {
      * */
     public List<TeacherDto> getTeachersByAcaId(int acaId) {
         return teachersRepository.findTeachersByAcaId(acaId);
+    }
+
+    public List<TeacherListDto> getTeacherListByAcademyId(int academyId) {
+        List<TeachersEntity> teachers = teachersRepository.findByAcademyId(academyId);
+
+        return teachers.stream().map(t -> {
+            String profile = t.getUser().getUserProfile();
+            String profileUrl = (profile == null || profile.isBlank())
+                    ? "https://cdn-icons-png.flaticon.com/512/147/147144.png"
+                    : "https://kr.object.ncloudstorage.com/square/mypage/" + profile;
+
+            return new TeacherListDto(
+                t.getTeacherId(),
+                t.getUser().getName(),
+                t.getUser().getEmail(),
+                t.getSubject(),
+                profileUrl,
+                t.getUser().getPhone());
+        }).collect(Collectors.toList());
+    }
+
+    public void deleteTeacherByTeacherId(int teacherId) {
+        TeachersEntity teacher = teachersRepository.findById(teacherId).orElseThrow();
+        UsersEntity user = teacher.getUser();
+
+        // 연관관계 끊기
+        teacher.setUser(null);
+        user.setTeacher(null);
+
+        teachersRepository.delete(teacher); // optional
+        usersRepository.delete(user);
     }
 }

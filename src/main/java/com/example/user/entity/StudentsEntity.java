@@ -1,12 +1,16 @@
 package com.example.user.entity;
 
+import com.example.attend.entity.AttendancesEntity;
 import com.example.classes.entity.ClassUsersEntity;
+import com.example.evaluations.entity.EvaluationsEntity;
 import com.example.schedule.entity.SchoolsEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +29,12 @@ public class StudentsEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AcademiesEntity academy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UsersEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,4 +55,13 @@ public class StudentsEntity {
     @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ClassUsersEntity> classUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<EvaluationsEntity> evaluations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AttendancesEntity> attendances = new ArrayList<>();
+
 }

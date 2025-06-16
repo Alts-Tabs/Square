@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './EvaluationStudent.css';
+import '../Board/Notice/BoardMainPage.css'; //페이징 css 가져오기
 import axios from 'axios';
 
 const EvaluationStudent = () => {
@@ -62,6 +63,20 @@ const EvaluationStudent = () => {
             .catch(error => console.error(error));
     }, []);
 
+    // 페이징 번호
+    const[currentPage,setCurrentPage]=useState(1);
+    const itemsPerPage = 10;
+    const totalPages=Math.ceil(evaluations.length/itemsPerPage);
+    const currentItems=evaluations.slice((currentPage-1)*itemsPerPage,currentPage* itemsPerPage);
+    const startPage = Math.floor((currentPage - 1) / 10) * 10 + 1;
+    const endPage = Math.min(startPage + 9, totalPages);
+    const pageNumbers=Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i); //페이지 번호 동적 생성
+
+    //페이지 클릭 핸들러
+    const handlePageClick=(pageNumber)=>{
+        setCurrentPage(pageNumber);
+    }
+
     return (
         <div className='evaluationSContainer'>
           <div className='evalS-topContainer'>
@@ -118,11 +133,11 @@ const EvaluationStudent = () => {
                         <th>저장 날짜</th>
                       </tr>
                     </thead>
-                    <tbody>
-                        {evaluations.length>0?(
-                            evaluations.map((evalItem,index)=>(
+                    <tbody >
+                        {currentItems.length>0?(
+                            currentItems.map((evalItem,index)=>(
                                 <tr key={index}>
-                                    <td>{index+1}.</td>
+                                    <td>{(currentPage-1) * itemsPerPage +index+1}</td>
                                     <td>{`${evalItem.subject}(${evalItem.teacherName})`}</td>
                                     <td>{evalItem.score}</td>
                                     <td>{evalItem.contents}</td>
@@ -137,6 +152,25 @@ const EvaluationStudent = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* 페이징 + 검색 */}
+            <div className="evalS-pagination-container evalSPage">
+                <div className="evalS-Pagination">
+                     <span onClick={() => {const newPage = Math.max(1, Math.floor((currentPage - 1) / 10) * 10);
+                        setCurrentPage(newPage);
+                    }}>&lt;</span>
+                    {pageNumbers.map((num) => (
+                        <span key={num} onClick={()=>handlePageClick(num)}
+                        className={num === currentPage ? 'active' : ''}>
+                        {num}
+                        </span>
+                    ))}
+                    <span onClick={() => {const newPage = Math.min(totalPages, (Math.floor((currentPage - 1) / 10) + 1) * 10 + 1);
+                        setCurrentPage(newPage);
+                    }}>&gt;</span>
+                </div>
+            </div>
+
           </div>  
         </div>
     );
