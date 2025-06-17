@@ -78,7 +78,6 @@ const Attend = () => {
     }, [userInfo]);
     // ===============================================================================
     
-
     // 당일 출석 날짜 출력
     const getTodayDate = () => {
         const today = new Date();
@@ -129,6 +128,55 @@ const Attend = () => {
         });
     }, [userInfo]);
 
+    // 지난 출석 기록 최신화 함수(API 부르고 프론트 값 포맷)
+    const fetchAttendanceSummary = async () => {
+        if (!currentClass || !currentClass.timetableId || !currentClass.classId) return;
+
+        try {
+            const response = await axios.get(
+                `/public/${currentClass.timetableId}/attendance-summary`
+            );
+            const rawData = response.data || [];
+
+            const groupedByAttendId = rawData.reduce((acc, curr) => {
+                const key = curr.timetableAttendId;
+                const dateObj = new Date(curr.attendStart);
+                const hours = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[dateObj.getDay()];
+                const date = curr.attendStart.split('T')[0];
+
+                if (!acc[key]) {
+                    acc[key] = {
+                        timetableAttendId: curr.timetableAttendId,
+                        date: date,
+                        startTime: `${hours}:${minutes}`,
+                        dayOfWeek: dayOfWeek,
+                        statusSummary: [
+                            { status: 'PRESENT', count: 0 },
+                            { status: 'LATE', count: 0 },
+                            { status: 'ABSENT', count: 0 }
+                        ]
+                    };
+                }
+
+                const target = acc[key].statusSummary.find(s => s.status === curr.status);
+                if (target) {
+                    target.count += curr.count;
+                }
+
+                return acc;
+            }, {});
+
+            const convertedData = Object.values(groupedByAttendId);
+            setAttendanceSummaries(convertedData);
+        } catch (error) {
+            console.error('출석 요약을 불러오는 중 오류 발생:', error);
+        }
+    };
+
+
     const handleAttendanceClick = async () => {
     if (!userInfo?.userId || !currentClass?.classId) return;
 
@@ -150,60 +198,8 @@ const Attend = () => {
                 withCredentials: true
             });
 
-            // 출석 종료 후 우측에 지난 출석 실시간 추가
-            const summaryResponse = await axios.get(
-                `/public/${currentClass.timetableId}/${currentClass.classId}/attendance-summary`
-            );
-            const rawData = summaryResponse.data;
-
-            // 날짜별로 그룹핑 및 집계
-            const groupedData = {};
-
-            rawData.forEach(item => {
-                const date = item.attendStart.split('T')[0]; // YYYY-MM-DD 추출
-
-                if (!groupedData[date]) {
-                    groupedData[date] = {
-                        date: date,
-                        present: 0,
-                        absent: 0,
-                        late: 0
-                    };
-                }
-
-                if (item.status === 'PRESENT') {
-                    groupedData[date].present += item.count;
-                } else if (item.status === 'ABSENT') {
-                    groupedData[date].absent += item.count;
-                } else if (item.status === 'LATE') {
-                    groupedData[date].late += item.count;
-                }
-            });
-
-            // 최종 데이터 배열로 변환 + 요일 추가
-            const finalData = Object.values(groupedData).map(item => {
-            const dayOfWeek = new Date(item.date).toLocaleDateString('ko-KR', { weekday: 'long' });
-
-                return {
-                    // date: item.date,
-                    // dayOfWeek: dayOfWeek,
-                    // present: item.present,
-                    // late: item.late,
-                    // absent: item.absent
-                    date: item.date,
-                    dayOfWeek: dayOfWeek,
-                    statusSummary: [
-                        { status: 'PRESENT', count: item.present },
-                        { status: 'LATE', count: item.late },
-                        { status: 'ABSENT', count: item.absent }
-                    ]
-                };
-            });
-
-            setAttendanceSummaries(prev => [...prev, ...finalData]);
-
-            console.log(attendanceSummaries);
-            console.log("finalData",finalData); // 이 값이 이상한 게 담기고 있음.
+            // 출석 종료 후 우측에 지난 출석 실시간 추가 - 출석 요약 신규 부르기
+            await fetchAttendanceSummary();
 
             setAttending(false);
             setAttendanceEnded(true);
@@ -247,50 +243,9 @@ const Attend = () => {
     const [attendanceSummaries, setAttendanceSummaries] = useState([]);
     
     useEffect(() => {
-    if (!currentClass || !currentClass.timetableId || !currentClass.classId) return;
-
-    const fetchAttendanceSummary = async () => {
-      try {
-        const response = await axios.get(
-          `/public/${currentClass.timetableId}/${currentClass.classId}/attendance-summary`
-        );
-        const rawData = response.data || [];
-        // console.log("rawData임.",rawData);
-
-        // 그룹핑 로직
-        const groupedByAttendId = rawData.reduce((acc, curr) => {
-            const key = curr.timetableAttendId;
-            if (!acc[key]) {
-                const dateObj = new Date(curr.attendStart);
-                const hours = dateObj.getHours().toString().padStart(2, '0');
-                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                const dayOfWeek = dayNames[dateObj.getDay()];
-
-                acc[key] = {
-                    timetableAttendId: curr.timetableAttendId,
-                    startTime: `${hours}:${minutes}`,
-                    dayOfWeek: dayOfWeek,
-                    statusSummary: []
-                };
-            }
-            acc[key].statusSummary.push({
-            status: curr.status,
-            count: curr.count
-            });
-            
-            return acc;
-        }, {});
-
-        const convertedData = Object.values(groupedByAttendId);
-        setAttendanceSummaries(convertedData);
-      } catch (error) {
-        console.error('출석 요약을 불러오는 중 오류 발생:', error);
-      }
-    };
-
-    fetchAttendanceSummary();
-  }, [currentClass]);
+        fetchAttendanceSummary();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentClass]);
 
     return (
             <div className='attendContainer'>

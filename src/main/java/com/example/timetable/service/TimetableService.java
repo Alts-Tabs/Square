@@ -119,84 +119,46 @@ public class TimetableService {
     /** 로그인된 강사와 학생의 현재 수업 정보를 조회 */
     public Optional<TimecontentsDto> getCurrentClassForTeacher(Integer userId) {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime currentTime = now.toLocalTime().withSecond(0).withNano(0); // 나노초 버리기
-        int today = now.getDayOfWeek().getValue() % 7; // 월=1 ~ 일=7(DB는 일(0) ~ 토(6))
+        LocalTime currentTime = now.toLocalTime().truncatedTo(ChronoUnit.MINUTES);
+        int today = (now.getDayOfWeek() == DayOfWeek.SUNDAY) ? 0 : now.getDayOfWeek().getValue();
 
-        // user 역할 찾고 학생 classesUser 에 속해 있는지 찾아서 -> classId
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
 
-        // 역할 확인
-        switch (user.getRole()) {
-            case ROLE_TEACHER -> {
-                // 강사일 경우 기존 로직 그대로 사용
-                return timecontentsRepository.findAll().stream()
-                        .filter(tc -> {
-                            // 시간 비교 전 정밀도 정리
-                            LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
-                            LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
-                            return tc.getDayOfWeek() == today &&
-                                    !currentTime.isBefore(startTime) &&
-                                    !currentTime.isAfter(endTime) &&
-                                    tc.getClasses() != null &&
-                                    tc.getClasses().getTeacher() != null &&
-                                    tc.getClasses().getTeacher().getUser() != null &&
-                                    Objects.equals(tc.getClasses().getTeacher().getUser().getUser_id(), userId);
-                        })
-                        .findFirst()
-                        .map(tc -> TimecontentsDto.builder()
-                                .startTime(tc.getStartTime())
-                                .endTime(tc.getEndTime())
-                                .timetableId(tc.getTimetable().getTimetableId())
-                                .classId(tc.getClasses().getClassId())
-                                .className(tc.getClasses().getName())
-                                .type(tc.getType())
-                                .dayOfWeek(tc.getDayOfWeek())
-                                .description(tc.getDescription())
-                                .build());
-            }
-            case ROLE_STUDENT -> {
-                // 학생일 경우
-                StudentsEntity student = studentsRepository.findByUserId(userId);
-                List<ClassUsersEntity> classUsers = classUsersRepository.findByStudent(student);
+        return switch (user.getRole()) {
+            case ROLE_TEACHER -> timecontentsRepository.findCurrentClassForTeacher(userId, today, currentTime)
+                    .map(this::toDto);
+            case ROLE_STUDENT -> findCurrentClassForStudent(userId, today, currentTime);
+            default -> Optional.empty();
+        };
+    }
 
-                for (ClassUsersEntity cu : classUsers) {
-                    ClassesEntity classEntity = cu.getClassEntity();
+    private Optional<TimecontentsDto> findCurrentClassForStudent(Integer userId, int today, LocalTime currentTime) {
+        StudentsEntity student = studentsRepository.findByUserId(userId);
+        List<ClassUsersEntity> classUsers = classUsersRepository.findByStudent(student);
 
-                    Optional<TimecontentsEntity> match = timecontentsRepository.findAll().stream()
-                            .filter(tc -> {
-                                LocalTime startTime = tc.getStartTime().withSecond(0).withNano(0);
-                                LocalTime endTime = tc.getEndTime().withSecond(0).withNano(0);
-
-                                return tc.getClasses() != null &&
-                                        tc.getClasses().getClassId() == classEntity.getClassId() &&
-                                        tc.getDayOfWeek() == today &&
-                                        !currentTime.isBefore(startTime) &&
-                                        !currentTime.isAfter(endTime);
-                            })
-                            .findFirst();
-
-                    if (match.isPresent()) {
-                        TimecontentsEntity tc = match.get();
-                        return Optional.of(TimecontentsDto.builder()
-                                .startTime(tc.getStartTime())
-                                .endTime(tc.getEndTime())
-                                .timetableId(tc.getTimetable().getTimetableId())
-                                .classId(tc.getClasses().getClassId())
-                                .className(tc.getClasses().getName())
-                                .type(tc.getType())
-                                .dayOfWeek(tc.getDayOfWeek())
-                                .description(tc.getDescription())
-                                .build());
-                    }
-                }
-
-                return Optional.empty(); // 일치하는 시간표 없음
-            }
-            default -> {
-                return Optional.empty();
+        for (ClassUsersEntity cu : classUsers) {
+            Integer classId = cu.getClassEntity().getClassId();
+            Optional<TimecontentsEntity> match = timecontentsRepository
+                    .findCurrentClassForClass(classId, today, currentTime);
+            if (match.isPresent()) {
+                return match.map(this::toDto);
             }
         }
+        return Optional.empty();
+    }
+
+    private TimecontentsDto toDto(TimecontentsEntity tc) {
+        return TimecontentsDto.builder()
+                .startTime(tc.getStartTime())
+                .endTime(tc.getEndTime())
+                .timetableId(tc.getTimetable().getTimetableId())
+                .classId(tc.getClasses().getClassId())
+                .className(tc.getClasses().getName())
+                .type(tc.getType())
+                .dayOfWeek(tc.getDayOfWeek())
+                .description(tc.getDescription())
+                .build();
     }
 
 

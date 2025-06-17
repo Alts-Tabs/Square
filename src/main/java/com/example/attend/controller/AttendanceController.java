@@ -63,10 +63,10 @@ public class AttendanceController {
 
 
     // 지난 출석 전체 출력 (Attend.js) ===================================================================================
-    @GetMapping("/public/{timetableId}/{classId}/attendance-summary")
+    @GetMapping("/public/{timetableId}/attendance-summary")
     public ResponseEntity<List<AttendanceSummaryDto>> getAttendanceSummary(
-            @PathVariable int timetableId, @PathVariable int classId) {
-        List<AttendanceSummaryDto> summaryList = attendanceHistoryService.getAttendanceSummary(timetableId, classId);
+            @PathVariable int timetableId) {
+        List<AttendanceSummaryDto> summaryList = attendanceHistoryService.getAttendanceSummary(timetableId);
         return ResponseEntity.ok(summaryList);
     }
 
