@@ -69,7 +69,7 @@ public class AttendanceHistoryService {
 
     // 지난 출석 전체 출력 (Attend.js) ====================================================================================
     @Transactional(readOnly = true)
-    public List<AttendanceSummaryDto> getAttendanceSummary(int timetableId, int classId) {
+    public List<AttendanceSummaryDto> getAttendanceSummary(int timetableId) {
         // timetableId로 timetable_attend 전부 조회
         List<TimetableAttendEntity> attendEntities =
                 timetableAttendRepository.findByTimetable_TimetableId(timetableId);
@@ -110,7 +110,7 @@ public class AttendanceHistoryService {
                         .timetableAttendId(timetableAttend.getIdx())
                         .attendStart(timetableAttend.getAttendStart())
                         .status("ABSENT")
-                        .count((int) presentCount)
+                        .count((int) absentCount)
                         .build());
             }
 
@@ -119,7 +119,7 @@ public class AttendanceHistoryService {
                         .timetableAttendId(timetableAttend.getIdx())
                         .attendStart(timetableAttend.getAttendStart())
                         .status("LATE")
-                        .count((int) presentCount)
+                        .count((int) lateCount)
                         .build());
             }
         }
