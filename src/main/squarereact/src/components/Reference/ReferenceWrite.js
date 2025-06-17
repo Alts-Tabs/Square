@@ -1,17 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './referenceWrite.css';
 
 const MAX_TITLE_LENGTH = 50;
 
 const ReferenceWrite = ({ initialData = null, onCancel }) => {
+  const location = useLocation();
+  const academyId = location.state?.academyId; // 소속 학원 PK
+  const role = location.state?.role;
+  const name = location.state?.name;
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [idx, setIdx] = useState(0);
   const [files, setFiles] = useState([]);
   const [fileAttachOpen, setFileAttachOpen] = useState(true);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  const [folders, setFolders] = useState([]); // 카테고리 목록
+  useEffect(() => {
+    axios.get(`/public/${academyId}/category`, { withCredentials: true })
+      .then(res => {
+        setFolders(res.data);
+      })
+      .catch(err => {
+        alert("자료실 카테고리 로딩에 실패했습니다.");
+      });
+  }, [academyId]);
 
   useEffect(() => {
     if (initialData) {
@@ -49,21 +66,22 @@ const ReferenceWrite = ({ initialData = null, onCancel }) => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
+    formData.append('idx', idx);
     files.forEach((file) => {
       formData.append('files', file);
     });
 
     try {
-      const res = await axios.post('/api/references', formData, {
+      await axios.post(`/th/${academyId}/references`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        withCredentials: true
       });
 
-      console.log('등록 성공:', res.data);
-      navigate('/main/reference');
+      navigate('/main/reference', {state: {acaId: academyId, role, name}});
     } catch (err) {
-      console.error('등록 실패:', err);
+      // console.error('등록 실패:', err);
       alert('글 등록 중 오류가 발생했습니다.');
     }
   };
@@ -72,7 +90,7 @@ const ReferenceWrite = ({ initialData = null, onCancel }) => {
     if (onCancel) {
       onCancel();
     } else {
-      navigate('/main/reference');
+      navigate('/main/reference', {state: {acaId: academyId, role, name}});
     }
   };
 
@@ -85,6 +103,7 @@ const ReferenceWrite = ({ initialData = null, onCancel }) => {
         <form className="board-form" onSubmit={handleSubmit}>
           <div className="reference-row">
             <div className="boardTitle1">
+              <label>폴더 선택</label>
               <label htmlFor="title">제목</label>
               <div className="file-attach-toggle">
                 <span>파일첨부</span>
@@ -100,6 +119,14 @@ const ReferenceWrite = ({ initialData = null, onCancel }) => {
             </div>
 
             <div className="reference-fields">
+              <div>
+                <select value={idx} onChange={(e) => setIdx(e.target.value)} className='toolbar-font'>
+                  <option value={0}>선택 안함</option>
+                  {folders && folders.map(f => (
+                    <option key={f.idx} value={f.idx}>{f.category}</option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <input
                   id="title"
@@ -164,24 +191,6 @@ const ReferenceWrite = ({ initialData = null, onCancel }) => {
           </div>
 
           <div className="editor-container">
-            <div className="editor-toolbar">
-              <select className="toolbar-font">
-                <option>기본 서체</option>
-                <option>고딕</option>
-                <option>맑은전청조체</option>
-              </select>
-              <select className="toolbar-fontsize">
-                <option>15</option>
-                <option>14</option>
-                <option>16</option>
-              </select>
-              <button type="button" className="toolbar-btn bold"><b>B</b></button>
-              <button type="button" className="toolbar-btn underline"><u>U</u></button>
-              <button type="button" className="toolbar-btn align-left"><i className="bi bi-text-left"></i></button>
-              <button type="button" className="toolbar-btn align-center"><i className="bi bi-text-center"></i></button>
-              <button type="button" className="toolbar-btn align-right"><i className="bi bi-text-right"></i></button>
-            </div>
-
             <textarea
               className="input content"
               placeholder="내용을 입력해 주세요."

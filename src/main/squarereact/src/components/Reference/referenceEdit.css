@@ -370,6 +370,10 @@
 }
 
 .file-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 50px;
   margin: 0;
   padding-left: 20px;
   list-style-type: disc;

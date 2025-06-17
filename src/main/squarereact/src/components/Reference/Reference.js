@@ -1,73 +1,69 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './reference.css';
+import axios from 'axios';
 
 const Reference = () => {
+  // 유저 정보 받아오기
+  const location = useLocation();
+  const academyId = location.state?.acaId; // 소속 학원 PK
+  const role = location.state?.role;
+  const name = location.state?.name;
+
+  const roleCheck = role === "원장" || role === "강사";
   const navigate = useNavigate();
 
-  const [folders, setFolders] = useState([
-    { name: '모의고사', children: ['고2', '고3', '3월 모의고사'] },
-  ]);
-  const [selectedFolder, setSelectedFolder] = useState('3월 모의고사');
+  const [folders, setFolders] = useState([]); // 카테고리 목록
+  const [selectedFolder, setSelectedFolder] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [checkedFiles, setCheckedFiles] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState('');
+  const [checkedFiles, setCheckedFiles] = useState(new Set());
   const [allChecked, setAllChecked] = useState(false);
+  const [allFiles, setAllFiles] = useState([]);
   const filesPerPage = 10;
 
-  const [allFiles, setAllFiles] = useState(() => {
-    const files = Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      filename: `${i + 1}번 파일 예시`,
-      author: '김영어',
-      uploadDate: '2025.05.23',
-      size: (i + 1) % 2 === 0 ? '8 MB' : '1.5 GB',
-    }));
-    return files.sort((a, b) => b.id - a.id);
+  // 자료 목록 조회
+  const fileList = useCallback(() => {
+    axios.get(`/public/${academyId}/getFiles`, { withCredentials: true })
+      .then(res => {
+        setAllFiles(res.data);
+      })
+      .catch(err => {
+        alert("자료실 글 목록 로딩에 실패했습니다.");
+      });
+  }, [academyId]);
+
+  // 카테고리 목록 조회
+  const CategoryList = useCallback(() => {
+    axios.get(`/public/${academyId}/category`, { withCredentials: true })
+      .then(res => {
+        setFolders(res.data);
+      })
+      .catch(err => {
+        alert("자료실 카테고리 로딩에 실패했습니다.");
+      });
+  }, [academyId]);
+
+  useEffect(() => {
+    fileList();
+    CategoryList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 필터링, 페이징
+  const filteredFiles = allFiles.filter(file =>{
+    const matchesSearch = file?.title?.includes(searchTerm);
+    const matchesCategory = selectedFolder ? file?.category === selectedFolder : true;
+    return matchesSearch && matchesCategory;
+    // file?.title?.includes(searchTerm)
   });
 
-  const filteredFiles = allFiles.filter(file => file.filename.includes(searchTerm));
   const pagedFiles = filteredFiles.slice(
     (currentPage - 1) * filesPerPage,
     currentPage * filesPerPage
   );
 
-  const addFolder = () => {
-    const name = prompt('추가할 폴더명을 입력하세요.');
-    if (!name || name.trim() === '') return;
-    setFolders(prev =>
-      prev.map(folder =>
-        folder.name === '모의고사' && !folder.children.includes(name)
-          ? { ...folder, children: [...folder.children, name] }
-          : folder
-      )
-    );
-  };
-
-  const onSelectFolder = name => {
-    setSelectedFolder(name);
-    setSearchTerm('');
-    setCheckedFiles(new Set());
-    setAllChecked(false);
-    setCurrentPage(1);
-  };
-
-  const onDeleteFolder = (e, name) => {
-    e.preventDefault();
-    if (!window.confirm(`폴더 "${name}"를 삭제하시겠습니까?`)) return;
-    setFolders(prev =>
-      prev.map(folder =>
-        folder.name === '모의고사'
-          ? {
-              ...folder,
-              children: folder.children.filter(child => child !== name),
-            }
-          : folder
-      )
-    );
-    if (selectedFolder === name) setSelectedFolder('');
-  };
-
+  // 체크박스
   const onCheckFile = id => {
     setCheckedFiles(prev => {
       const newSet = new Set(prev);
@@ -92,26 +88,86 @@ const Reference = () => {
     if (checkedFiles.size === 0) return alert('삭제할 파일을 선택하세요.');
     if (!window.confirm('선택한 파일을 삭제하시겠습니까?')) return;
 
+    // 실제 삭제 로직은 서버 요청이 있어야 합니다.
     setAllFiles(prev => prev.filter(file => !checkedFiles.has(file.id)));
     setCheckedFiles(new Set());
     setAllChecked(false);
   };
 
-  const onSearchChange = e => {
+  // 폴더 관리
+  const addFolder = async () => {
+    const name = prompt('추가할 폴더명을 입력하세요.');
+    if (!name || name.trim() === '') return;
+    if(folders.some(f => f.category === name)) {
+      alert('이미 존재하는 폴더명입니다.');
+      return;
+    }
+
+    try {
+      await axios.post(`/th/${academyId}/createCategory`, null, {
+        params: {
+          "categoryName":name
+        },
+        withCredentials: true 
+      });
+      setFolders(prev => [...prev, {category: name}]);  
+    } catch (err) {
+      alert('카테고리 생성 실패.');
+    }
+  };
+
+  const [prevName, setPrevName] = useState("");
+  const onSelectFolder = (name) => {
+    if(prevName === name && prevName !== "") {
+      setSelectedFolder();
+      setPrevName("");
+      return;
+    }
+    setSelectedFolder(name);
+    setPrevName(name);
+    // setSearchTerm('');
+    setCheckedFiles(new Set());
+    setAllChecked(false);
+    setCurrentPage(1);
+  };
+
+  const onDeleteFolder = (e, name) => {
+    e.preventDefault();
+    if (!window.confirm(`폴더 "${name}"를 삭제하시겠습니까?`)) return;
+    setFolders(prev =>
+      prev.map(folder =>
+        folder.name === '모의고사'
+          ? {
+              ...folder,
+              children: folder.children.filter(child => child !== name),
+            }
+          : folder
+      )
+    );
+    if (selectedFolder === name) setSelectedFolder('');
+  };
+
+  // 검색
+  const onSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
     setCheckedFiles(new Set());
     setAllChecked(false);
+    // setSelectedFolder();
   };
 
-  const onPageClick = page => {
+  // 페이지네이션
+  const onPageClick = (page) => {
     setCurrentPage(page);
     setCheckedFiles(new Set());
     setAllChecked(false);
   };
 
-  const onWriteClick = () => navigate('/main/reference/write');
-  const onFileClick = id => navigate(`/main/reference/${id}`);
+  const totalPages = Math.ceil(filteredFiles.length / filesPerPage);
+
+  // 네비게이션
+  const onWriteClick = () => navigate('/main/reference/write', {state: {academyId, role, name}});
+  const onFileClick = id => navigate(`/main/reference/${id}`, {state: {academyId, role, name}});
 
   return (
     <div className="contents">
@@ -125,20 +181,11 @@ const Reference = () => {
             </div>
             <ul className="folder-list">
               {folders.map(folder => (
-                <li key={folder.name}>
-                  {folder.name}
-                  <ul>
-                    {folder.children.map(child => (
-                      <li
-                        key={child}
-                        className={child === selectedFolder ? 'selected-folder' : ''}
-                        onClick={() => onSelectFolder(child)}
-                        onContextMenu={e => onDeleteFolder(e, child)}
-                      >
-                        {child}
-                      </li>
-                    ))}
-                  </ul>
+                <li key={folder.idx}
+                 className={folder.category === selectedFolder ? 'selected-folder' : ''}
+                 onClick={() => onSelectFolder(folder.category)}
+                 onContextMenu={e => onDeleteFolder(e, folder.idx)}>
+                  {folder.category}
                 </li>
               ))}
             </ul>
@@ -147,8 +194,10 @@ const Reference = () => {
 
         <div className="reference-main">
           <div className="reference-actions">
-            <button className="write-btn" onClick={onWriteClick}>글작성</button>
-            <button className="delete-btn" onClick={onDeleteFiles}>삭제</button>
+            {roleCheck && <>
+              <button className="write-btn" onClick={onWriteClick}>글작성</button>
+              <button className="delete-btn" onClick={onDeleteFiles}>삭제</button>
+            </>}
             <div className="search-box">
               <input
                 type="text"
@@ -164,17 +213,22 @@ const Reference = () => {
             <table className="reference-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" checked={allChecked} onChange={onCheckAll} /></th>
+                  <th>
+                    <input
+                      type="checkbox"
+                      checked={allChecked}
+                      onChange={onCheckAll}
+                    />
+                  </th>
                   <th>번호</th>
                   <th>파일명</th>
                   <th>작성자</th>
                   <th>업로드일</th>
-                  <th>용량</th>
                 </tr>
               </thead>
               <tbody>
                 {pagedFiles.length > 0 ? (
-                  pagedFiles.map(file => (
+                  pagedFiles.map((file, idx) => (
                     <tr key={file.id} onClick={() => onFileClick(file.id)} style={{ cursor: 'pointer' }}>
                       <td>
                         <input
@@ -184,23 +238,24 @@ const Reference = () => {
                           onChange={() => onCheckFile(file.id)}
                         />
                       </td>
-                      <td>{file.id}</td>
-                      <td>{file.filename}</td>
-                      <td>{file.author}</td>
-                      <td>{file.uploadDate}</td>
-                      <td>{file.size}</td>
+                      <td>{idx+1 ?? '-'}</td>
+                      <td>{file.title ?? '-'}</td>
+                      <td>{file.writer ?? '-'}</td>
+                      <td>{file.createdAt ?? '-'}</td>
                     </tr>
                   ))
                 ) : (
-                  <tr><td colSpan="6" style={{ textAlign: 'center' }}>검색 결과가 없습니다.</td></tr>
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: 'center' }}>검색 결과가 없습니다.</td>
+                  </tr>
                 )}
               </tbody>
             </table>
 
             <div className="reference-pagination">
-              {[...Array(Math.ceil(filteredFiles.length / filesPerPage))].map((_, i) => (
+              {Array.from({ length: totalPages }, (_, i) => (
                 <span
-                  key={i}
+                  key={i + 1}
                   className={`page-number ${currentPage === i + 1 ? 'active' : ''}`}
                   onClick={() => onPageClick(i + 1)}
                 >
