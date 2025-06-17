@@ -374,7 +374,7 @@ const Main = () => {
                                 <>
                                     <span className='naviContent'>
                                         <i className="bi bi-collection"></i>&nbsp;&nbsp;
-                                        <Link to="reference" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        <Link to="reference" state={{ acaId: userInfo.acaId, role: userInfo.role, name:userInfo.name }} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         자료실
                                         </Link>
                                     </span>

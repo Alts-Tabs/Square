@@ -1,6 +1,7 @@
 package com.example.user.entity;
 
 import com.example.classes.entity.ClassesEntity;
+import com.example.reference.entity.ReferenceEntity;
 import com.example.schedule.entity.ScheduleEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -77,4 +78,8 @@ public class AcademiesEntity {
     @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ScheduleEntity> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "academy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<ReferenceEntity> references = new ArrayList<>();
 }
