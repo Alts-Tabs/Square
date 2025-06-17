@@ -1,0 +1,104 @@
+.m-today-title {
+  flex-shrink: 0; /* 공간이 부족할 때에도 원래 크기 유지 */
+  font-size: 28px;
+  font-weight: bold;
+  color: #4DA1A9;
+  margin-bottom: 24px;
+  text-align: center;
+}
+/* 우리 반 누적 출석률 */
+.m-stackAttend {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 280px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    gap: 60px;
+    background-image: url(../image/stackAttend.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    box-sizing: border-box;
+}
+/* 반 누적 출석률 그래프 Div */
+/* .m-attendGraph {
+    height: auto;
+} */
+.m-attendClass {
+    display: block;
+    width: 90%;
+    /* padding-top: 2px; */
+}
+.m-attenderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;   
+    height: 70%;
+    margin-top: 20px;
+    gap: 25px;
+}
+/* 이번 달 출석왕&분발왕 div */
+.m-attender {
+    width: 50%;
+    height: auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 2px 13px #7c8a8a40;
+}
+.m-attenderTitle {
+    color: #7D8A8A;
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.m-attenderName {
+    color: #79D7BE;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+
+/* 오늘의 출석 영역 */
+.m-todayAttendTitle {
+    overflow-y: auto;
+    flex-shrink: 0;
+    overflow: hidden;
+    height: 70px;
+    text-align: center;
+    line-height: 67px;
+    margin-bottom: 5px;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+}
+/* 지금 수업은 ~입니다. */
+.m-todayAttendTitle span {
+    font-weight: 700;
+    font-size: 18px;
+    color: #7D8A8A;
+}
+/* 출석 내용 (스크롤 가능) */
+.m-todayAttendContent {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 25px;
+    border-radius: 0 0 10px 10px;
+    text-align: center;
+    background-color: white;
+    scrollbar-width: none;
+}
+
+.m-listWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
