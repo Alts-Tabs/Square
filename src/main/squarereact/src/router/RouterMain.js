@@ -21,7 +21,7 @@ import { MyPage } from '../components/Mypage';
 import { SuccessPage } from '../payment/SuccessPage';
 import { FailPage } from '../payment/FailPage';
 import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
-import { MobileCalendar, MobileNavi } from '../mobile';
+import { MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
 
 const RouterMain = () => {
     return (
@@ -100,6 +100,8 @@ const RouterMain = () => {
                 {/* 모바일 */}
                 <Route path="/m/" element={<MobileNavi />}>
                     <Route path='calendar' element={<MobileCalendar />} />
+                    <Route path='mypage' element={<MobileMypage />}/>
+                    <Route path='timetable' element={<MobileTimetable/>}/>
                 </Route>
             </Routes>
         </BrowserRouter>

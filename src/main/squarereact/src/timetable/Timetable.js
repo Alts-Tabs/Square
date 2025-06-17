@@ -129,10 +129,6 @@ const Timetable = () => {
             });
         }
     },[userInfo.acaId]);
-
-    // const handleTimetableSelect=(timetable)=>{
-    //     setSelectedTimetable(timetable);
-    // }; // 미사용 주석용
     
     //선택된 시간표의 timecontents 조회 + 반복 일정 생성
     const [events, setEvents] =useState([]);
@@ -182,11 +178,10 @@ const Timetable = () => {
                     id: `${dateStr}-${tc.startTime}-${tc.endTime}-${title}`, // 고유한 id 부여
                     title:title,
                     start: `${dateStr}T${tc.startTime}`,
-                    end: `${dateStr}T${tc.endTime}`
+                    end: `${dateStr}T${tc.endTime === '00:00:00' ? '23:59:59' : tc.endTime}`
                 })
             })
-        }
-        
+        }     
         return events;
     }
 
@@ -244,6 +239,14 @@ const Timetable = () => {
                     })()}
                 </div>
 
+            </div>
+
+
+            {/* rightContainer - 우측 시간표 영역 */}
+            <div className='timetableContainer'>
+              <div className='time-buttons'>
+
+                <div className='time-cal-buttons'>
                 <div className='buttonsWrapper3'>
                         <button className='time-selectToday' onClick={() => handleDateNavigate()} style={{fontSize:'25px'}}
                         >오늘</button>
@@ -267,17 +270,14 @@ const Timetable = () => {
                         <button
                             key={label}
                             onClick={() => handlePeriodClick(label)}
+                            style={{fontSize:'17px'}}
                             className={selectedPeriod === label ? 'selectedButton' : ''}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
-            </div>
-
-
-            {/* rightContainer - 우측 시간표 영역 */}
-            <div className='timetableContainer'>
+                </div>
                 {/* 학생 & 학부모는 아래 버튼 렌더링 X */}
                 {(userInfo.role !== '학생' && userInfo.role !== '학부모') && (
                     <div className='buttonsWrapper'>
@@ -287,7 +287,7 @@ const Timetable = () => {
 
                     </div>
                 )}
-
+              </div>
                 <div className='timetable'>
                     <FullCalendar
                       plugins={[dayGridPlugin,timeGridPlugin,interactionPlugin]}
@@ -334,8 +334,19 @@ const Timetable = () => {
                         if (!(event.start instanceof Date) || !(event.end instanceof Date)) return;
                         
                         const start = new Date(event.start);
-                        const end = new Date(event.end);
-                        const dateStr = event.start.toISOString().split('T')[0];
+                        let end = event.end ? new Date(event.end) : null;
+
+                        // 종료 시간이 00:00:00 인 경우 보정 (동일 날짜 23:59:59로)
+                        if (!end || (
+                            end.getHours() === 0 &&
+                            end.getMinutes() === 0 &&
+                            end.getSeconds() === 0
+                        )) {
+                            end = new Date(start);
+                            end.setHours(23, 59, 59);
+                        }
+
+                        
                         
                         //툴팁 노출
                         const formatTime = (date) =>
@@ -344,20 +355,19 @@ const Timetable = () => {
                                 minute: '2-digit',
                             });
 
-                        if (!isNaN(start) && !isNaN(end)) {
-                            const timeRange = `${formatTime(start)} ~ ${formatTime(end)}`;
-                            const title = event.title;
-                            //innerHTML을 이용한 줄바꿈
-                            const tooltipHTML = `${timeRange}<br>${title}`;
-                            info.el.setAttribute('data-bs-toggle', 'tooltip');
-                            info.el.setAttribute('data-bs-placement', 'top');
-                            info.el.setAttribute('data-bs-html', 'true'); // HTML 허용
-                            info.el.setAttribute('title', tooltipHTML);
+                        const timeRange = `${formatTime(start)} ~ ${formatTime(end)}`;
+                        const title = event.title;
+                        const tooltipHTML = `${timeRange}<br>${title}`;
+                        el.setAttribute('data-bs-toggle', 'tooltip');
+                        el.setAttribute('data-bs-placement', 'top');
+                        el.setAttribute('data-bs-html', 'true');
+                        el.setAttribute('title', tooltipHTML);
+                        new Tooltip(el, {
+                            container: 'body',
+                            trigger: 'hover',
+                        });
 
-                            // Bootstrap Tooltip 초기화
-                            new Tooltip(info.el);
-                        }
-
+                        const dateStr = event.start.toISOString().split('T')[0];
                         const allInstances = Object.values(view.getCurrentData().eventStore.instances);
 
                         const isTimeOverlap = (aStart, aEnd, bStart, bEnd) => {

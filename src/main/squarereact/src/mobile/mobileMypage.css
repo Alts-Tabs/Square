@@ -1,0 +1,61 @@
+.m-my-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #4DA1A9;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.m {
+    background-color: #f9f9f9;
+}
+
+.m-mypage-contents-container{
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+.m-info-box1, .m-info-box2 {
+  flex: 1;
+  width: 100%;
+  margin: 5px;
+}
+.m-info-box2 {
+    margin-top: 10px;
+}
+.m-info-title {
+  font-size: 20px;
+  color: #4DA1A9;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 24px;
+}
+.m-info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+.m-info-value {
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* 프로필 섹션 */
+.m-profile-section {
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.m-profile-section img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}

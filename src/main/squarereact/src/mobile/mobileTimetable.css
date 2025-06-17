@@ -1,0 +1,150 @@
+.m-timetable-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #4DA1A9;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.m-radioItem {
+  display: inline;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px; 
+  cursor: pointer;
+}
+/* radio 버튼 커스텀 */
+.m-radioItem input[type="checkbox"] {
+  display: none;
+}
+
+.m-radioItem .radioMark { /* 미선택 상태 */
+    height: 20px;
+    width: 20px;
+    border: 1px solid rgba(121, 215, 190, 0.5);
+    background-color: white;
+    display: inline-block;
+    position: relative;
+}
+
+.m-radioItem .radioText {
+  transition: color 0.2s ease;
+}
+
+.m-radioItem input[type="checkbox"]:checked + .radioMark::after { /* 선택 상태 */
+    content: "✔";
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: #79D7BE;
+    position: absolute;
+}
+
+.m-radioItem input[type="radio"]:checked + .radioMark + .radioText {
+  color: #79D7BE; /* 체크 시 바뀔 색상 */
+}
+
+/*버튼 ====================================================*/
+.m-timetab-button {
+    display: flex;
+    flex-wrap: wrap; /* 줄 바꿈 허용 여부에 따라 사용 */
+    justify-content: flex-start;  /* 필요에 따라 조정: space-around, center 등 */
+    align-items: center;
+    gap: 10px; /* 버튼 간 간격 */
+    margin-top: 10px;
+}
+
+/* 일 - 주 - 월, < - > */
+.m-buttonsWrapper2 {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    margin-top: 10px;
+}
+
+.m-buttonsWrapper2 .m-time-prevnextbtn:hover{
+    background-color: white;
+    color: #79D7BE;
+    border: 2px solid #79D7BE;
+}
+
+.m-buttonsWrapper2 button:first-child {
+    width: 40px;
+    height: 33px;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px 0 0 10px;
+    border-right: 1px solid #EBF0F0;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+.m-buttonsWrapper2 button:nth-child(2) {
+    width: 40px;
+    height: 33px;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    border-left: 1px solid #EBF0F0;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+/* 일 - 주 - 월 하나만 선택하는 디자인 */
+.m-selectedButton {
+    background-color: #79D7BE !important;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.m-buttonsWrapper3{
+    display: flex;
+    /* justify-content: flex-end; */
+    align-items: center; 
+    width: 80px;
+    height: 33px;
+    margin-left: 0;
+    margin-top: 8px;
+}
+.m-buttonsWrapper3 .m-time-selectToday {
+    width: 80px;
+    height: 33px;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(121, 215, 190, 0.5);
+}
+
+.m-buttonsWrapper3 .m-time-selectToday:hover{
+    background-color: white;
+    color: #79D7BE;
+    border: 2px solid #79D7BE;
+}
+
+/* 시간표 */
+.m-timetable {
+    width: 100%;
+    height: 600px;
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 10px;
+}
+colgroup>col{
+    width: 10% !important;
+}
+fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion {
+    white-space: pre-wrap !important; /*자동 줄바꿈*/
+}
+.fc-event-main { /*일정있는 경우 css 지정*/
+    width: 93%;
+
+    height: 98%;
+    margin-left: 2px;
+    border:none;
+    border-radius: 5px;
+    background-color:  rgba(121, 215, 190,0.7);
+    /* visibility: hidden; */
+}

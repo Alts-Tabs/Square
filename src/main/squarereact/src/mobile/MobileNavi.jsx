@@ -57,6 +57,7 @@ const MobileNavi = () => {
         <div className='mobile-menu'>
           <Link to='calendar' className='mobile-menu-item'
            state={{acaId: userInfo.acaId}}>일정확인</Link>
+          <Link to='timetable' className='mobile-menu-item'>시간표</Link>
           {/* 권한별 링크 */}
           {userInfo.role === '원장' && (<>
             <div className='mobile-menu-item'>메뉴3</div>
@@ -70,7 +71,7 @@ const MobileNavi = () => {
           {userInfo.role === '학생' && (<>
             <div className='mobile-menu-item'>메뉴3</div>
           </>)}
-          <div className='mobile-menu-item'>마이페이지</div>
+          <Link to='mypage' className='mobile-menu-item'>마이페이지</Link>
           <div className='mobile-menu-item' onClick={onLogout}>로그아웃</div>
         </div>
       )}
