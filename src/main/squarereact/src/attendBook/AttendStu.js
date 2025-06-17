@@ -73,7 +73,12 @@ const AttendStu = () => {
         // 출석 활성 여부 확인
         axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
-            setIsEditable(res.data); // true이면 출석창 활성화
+            if(res.data !== null) {
+                setIsEditable(true); // true이면 출석창 활성화
+
+            } else {
+                setIsEditable(false);
+            }
         })
         .catch(err => {
             console.error("출석 활성 상태 확인 실패:", err);
@@ -114,7 +119,7 @@ const AttendStu = () => {
         }
     };
 
-    console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
+    // console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================

@@ -13,5 +13,4 @@ import java.util.Optional;
 public interface AttendancesRepository extends JpaRepository<AttendancesEntity, Integer> {
     List<AttendancesEntity> findAllByTimetableAttend(TimetableAttendEntity timetableAttend);
     AttendancesEntity findByTimetableAttendAndStudent(TimetableAttendEntity timetableAttend, StudentsEntity student);
-
 }
