@@ -58,6 +58,25 @@ const MobileNavi = () => {
           <Link to='calendar' className='mobile-menu-item'
            state={{acaId: userInfo.acaId}}>일정확인</Link>
           <Link to='timetable' className='mobile-menu-item'>시간표</Link>
+          {
+              userInfo.role === "학생" ? ( // 학생 로그인
+                  <Link to={`attend-student/${userInfo.acaId}`} className='mobile-menu-item'>
+                      출석 관리
+                  </Link>
+              ) : userInfo.role === "학부모" ? ( // 학부모 로그인
+                  <Link to="attend-parent" className='mobile-menu-item'>
+                      출석 관리
+                  </Link>
+              ) : userInfo.role ? ( // 원장, 강사 로그인
+                  <Link to={`attend/${userInfo.acaId}`} state={{ userInfo }} className='mobile-menu-item'>
+                      출석 관리
+                  </Link>
+              ) : ( // userInfo.role이 아직 로드되지 않았을 경우
+                  <span className='mobile-menu-item'>
+                      출석 관리
+                  </span>
+              )
+          }
           {/* 권한별 링크 */}
           {userInfo.role === '원장' && (<>
             <div className='mobile-menu-item'>메뉴3</div>

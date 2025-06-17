@@ -21,7 +21,7 @@ import { MyPage } from '../components/Mypage';
 import { SuccessPage } from '../payment/SuccessPage';
 import { FailPage } from '../payment/FailPage';
 import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
-import { MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
+import { MobileAttend, MobileAttendParent, MobileAttendStu, MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
 
 const RouterMain = () => {
     return (
@@ -102,6 +102,9 @@ const RouterMain = () => {
                     <Route path='calendar' element={<MobileCalendar />} />
                     <Route path='mypage' element={<MobileMypage />}/>
                     <Route path='timetable' element={<MobileTimetable/>}/>
+                    <Route path='attend/:acaId' element={<MobileAttend/>}/> {/*원장, 강사 출석 관리 */}
+                    <Route path='attend-student/:acaId' element={<MobileAttendStu/>} /> {/*학생 출석 관리 */}
+                    <Route path='attend-parent' element={<MobileAttendParent/>} /> {/*학부모 출석 관리 */}
                 </Route>
             </Routes>
         </BrowserRouter>
