@@ -7,9 +7,7 @@ import com.example.attend.repository.*;
 import com.example.classes.jpa.ClassUsersRepository;
 import com.example.timetable.entity.TimecontentsEntity;
 import com.example.timetable.entity.TimetableEntity;
-import com.example.timetable.entity.TimeusersEntity;
 import com.example.timetable.repository.TimecontentsRepository;
-import com.example.timetable.repository.TimeusersRepository;
 import com.example.user.entity.StudentsEntity;
 import com.example.user.entity.UserRole;
 import com.example.user.entity.UsersEntity;
@@ -30,12 +28,11 @@ public class AttendanceService {
 
     private final UsersRepository usersRepository;
     private final TimecontentsRepository timecontentsRepository;
-    private final TimeusersRepository timeusersRepository;
-    private final ClassUsersRepository classUsersRepository;
     private final TimetableAttendRepository timetableAttendRepository;
     private final AttendanceCodeRepository attendanceCodeRepository;
     private final AttendancesRepository attendancesRepository;
     private final StudentsRepository studentsRepository;
+    private final ClassUsersRepository classUsersRepository;
 
     // 출석 시작: 출석코드 생성 + 출석부 초기화 =============================================================================
     @Transactional
@@ -65,6 +62,8 @@ public class AttendanceService {
 
         // 1. TimetableAttend 생성
         TimetableAttendEntity timetableAttend = TimetableAttendEntity.builder()
+                .dayOfWeek(today)
+                .attendStart(now)
                 .timetable(timetable)
                 .build();
         timetableAttend = timetableAttendRepository.save(timetableAttend); // 저장 후 영속성 코드 받기
@@ -78,13 +77,16 @@ public class AttendanceService {
         attendanceCodeRepository.save(codeEntity);
 
         // 3. timetable_attend 등록
-        // 3-1. 수업에 속한 학생 가져오기
-        List<TimeusersEntity> timeUsers = timeusersRepository.findByTimetable_timetableId(timetable.getTimetableId());
+        // 3-1. 시간표에 맞는 반 소속 학생들 가져오기
+        List<Integer> classUsers = classUsersRepository.findStudentIdsByClassId(currentClass.getClasses().getClassId());
+        System.out.println(classUsers.size());
 
         // 3-2. attendances 초기화 - 학생들 초기 정보 저장
-        for (TimeusersEntity tu : timeUsers) {
+        for (Integer cu : classUsers) {
+            StudentsEntity student = studentsRepository.findById(cu)
+                    .orElseThrow(() -> new NotFoundException("학생 없음"));
             AttendancesEntity attendance = AttendancesEntity.builder()
-                    .student(tu.getStudent())
+                    .student(student)
                     .timetableAttend(timetableAttend)
                     .build();
             attendancesRepository.save(attendance);
@@ -134,12 +136,14 @@ public class AttendanceService {
 
     // 학생 출석 입력란 활성화 여부 ========================================================================================
     @Transactional
-    public boolean isAttendanceActive(Integer userId) {
+    public Integer isAttendanceActive(Integer userId) {
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
         int today = now.getDayOfWeek().getValue() % 7;
 
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("NOT FOUND USER"));
+
+        boolean isStudent = user.getRole().equals(UserRole.ROLE_STUDENT);
 
         // 현재 수업 시간대 찾기
         Optional<TimecontentsEntity> currentClassOpt = timecontentsRepository.findAll().stream()
@@ -157,18 +161,24 @@ public class AttendanceService {
 
 
                     // 사용자 검증
-                    return tc.getClasses().getClassUsers().stream()
-                            .anyMatch(classUser -> classUser.getStudent().getUser().equals(user));
+                    if (isStudent) {
+                        // 학생인 경우: 해당 클래스에 현재 user가 속해 있는지 검사
+                        return tc.getClasses().getClassUsers().stream()
+                                .anyMatch(classUser -> classUser.getStudent().getUser().equals(user));
+                    } else {
+                        // 교사인 경우: 클래스의 교사와 로그인 유저가 일치하는지
+                        return tc.getClasses().getTeacher().getUser().equals(user);
+                    }
 
                 }).findFirst();
 
-        if (currentClassOpt.isEmpty()) return false;
+        if (currentClassOpt.isEmpty()) return null;
 
         TimetableEntity timetable = currentClassOpt.get().getTimetable();
 
         // 가장 최근의 timetable_attend 가져오기
         Optional<TimetableAttendEntity> attendOpt = timetableAttendRepository.findTopByTimetableOrderByIdxDesc(timetable);
-        if (attendOpt.isEmpty()) return false;
+        if (attendOpt.isEmpty()) return null;
 
         TimetableAttendEntity attend = attendOpt.get();
 
@@ -176,7 +186,7 @@ public class AttendanceService {
         AttendanceCodeEntity code = attendanceCodeRepository
                 .findTopByTimetableAttend_IdxOrderByCreatedAtDesc(attend.getIdx());
 
-        return code != null;
+        return code != null ? attend.getIdx() : null;
     }
 
 

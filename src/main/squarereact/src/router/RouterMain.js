@@ -35,8 +35,8 @@ const RouterMain = () => {
                     <Route path="teachersManage" element={<TeachersManage />} /> {/* 원장 - 강사들 관리 */}
                     <Route path="students-manage/:acaId" element={<ClassStudentsManage />} /> {/* 수강생 관리 */}
 
-                    <Route path="attend/:acaId" element={<Attend />} /> {/* 출석 관리 */}
-                    <Route path="attend/:acaId/attend-history" element={<AttendHistory />} />
+                    <Route path="attend/:acaId/" element={<Attend />} /> {/* 출석 관리 */}
+                    <Route path="attend/:acaId/attend-history/:timetableAttendIdx" element={<AttendHistory />} />
                     <Route path="attend-stu/:acaId" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
                     <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 출석 관리 경로 */}
 

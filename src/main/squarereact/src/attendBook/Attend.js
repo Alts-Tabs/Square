@@ -54,8 +54,8 @@ const Attend = () => {
         });
     }, [userInfo]);
 
-    console.log("userInfo:", userInfo);
-    console.log('현 수업 currentClass:', currentClass);
+    // console.log("userInfo:", userInfo);
+    // console.log('현 수업 currentClass:', currentClass);
 
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
@@ -108,6 +108,27 @@ const Attend = () => {
 
     // 2. 출석 시작 / 종료 요청
     const [timetableAttendIdx, setTimetableAttendIdx] = useState();
+    useEffect(() => {
+        if (!userInfo?.userId) return;
+    
+        // 출석 활성 여부 확인
+        axios.get('/student/attendance-active', { withCredentials: true })
+        .then(res => {
+                console.log("출석 활성 여부:",res);
+            if(res.data !== "") { // !== null이 아니었음...
+                setTimetableAttendIdx(res.data);
+                setAttending(true);
+            } else {
+                setTimetableAttendIdx();
+                setAttending(false);
+            }
+        })
+        .catch(err => {
+            console.error("출석 활성 상태 확인 실패:", err);
+            setAttending(false);
+        });
+    }, [userInfo]);
+
     const handleAttendanceClick = async () => {
     if (!userInfo?.userId || !currentClass?.classId) return;
 
@@ -128,6 +149,61 @@ const Attend = () => {
             await axios.post(`/th/${timetableAttendIdx}/attendance-end`, {
                 withCredentials: true
             });
+
+            // 출석 종료 후 우측에 지난 출석 실시간 추가
+            const summaryResponse = await axios.get(
+                `/public/${currentClass.timetableId}/${currentClass.classId}/attendance-summary`
+            );
+            const rawData = summaryResponse.data;
+
+            // 날짜별로 그룹핑 및 집계
+            const groupedData = {};
+
+            rawData.forEach(item => {
+                const date = item.attendStart.split('T')[0]; // YYYY-MM-DD 추출
+
+                if (!groupedData[date]) {
+                    groupedData[date] = {
+                        date: date,
+                        present: 0,
+                        absent: 0,
+                        late: 0
+                    };
+                }
+
+                if (item.status === 'PRESENT') {
+                    groupedData[date].present += item.count;
+                } else if (item.status === 'ABSENT') {
+                    groupedData[date].absent += item.count;
+                } else if (item.status === 'LATE') {
+                    groupedData[date].late += item.count;
+                }
+            });
+
+            // 최종 데이터 배열로 변환 + 요일 추가
+            const finalData = Object.values(groupedData).map(item => {
+            const dayOfWeek = new Date(item.date).toLocaleDateString('ko-KR', { weekday: 'long' });
+
+                return {
+                    // date: item.date,
+                    // dayOfWeek: dayOfWeek,
+                    // present: item.present,
+                    // late: item.late,
+                    // absent: item.absent
+                    date: item.date,
+                    dayOfWeek: dayOfWeek,
+                    statusSummary: [
+                        { status: 'PRESENT', count: item.present },
+                        { status: 'LATE', count: item.late },
+                        { status: 'ABSENT', count: item.absent }
+                    ]
+                };
+            });
+
+            setAttendanceSummaries(prev => [...prev, ...finalData]);
+
+            console.log(attendanceSummaries);
+            console.log("finalData",finalData); // 이 값이 이상한 게 담기고 있음.
 
             setAttending(false);
             setAttendanceEnded(true);
@@ -167,10 +243,54 @@ const Attend = () => {
     };
 
 
-    // 지난 출석 날짜 출력 ==============================================================
-    const [attendList, setAttendList] = useState([]);
-    // 아직 미작성
+    // 지난 출석 ===========================================================================
+    const [attendanceSummaries, setAttendanceSummaries] = useState([]);
+    
+    useEffect(() => {
+    if (!currentClass || !currentClass.timetableId || !currentClass.classId) return;
 
+    const fetchAttendanceSummary = async () => {
+      try {
+        const response = await axios.get(
+          `/public/${currentClass.timetableId}/${currentClass.classId}/attendance-summary`
+        );
+        const rawData = response.data || [];
+        // console.log("rawData임.",rawData);
+
+        // 그룹핑 로직
+        const groupedByAttendId = rawData.reduce((acc, curr) => {
+            const key = curr.timetableAttendId;
+            if (!acc[key]) {
+                const dateObj = new Date(curr.attendStart);
+                const hours = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[dateObj.getDay()];
+
+                acc[key] = {
+                    timetableAttendId: curr.timetableAttendId,
+                    startTime: `${hours}:${minutes}`,
+                    dayOfWeek: dayOfWeek,
+                    statusSummary: []
+                };
+            }
+            acc[key].statusSummary.push({
+            status: curr.status,
+            count: curr.count
+            });
+            
+            return acc;
+        }, {});
+
+        const convertedData = Object.values(groupedByAttendId);
+        setAttendanceSummaries(convertedData);
+      } catch (error) {
+        console.error('출석 요약을 불러오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchAttendanceSummary();
+  }, [currentClass]);
 
     return (
             <div className='attendContainer'>
@@ -184,7 +304,7 @@ const Attend = () => {
                         <>
                         <span> 지금은&nbsp; </span>
                         <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '800' }}>
-                            {currentClass.className}
+                             {currentClass.className}
                         </span>
                         <span> &nbsp;입니다. </span>
                         </>
@@ -203,7 +323,7 @@ const Attend = () => {
                         </span>
                         <br />
 
-                        {/* 출석 시작 & 출석 종료 버튼 */}
+                        {/* ▶️ 출석 시작 & 출석 종료 버튼 */}
                         {!attendanceEnded ? (
                         <>
                             {attending && randomNumber && (
@@ -285,7 +405,7 @@ const Attend = () => {
 
 
                 <div className='rightContainer'>
-                    {/* 우리 반 누적 출석률 =========================================== */}
+                    {/* 우리 반 누적 출석률 ================================================= */}
                     <span className='attendTitle'> 우리 반 누적 출석률 </span>
                     <div className='stackAttend'>
                         {/* 원형(도넛) 그래프 */}
@@ -311,49 +431,55 @@ const Attend = () => {
                         </div>
                     </div>
 
-                    {/* 지난 출석 ==================================================== */}
+                    {/* 📜 지난 출석 ============================================================= */}
                     <span className='attendTitle'> 지난 출석 </span>
                     <div className='historyAttend'>
                         {/* 반복 처리 리스트 */}
-                        {attendList.map((attend, index) => (
+                        {Array.isArray(attendanceSummaries) && attendanceSummaries.length > 0 ? (
+                        attendanceSummaries.map((summary, index) => (
+                            
                         <div className='historyList' key={index}>
-                        <div>
-                            <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
-                                ({attend.dateOnly})
-                            </span>
+                            <div>
+                                <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
+                                    {summary.date}{summary.dayOfWeek}
+                                </span>
 
-                            <span style={{ display: 'inline-block', marginRight: '10px' }}>
-                                <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
-                                <span className='historyCount'> ({attend.present}) </span>
-                            </span>
+                                {summary.statusSummary?.map((statusObj) => (
+                                <span key={statusObj.status} style={{ display: 'inline-block', marginRight: '10px' }}>
+                                {statusObj.status === 'PRESENT' && (
+                                    <>
+                                    <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
+                                    <span className='historyCount'> 출석수 {statusObj.count}</span>
+                                    </>
+                                )}
+                                {statusObj.status === 'LATE' && (
+                                    <>
+                                    <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
+                                    <span className='historyCount'> 지각수 {statusObj.count}</span>
+                                    </>
+                                )}
+                                {statusObj.status === 'ABSENT' && (
+                                    <>
+                                    <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
+                                    <span className='historyCount'> 결석수 {statusObj.count}</span>
+                                    </>
+                                )}
+                                </span>
+                            ))}
+                            </div>
 
-                            <span style={{ display: 'inline-block', marginRight: '10px' }}>
-                                <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
-                                <span className='historyCount'> ({attend.late}) </span>
-                            </span>
-
-                            <span style={{ display: 'inline-block' }}>
-                                <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
-                                <span className='historyCount'> ({attend.absent}) </span>
-                            </span>
+                            {/* 출석 상세 등록 링크 ===================== */}
+                            <Link to={`attend-history/${summary.timetableAttendId}`}>
+                                <i className="bi bi-chevron-right"></i>
+                            </Link>
                         </div>
 
-                        <Link
-                            to="attend-history"
-                            state={{
-                            date: attend.dateOnly,
-                            present: attend.present,
-                            late: attend.late,
-                            absent: attend.absent
-                            }}
-                        >
-                            <i className="bi bi-chevron-right"></i>
-                        </Link>
-                        </div>
-                    ))}
+                        ))
+                        ) : (
+                        <p>출석 기록이 없습니다.</p>
+                        )}
                     </div>
                 </div>
-                
             </div>
     );
 };  
