@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 import './successPage.css';
+import './PaymentPayCheck.css';
 
 const PaymentPayCheck = () => {
     //라우팅 경로 상에서 받아 낼 파라미터
@@ -161,31 +161,28 @@ const PaymentPayCheck = () => {
            <div className='paymentManagementContainer'>    
                 <div className='leftContainer'>
                     {/* 오늘의 출석 */}
-                    <span className='title'> 자녀 학원비 결제 </span>
+                    <span className='title'> 수강료 결제 </span>
                     <div className='PrevPayclassRead'>
+                        <span className='navyTitle'> 수업 목록 </span>
+
                         {prevPay.length === 0 ? (
                                 <div>결제한 클래스가 없습니다.</div>
                             ):(
                                 <table border={0} className='enrollWaitTable'>
                                     <tbody>
-                                    {prevPay.map(pp=>(
-                                        <React.Fragment key={pp.id}>
-                                            <tr>        
-                                                <td rowSpan={2}>
-                                                    <div className='ellipse'/>
-                                                </td>
-                                                <td>학생명 {pp.studentName}</td>
-                                                <td>{pp.duration}</td>
-                                                <td>{pp.tuition}원</td>
-                                            </tr>
-                                            <tr>
-                                                <td>{pp.className}</td>
-                                                <td>
-                                                
-                                                </td>
-                                            </tr>
-                                        </React.Fragment>
-                                    ))}
+                                        <tr>
+                                        <td> </td>
+                                        <td> <b> 수업명 </b></td>
+                                        <td><b> 금액 </b></td>
+                                        </tr>
+
+                                        {prevPay.map((pp, index) => (
+                                        <tr key={pp.id}>
+                                            <td>{index + 1}</td>
+                                            <td>{pp.className}</td>
+                                            <td>{pp.tuition}원</td>
+                                        </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             )
@@ -197,6 +194,9 @@ const PaymentPayCheck = () => {
                 <div className='rightPCContainer'>
                     {/* 수업료 변경 */}
                     <div className='selectParentClass'>
+                        <span className='navyTitle'> 수업 선택 </span>
+
+                        {/* 수업 선택 토글 */}
                         <select className='classLabel' style={{ width: '100%' }}
                         value={selClass} onChange={(e) => setSelClass(e.target.value)}>
                             <option value=''> 수업 선택 </option>
@@ -204,69 +204,74 @@ const PaymentPayCheck = () => {
                                 <option key={cls.id} value={cls.id}>{cls.name}</option>
                             ))}
                         </select>
-                            {classes.length === 0 ? (
-                                <div>클래스가 없습니다.</div>
-                            ):(
-                                <table className='enrollreuqest'>
-                                    <tbody>
-                                    {selectedClass ? (
-                                    <React.Fragment key={selectedClass.id}>
-                                        <tr>
-                                            <td rowSpan={5}>
-                                                <div className='ellipse'/>
-                                            </td>
-                                            <td>강사명 {selectedClass.teacherName}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{selectedClass.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>
-                                                {selectedClass.tuition
-                                                .toString()
-                                                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원
-                                            </b></td>
-                                        </tr>
-                                        <tr>
-                                            {/*
-                                            똑같이 value와 내용을 맞춰줘야 jackson 직렬화 문제 방지
-                                            기간은 학원의 수업의 재량에 따라 천차만별이다.
-                                            */}
-                                            <select
-                                                style={{ width:'70%', textAlign: 'center' }}
-                                                value={duration}
-                                                onChange={handleEnrollDuration}
-                                            >
-                                                <option value="2025년 5월">2025년 5월</option>
-                                                <option value="2025년 6월">2025년 6월</option>
-                                            </select>
-                                        </tr>
-                                        <tr>
-                                            <select
-                                                style={{ width:'70%', textAlign: 'center' }}
-                                                value={selStudent}
-                                                onChange={(e)=>setSelStudent(e.target.value)}
-                                            >
-                                                <option value="">자녀 선택</option>
-                                                {
-                                                    students.map(stu => (
-                                                        <option key={stu.studentId} value={stu.studentId}>
-                                                            {stu.name}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                        </tr>
-                                    </React.Fragment>
-                                    ) : (
+
+                        {/* 선택한 수업 출력 */}
+                        {classes.length === 0 ? (
+                        <div>클래스가 없습니다.</div>
+                        ) : (
+                        <>
+                            <table className='enrollreuqest'>
+                            <tbody>
+                                {selectedClass ? (
+                                <React.Fragment key={selectedClass.id}>
                                     <tr>
-                                        <td colSpan={2}>수업을 선택해주세요.</td>
+                                    <td rowSpan={2}>
+                                        <b> {selectedClass.name} </b> <br />
+                                        강사 {selectedClass.teacherName}
+                                    </td>
+                                    <td>
+                                        <b>
+                                        {selectedClass.tuition
+                                            .toString()
+                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        원
+                                        </b>
+                                    </td>
                                     </tr>
-                                    )}
-                                    </tbody>
-                                </table>
-                            )
-                        }
+                                </React.Fragment>
+                                ) : (
+                                <tr>
+                                    <td colSpan={2}>결제할 수업을 선택해 주세요.</td>
+                                </tr>
+                                )}
+                            </tbody>
+                            </table>
+                            <hr />
+
+                            {selectedClass && (
+                            <div className='selectPayClass'>
+                                <div>
+                                    <label> 수강 기간 &nbsp;&nbsp; </label>
+                                    <select
+                                        style={{ width: '150px', textAlign: 'center' }}
+                                        value={duration}
+                                        onChange={handleEnrollDuration}
+                                    >
+                                        <option value="2025년 5월">2025년 5월</option>
+                                        <option value="2025년 6월">2025년 6월</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label> 자녀 선택 &nbsp;&nbsp; </label>
+                                    <select
+                                        style={{ width: '150px', textAlign: 'center' }}
+                                        value={selStudent}
+                                        onChange={(e) => setSelStudent(e.target.value)}
+                                    >
+                                        <option value=""> 자녀 선택 </option>
+                                        {students.map((stu) => (
+                                        <option key={stu.studentId} value={stu.studentId}>
+                                            {stu.name}
+                                        </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            )}
+                        </>
+                        )}
+
                         <button
                             className='btn insertButton btn-outline-success'
                             onClick={handleEnroll}    
@@ -275,39 +280,35 @@ const PaymentPayCheck = () => {
                         </button>
                     </div>
 
+
                     {/* 수업 신규 등록 */}
-                    
                     <div className='insertClass'>
-                        <span className='title'> 결제하기  </span>
-                        <hr />
+                        <span className='navyTitle'> 결제하기 </span>
+
                         {/* 이런 식으로 신청하기 버튼을 누르면 뜨게 하기 */}
                         {enrollList.length === 0 ? (
-                                <div>신청한 클래스가 없습니다.</div>
+                                <div><br />신청한 클래스가 없습니다.</div>
                             ):(
                                 <table border={0} className='enrollWaitTable'>
                                     <tbody>
-                                    {enrollList.map(el=>(
+                                    {enrollList.map((el, index) => (
                                         <React.Fragment key={el.id}>
                                             <tr>
                                                 <td rowSpan={4}>
-                                                    <div className='ellipse'/>
+                                                    {index + 1}
                                                 </td>
-                                                <td>강사명 {el.teacherName}</td>
+                                                <td> <b> {el.className} </b></td>
                                                 <td>{el.duration}</td>
                                             </tr>
                                             <tr>
-                                                <td>{el.className}</td>
+                                                <td>강사 {el.teacherName}</td>
                                                 <td>
-                                                    <button onClick={() => handleTossPay(el)}>
-                                                        결제
-                                                    </button>
+                                                    <button onClick={() => handleTossPay(el)}>결제</button>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <b>
-                                                        {el.tuition}원
-                                                    </b>
+                                                    <b>{el.tuition}원</b>
                                                 </td>
                                                 <td>
                                                     <button onClick={() => handleRemoveEnroll(el.enrollId)}>
@@ -316,8 +317,8 @@ const PaymentPayCheck = () => {
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>학생명 {el.studentName}</td>
-                                                <td>---</td>
+                                                <td> 자녀명 {el.studentName}</td>
+                                                <td> - </td>
                                             </tr>
                                         </React.Fragment>
                                     ))}
@@ -325,7 +326,6 @@ const PaymentPayCheck = () => {
                                 </table>
                             )
                         }
-                        <button className='btn insertButton btn-outline-success'>결제하기</button>
                     </div>
                 </div>    
             </div>  
