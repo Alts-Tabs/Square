@@ -135,6 +135,11 @@ const MobileTimetable = () => {
         const calendarApi = calendarRef.current?.getApi();
         if(!calendarApi) return;
 
+        if (direction === '오늘') {
+                calendarApi.today(); // 오늘 날짜로 이동
+                return;
+        }
+
         if(selectedPeriod === '일'){
             if(direction === '<'){
                 calendarApi.prev();//이전 날짜
@@ -186,7 +191,7 @@ const MobileTimetable = () => {
             </div>
             <div className='m-timetab-button'>
             <div className='m-buttonsWrapper3'>
-                    <button className='m-time-selectToday' onClick={() => handleDateNavigate()} style={{fontSize:'20px'}}
+                    <button className='m-time-selectToday' onClick={() => handleDateNavigate('오늘')} style={{fontSize:'20px'}}
                     >오늘</button>
             </div>
 
