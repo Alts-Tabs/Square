@@ -60,15 +60,11 @@ const PaymentManagement = () => {
                         <table border={0} className='classMenu'>
                             <tbody>
                             {
-                                classes.map(cls=>(
+                                classes.map((cls, index) => (
                                     <React.Fragment key={cls.id}>
                                         <tr>
                                             <td rowSpan={2}>
-                                                <div
-                                                    className='ellipse'
-                                                    style={{ cursor:'pointer' }}
-                                                    onClick={()=>handleEllipseClick(cls)}
-                                                />
+                                                {index + 1}
                                             </td>
                                             <td>
                                                 &nbsp;&nbsp;&nbsp;
