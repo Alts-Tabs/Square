@@ -74,9 +74,11 @@ const PaymentManagement = () => {
                                             </td>
                                             {/* 가독성을 위해 수업료 금액의 세자리마다 콤마로 구분*/}
                                             <td>
-                                                수업료: <b>{cls.tuition
-                                                .toString()
-                                                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</b>
+                                                <div onClick={()=>handleEllipseClick(cls)}>
+                                                    수업료: <b>{cls.tuition
+                                                    .toString()
+                                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</b>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -109,6 +111,7 @@ const PaymentManagement = () => {
                                 />
                                 원
                             </p>
+                            <p>변경할 수업의 수업료 부분을 클릭하세요</p>
                             <button
                                 className='btn insertButton btn-success'
                                 onClick={handleUpdateTuition}
