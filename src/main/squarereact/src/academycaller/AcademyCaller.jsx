@@ -6,19 +6,35 @@ import interactionPlugin from '@fullcalendar/interaction';
 import './AcademyCaller.css';
 import Modal from '../ui/Modal';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 
 const AcademyCaller = () => {
-  // 유저 정보 받아오기
-  const location = useLocation();
-  const academyId = location.state?.acaId; // 소속 학원 PK
+  // // 유저 정보 받아오기
+  // const location = useLocation();
+  // const academyId = location.state?.acaId; // 소속 학원 PK
   
-  // 권한에 따른 달력 기능 적용
-  const role = location.state?.role; // 유저 권한
+  // // 권한에 따른 달력 기능 적용
+  // const role = location.state?.role; // 유저 권한
+  const navi = useNavigate();
+
+  // 로그인 시 받은 사용자 정보 상태
+  const [userInfo, setUserInfo] = useState({name: '', role: '', username: '', acaId: '', userId: '', roleId: '', academyName: ''});
+  useEffect(() => {
+    // 페이지 로드 시 사용자 정보 요청
+    axios.get("/public/user", {withCredentials: true})
+        .then(res => {
+            const {name, role, username, acaId, userId, roleId, academyName} = res.data;
+            setUserInfo({name, role, username, acaId, userId, roleId, academyName});
+        }).catch(() => { // 인증 실패 - 로그인 페이지로..
+            navi("/login");
+        });
+  }, [navi]);
+
   const calendarPlugins = useMemo(() => {
     const base = [dayGridPlugin, timeGridPlugin];
-    return (role === '원장' || role === '강사') ? [...base, interactionPlugin] : base;
-  }, [role]);
+    return (userInfo.role === '원장' || userInfo.role === '강사') ? [...base, interactionPlugin] : base;
+  }, [userInfo]);
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 정보
@@ -35,8 +51,8 @@ const AcademyCaller = () => {
 
   const fetchAcademySchools = async () => {
     try {
-      if(!academyId) return;
-      const res = await axios.get(`/public/${academyId}/schools`, {withCredentials:true});
+      if(!userInfo.acaId) return;
+      const res = await axios.get(`/public/${userInfo.acaId}/schools`, {withCredentials:true});
       setAcademySchoolList(res.data);
     } catch(error) {
       alert(`학원 스케줄 연관 학교 목록 fetch fail: ${error}`);
@@ -67,8 +83,8 @@ const AcademyCaller = () => {
 
   const fetchSchedules = useCallback(async () => {
     try {
-      if(!academyId) return;
-      const res = await axios.get(`/public/${academyId}/schedule`, {withCredentials: true});
+      if(!userInfo.acaId) return;
+      const res = await axios.get(`/public/${userInfo.acaId}/schedule`, {withCredentials: true});
       const events = res.data.map((item) => {
         const endDateObj = new Date(item.endDate);
         endDateObj.setDate(endDateObj.getDate() + 1); // FullCallendar는 마지막날 기본적으로 배제
@@ -92,7 +108,7 @@ const AcademyCaller = () => {
     } catch(error) {
       alert('일정 불러오기 실패: '+error);
     }
-  }, [academyId]);
+  }, [userInfo]);
 
   /* 날짜 변경 이벤트 */
   const formatDateOnly = (date) => {
@@ -174,7 +190,7 @@ const AcademyCaller = () => {
     }
 
     const payload = {
-      academyId: academyId,
+      academyId: userInfo.acaId,
       title: title,
       description: description,
       startDate: `${startDate}T00:00:00`, //LocalDateTime 형식
@@ -247,18 +263,22 @@ const AcademyCaller = () => {
   /*================== */
 
   useEffect(() => {
-    fetchSchoolList();
+    if(!userInfo.acaId) return;
     fetchSchedules(); // academyId를 기반으로 fetch
     fetchAcademySchools();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userInfo.acaId]);
+
+  useEffect(() => {
+    fetchSchoolList();
+  }, [])
 
 
   return (
     <div className='academy-caller-container'>
       <div className='academy-caller-sidebar'>
         <h2 className='academy-caller-title'>학원 캘린더 </h2>
-        {(role === '원장' || role === '강사') &&
+        {(userInfo.role === '원장' || userInfo.role === '강사') &&
           <button type='button' className='caller-registerBtn'
            onClick={() => setOpenModal(true)}>학사일정 등록</button>
         }
@@ -290,7 +310,7 @@ const AcademyCaller = () => {
          dayHeaders={false}
          height='auto'
          selectable={true}
-         editable={role === '원장' || role === '강사'}
+         editable={userInfo.role === '원장' || userInfo.role === '강사'}
          eventDrop={handleEventUpdate}
          eventResize={handleEventUpdate}
          events={filteredSchedules}
@@ -307,7 +327,7 @@ const AcademyCaller = () => {
           };
 
           setSelectedEvent(clickedEvent);
-          if(role === '원장' || role === '강사') {
+          if(userInfo.role === '원장' || userInfo.role === '강사') {
             setEditTitle(clickedEvent.title);
             setEditDescription(clickedEvent.description);
             setEditColor(clickedEvent.color);

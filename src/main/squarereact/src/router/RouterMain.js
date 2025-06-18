@@ -8,7 +8,6 @@ import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
 import ChatbotPage from '../ChatBot/ChatbotPage';
 
-import AttendParent from '../attendBook/AttendParent';
 import ClassSetting from '../settings/ClassSetting';
 import { AcademyCaller, Consultation } from '../academycaller';
 import { Timetable, CreateTimetable, UpdateTimetable } from '../timetable';
@@ -20,7 +19,7 @@ import { MyPage } from '../components/Mypage';
 import { SuccessPage } from '../payment/SuccessPage';
 import { FailPage } from '../payment/FailPage';
 import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
-import { MobileAttend, MobileAttendParent, MobileAttendStu, MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
+import { MobileAttendStu, MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
 import BoardEditer from '../Board/Notice/BoardEditer';
 
 const RouterMain = () => {
@@ -30,6 +29,7 @@ const RouterMain = () => {
                 <Route path='/' element={<Root />} />
 
                 <Route path="/main/" element={<Main />}> {/* Header & Navi 레이아웃 */}
+                    <Route path='' element={<AcademyCaller />} />
                     {/* 수강생 ===================================================================================== */}
                     <Route path="studentsManage" element={<StudentsManage />} />
                     <Route path="teachersManage" element={<TeachersManage />} /> {/* 원장 - 강사들 관리 */}
@@ -38,7 +38,6 @@ const RouterMain = () => {
                     <Route path="attend/:acaId/" element={<Attend />} /> {/* 출석 관리 */}
                     <Route path="attend/:acaId/attend-history/:timetableAttendIdx" element={<AttendHistory />} />
                     <Route path="attend-stu/:acaId" element={<AttendStu />} /> {/* 학생 출석 관리 경로 */}
-                    <Route path="attend-parent" element={<AttendParent />} /> {/* 학부모 출석 관리 경로 */}
 
                     <Route path="evaluationAdmin" element={<EvalAdmin/>}/> {/*학원관계자 종합평가 관리 */}
                     <Route path="evaluationParents" element={<EvalParents/>}/> {/*학부모 종합평가 관리 */}
@@ -49,7 +48,7 @@ const RouterMain = () => {
                     <Route path="board" element={<BoardMainPage/>} />
                     <Route path="board/:postId" element={<BoardMainPostDetail/>} />
                     <Route path="post/boardcreate" element={<BoardMainPostForm/>} />
-                    <Route path="post/BoardEditer" element={<BoardEditer/>} />                 
+                    <Route path="post/BoardEditer" element={<BoardEditer/>} />
                     <Route path='consultation' element={<Consultation />} />
 
 
@@ -95,12 +94,11 @@ const RouterMain = () => {
 
                 {/* 모바일 */}
                 <Route path="/m/" element={<MobileNavi />}>
+                    <Route path='' element={<MobileTimetable />} />
                     <Route path='calendar' element={<MobileCalendar />} />
                     <Route path='mypage' element={<MobileMypage />}/>
                     <Route path='timetable' element={<MobileTimetable/>}/>
-                    <Route path='attend/:acaId' element={<MobileAttend/>}/> {/*원장, 강사 출석 관리 */}
                     <Route path='attend-student/:acaId' element={<MobileAttendStu/>} /> {/*학생 출석 관리 */}
-                    <Route path='attend-parent' element={<MobileAttendParent/>} /> {/*학부모 출석 관리 */}
                 </Route>
             </Routes>
         </BrowserRouter>

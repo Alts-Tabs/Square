@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface TimetableAttendRepository extends JpaRepository<TimetableAttendEntity, Integer> {
     Optional<TimetableAttendEntity> findTopByTimetableOrderByIdxDesc(TimetableEntity timetable);
-    List<TimetableAttendEntity> findByTimetable_TimetableId(int timetableId);
+    List<TimetableAttendEntity> findByTimetable_TimetableIdOrderByAttendStartDesc(int timetableId);
 }

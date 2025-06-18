@@ -1,9 +1,6 @@
 package com.example.attend.controller;
 
-import com.example.attend.dto.AttendanceHistoryDto;
-import com.example.attend.dto.AttendanceHistoryUpdateDto;
-import com.example.attend.dto.AttendanceSummaryDto;
-import com.example.attend.dto.StartAttendanceResponseDto;
+import com.example.attend.dto.*;
 import com.example.attend.service.AttendanceHistoryService;
 import com.example.attend.service.AttendanceService;
 import com.example.security.CustomUserDetails;
@@ -86,6 +83,13 @@ public class AttendanceController {
             @RequestBody AttendanceHistoryUpdateDto updates) {
         attendanceHistoryService.updateAttendanceHistory(updates);
         return ResponseEntity.ok().build();
+    }
+
+    // 지각왕, 출석왕 출력
+    @GetMapping("/student/{timetableId}/attendance-ranking")
+    public ResponseEntity<AttendanceRankingDto> getMonthlyRanking(@PathVariable int timetableId) {
+        AttendanceRankingDto dto = attendanceHistoryService.getMonthlyRanking(timetableId);
+        return ResponseEntity.ok(dto);
     }
 
 }

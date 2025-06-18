@@ -141,8 +141,7 @@ function ReferenceDetail() {
             )}
           </div>
           <div className="date-views-row">
-            <span className="date">{reference.createdAt?.substring(0, 10)}</span>
-            <span className="views">조회 {reference.viewCount || 0}</span>
+            <span className="date">{reference.createdAt?.substring(0, 20)}</span>
           </div>
         </div>
 
