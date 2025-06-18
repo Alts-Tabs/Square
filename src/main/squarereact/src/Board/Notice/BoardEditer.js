@@ -1,14 +1,19 @@
-import React, { useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import './QnABoardMainPostForm.css';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation, useOutletContext } from 'react-router-dom';
+import axios from 'axios';
+import './BoardEditer.css';
 
-const PostForm = ({ username }) => {
-  const location = useLocation();
+const BoardEditer = () => {
   const navigate = useNavigate();
-  const { category: initialCategory = '상담신청' } = location.state || {};
+  const location = useLocation();
+  const userInfo = useOutletContext();
+  const queryParams = new URLSearchParams(location.search);
+  const editPostId = queryParams.get('edit');
+  const categoryParam = queryParams.get('category') || '공지사항';
+  const [isEditMode, setIsEditMode] = useState(!!editPostId);
 
-  const [category, setCategory] = useState(initialCategory);
-  const [division, setDivision] = useState('구분');
+  const [category, setCategory] = useState(categoryParam);
+  const [division, setDivision] = useState('전체');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isMemberOnly, setIsMemberOnly] = useState(false);
@@ -17,7 +22,31 @@ const PostForm = ({ username }) => {
   const [files, setFiles] = useState([]);
   const [fileAttachOpen, setFileAttachOpen] = useState(true);
   const fileInputRef = useRef(null);
+
   const MAX_TITLE_LENGTH = 50;
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchPost = async () => {
+        try {
+          const response = await axios.get(`/public/api/board/${editPostId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          });
+          const post = response.data;
+          setCategory(post.category);
+          setDivision(post.division);
+          setTitle(post.title);
+          setContent(post.content);
+          setIsMemberOnly(post.isMemberOnly);
+          setAllowComments(post.isAllowComments);
+          setIsSecret(post.isSecret);
+        } catch (error) {          
+          alert('게시글을 불러오지 못했습니다.');
+        }
+      };
+      fetchPost();
+    }
+  }, [editPostId, isEditMode]);
 
   const handleTitleChange = (e) => {
     const val = e.target.value;
@@ -41,54 +70,63 @@ const PostForm = ({ username }) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newPost = {
-      id: Date.now(), // 실제로는 백엔드에서 고유 ID 생성
+    const formData = new FormData();
+    const dto = {
       title,
-      author: username || '사용자',
-      date: new Date().toISOString().split('T')[0],
-      views: 0,
-      category: category === '상담신청' ? 'consulting' : category === 'QnA게시판' ? 'qna' : 'faq',
       content,
+      category,
+      division,
       isMemberOnly,
       allowComments,
       isSecret,
-      files,
     };
+    formData.append('board', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+    files.forEach((file) => formData.append('files', file));
 
-    // 새 게시글을 목록 페이지로 전달
-    navigate('/qnaboard', { state: { newPost } });
+    try {
+      const token = localStorage.getItem('token');
+      if (isEditMode) {
+        await axios.put(`/public/api/board/${editPostId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert('게시글 수정 성공');
+      } else {
+        await axios.post('/public/api/board', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert('게시글 작성 성공');
+      }
+      navigate('/main/board');
+    } catch (error) {      
+      alert(`게시글 ${isEditMode ? '수정' : '작성'}에 실패했습니다: ${error.response?.data?.message || '서버 오류입니다.'}`);
+    }
   };
+
+  if (!userInfo || (userInfo.role !== '원장' && userInfo.role !== '관리자')) {
+    return <div className="board-wrap">게시글 수정 권한이 없습니다.</div>;
+  }
 
   return (
     <div className="board-wrap">
       <div className="board-header">
-        <span className="board-title">상담신청 및 QnA 게시판</span>
+        <span className="board-title">학원 게시판</span>
       </div>
       <div className="boardMenu">
         <form className="board-form" onSubmit={handleSubmit}>
           <div className="rowtops">
             <div className="row row-top1">
-              <select
-                className="select category selectMenu1"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="상담신청">상담신청</option>
-                <option value="QnA게시판">QnA게시판</option>
-                <option value="FAQ게시판">FAQ게시판</option>
-              </select>
-            </div>
-            <div className="row row-top2">
-              <select
-                className="select division selectMenu2"
-                value={division}
-                onChange={(e) => setDivision(e.target.value)}
-              >
-                <option value="구분">구분</option>
-                <option value="일반">일반</option>
-                <option value="중요">중요</option>
+              <select className="select category selectMenu1" value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option value="공지사항">공지사항</option>
+                <option value="자유게시판">자유게시판</option>
+                <option value="FAQ">FAQ</option>
               </select>
             </div>
           </div>
@@ -195,42 +233,16 @@ const PostForm = ({ username }) => {
           </div>
           <textarea
             className="input content"
-            placeholder="내용을 입력해 주세요.(기본값)"
+            placeholder="내용을 입력해 주세요."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-          />
-          <div className="post-settings">
-            <label className="setting">
-              <input
-                type="checkbox"
-                checked={isMemberOnly}
-                onChange={(e) => setIsMemberOnly(e.target.checked)}
-              />
-              멤버 공개
-            </label>
-            <label className="setting">
-              <input
-                type="checkbox"
-                checked={allowComments}
-                onChange={(e) => setAllowComments(e.target.checked)}
-              />
-              댓글 허용
-            </label>
-            <label className="setting">
-              <input
-                type="checkbox"
-                checked={isSecret}
-                onChange={(e) => setIsSecret(e.target.checked)}
-              />
-              비밀 게시글
-            </label>
-          </div>
+          />          
           <div className="form-buttons">
-            <button type="button" className="btn cancel" onClick={() => navigate('../qnaboard')}>
+            <button type="button" className="btn cancel" onClick={() => navigate(-1)}>
               취소
             </button>
             <button type="submit" className="btn submit">
-              등록
+              {isEditMode ? '수정' : '등록'}
             </button>
           </div>
         </form>
@@ -239,4 +251,4 @@ const PostForm = ({ username }) => {
   );
 };
 
-export default PostForm;
+export default BoardEditer;
