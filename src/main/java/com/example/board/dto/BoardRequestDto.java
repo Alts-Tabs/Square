@@ -10,8 +10,5 @@ public class BoardRequestDto {
     private String content;
     private String category;
     private String division;
-    private boolean isMemberOnly;
-    private boolean allowComments;
-    private boolean isSecret;
     private List<String> fileNames; // NCP에 업로드된 파일 이름
 }

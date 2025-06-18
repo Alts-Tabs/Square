@@ -7,7 +7,11 @@ const BoardMainPage = () => {
   const defaultUserInfo = useOutletContext() || { username: null, role: null };
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('공지사항');
+  // localStorage에서 마지막 선택한 탭을 초기값으로 설정
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem('activeTab');
+    return ['공지사항', '자유게시판', 'FAQ'].includes(savedTab) ? savedTab : '공지사항';
+  });
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -30,27 +34,27 @@ const BoardMainPage = () => {
   }, []);
 
   const fetchPosts = useCallback(async (category, pageNum, keyword = '') => {
-  setIsLoading(true);
-  try {    
-    const response = await axios.get(`/public/api/board`, {
-      params: { 
-        category, 
-        page: pageNum, 
-        size: 10, 
-        ...(keyword && { keyword, searchType }), 
-        sort: 'id,desc'
-      },
-    });    
-    setPosts(response.data.content || []);
-    setTotalPages(response.data.totalPages || 1);
-  } catch (error) {    
-    alert('게시글을 불러오는 데 실패했습니다.');
-    setPosts([]);
-    setTotalPages(1);
-  } finally {
-    setIsLoading(false);
-  }
-}, [searchType]);
+    setIsLoading(true);
+    try {    
+      const response = await axios.get(`/public/api/board`, {
+        params: { 
+          category, 
+          page: pageNum, 
+          size: 10, 
+          ...(keyword && { keyword, searchType }), 
+          sort: 'id,desc'
+        },
+      });    
+      setPosts(response.data.content || []);
+      setTotalPages(response.data.totalPages || 1);
+    } catch (error) {    
+      alert('게시글을 불러오는 데 실패했습니다.');
+      setPosts([]);
+      setTotalPages(1);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchType]);
 
   useEffect(() => {    
     if (userInfo.username) {
@@ -59,6 +63,13 @@ const BoardMainPage = () => {
       setIsLoading(false);
     }
   }, [activeTab, page, fetchPosts, userInfo.username]);
+
+  // 탭 변경 시 localStorage에 저장
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setPage(1);
+    localStorage.setItem('activeTab', tab);
+  };
 
   const handleSearch = () => {
     setPage(1);
@@ -89,19 +100,19 @@ const BoardMainPage = () => {
         <div className="boardMainTab overlap-group">
           <button
             className={`boardMainTabButton ${activeTab === '공지사항' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('공지사항'); setPage(1); }}
+            onClick={() => handleTabChange('공지사항')}
           >
             공지사항
           </button>
           <button
             className={`boardMainTabButton ${activeTab === '자유게시판' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('자유게시판'); setPage(1); }}
+            onClick={() => handleTabChange('자유게시판')}
           >
             자유게시판
           </button>
           <button
             className={`boardMainTabButton ${activeTab === 'FAQ' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('FAQ'); setPage(1); }}
+            onClick={() => handleTabChange('FAQ')}
           >
             FAQ
           </button>

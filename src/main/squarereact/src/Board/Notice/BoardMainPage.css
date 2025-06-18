@@ -51,8 +51,10 @@
 
 .boardMainTabButton.active {
   color: #79d7be;
+  font-size: 25px;
   font-weight: 700;
   border-bottom: 3px solid #79d7be;
+  margin-bottom: -8px;
 }
 
 .boardMainSubHeader {
