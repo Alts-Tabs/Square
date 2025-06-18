@@ -134,7 +134,7 @@ const BoardEditer = () => {
   }
 
   return (
-    <div className="board-wrap">
+    <div className="board-wrapp">
       <div className="board-header">
         <span className="board-title">학원 게시판</span>
       </div>

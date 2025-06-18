@@ -102,7 +102,6 @@ public class Boardservice {
                 .author(author)
                 .category(dto.getCategory())
                 .division(dto.getDivision())
-                .allowComments(dto.isAllowComments())
                 .views(0)
                 .role(role)
                 .createdAt(LocalDateTime.now())
@@ -136,7 +135,6 @@ public class Boardservice {
         board.setContent(dto.getContent());
         board.setCategory(dto.getCategory());
         board.setDivision(dto.getDivision());
-        board.setAllowComments(dto.isAllowComments());
         board.setUpdatedAt(LocalDateTime.now());
 
         if (fileNames != null && !fileNames.isEmpty()) {
@@ -174,9 +172,6 @@ public class Boardservice {
     public BoardCommentEntity createComment(Long postId, String content, String author, String role) {
         BoardEntity board = boardRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        if (!board.isAllowComments()) {
-            throw new RuntimeException("댓글 작성이 허용되지 않은 게시글입니다.");
-        }
         BoardCommentEntity comment = BoardCommentEntity.builder()
                 .post(board)
                 .author(author)
@@ -199,7 +194,6 @@ public class Boardservice {
         dto.setAuthor(board.getAuthor());
         dto.setCategory(board.getCategory());
         dto.setDivision(board.getDivision());
-        dto.setAllowComments(board.isAllowComments());
         dto.setViews(board.getViews());
         dto.setRole(board.getRole());
         dto.setCreatedAt(board.getCreatedAt());

@@ -37,9 +37,6 @@ public class BoardEntity {
     private String division;
 
     @Column(nullable = false)
-    private boolean allowComments;
-
-    @Column(nullable = false)
     private int views;
 
     @Column
