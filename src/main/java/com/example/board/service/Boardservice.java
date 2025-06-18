@@ -103,9 +103,7 @@ public class Boardservice {
                 .author(author)
                 .category(dto.getCategory())
                 .division(dto.getDivision())
-                .isMemberOnly(dto.isMemberOnly())
                 .allowComments(dto.isAllowComments())
-                .isSecret(dto.isSecret())
                 .views(0)
                 .role(role)
                 .createdAt(LocalDateTime.now())
@@ -139,9 +137,7 @@ public class Boardservice {
         board.setContent(dto.getContent());
         board.setCategory(dto.getCategory());
         board.setDivision(dto.getDivision());
-        board.setMemberOnly(dto.isMemberOnly());
         board.setAllowComments(dto.isAllowComments());
-        board.setSecret(dto.isSecret());
         board.setUpdatedAt(LocalDateTime.now());
 
         if (fileNames != null && !fileNames.isEmpty()) {
@@ -204,9 +200,7 @@ public class Boardservice {
         dto.setAuthor(board.getAuthor());
         dto.setCategory(board.getCategory());
         dto.setDivision(board.getDivision());
-        dto.setMemberOnly(board.isMemberOnly());
         dto.setAllowComments(board.isAllowComments());
-        dto.setSecret(board.isSecret());
         dto.setViews(board.getViews());
         dto.setRole(board.getRole());
         dto.setCreatedAt(board.getCreatedAt());
