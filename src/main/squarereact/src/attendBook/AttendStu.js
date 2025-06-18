@@ -4,9 +4,15 @@ import './attendStu.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
-import { attendanceChartOptions  } from './attendanceChartOptions';
+import { attendanceChartOptions } from './attendanceChartOptions';
 
 const AttendStu = () => {
+    const [attendanceRate, setAttendanceRate] = useState(0); // 출석률(%)
+    const [attendanceSummaryStats, setAttendanceSummaryStats] = useState({
+        present: 0,
+        late: 0,
+        absent: 0,
+    });
     const [isEditable, setIsEditable] = useState(false);
     const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
     
@@ -15,13 +21,14 @@ const AttendStu = () => {
     // 누적 출석 차트
     useEffect(() => {
         if (chartRef.current) {
-            const chart = new ApexCharts(chartRef.current, attendanceChartOptions );
+            const options = attendanceChartOptions(attendanceSummaryStats);
+            const chart = new ApexCharts(chartRef.current, options);
             chart.render();
 
             // 언마운트 시 chart 파괴
             return () => chart.destroy();
-        }
-    }, []);
+        } 
+    }, [attendanceRate, attendanceSummaryStats]);
 
 
     // 현재 수업 출력 ============================================================
@@ -62,9 +69,94 @@ const AttendStu = () => {
         });
     }, [userInfo]);
 
-    // console.log("userInfo:", userInfo);
-    // console.log('현 수업 currentClass:', currentClass);
+    // 출석왕 분발왕 구하기
+    const [king, setKing] = useState(null);
+    const fetchAttendRanking = async () => {
+        try {
+            const timetableId = currentClass.timetableId;
+            const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
+            // console.log(res.data);
+            setKing(res.data);
+        } catch(err) {
+            alert("랭킹 구하기 실패");
+        }
+    }
 
+    const [attendanceSummaries, setAttendanceSummaries] = useState([]);
+        
+        useEffect(() => {
+            if(!currentClass) return;
+            fetchAttendanceSummary();
+            fetchAttendRanking();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [currentClass]);
+
+    // 지난 출석 기록 최신화 함수(API 부르고 프론트 값 포맷) - 출석률 계산 추가
+    const fetchAttendanceSummary = async () => {
+        if (!currentClass || !currentClass.timetableId || !currentClass.classId) return;
+
+        try {
+            const response = await axios.get(
+                `/public/${currentClass.timetableId}/attendance-summary`
+            );
+            const rawData = response.data || [];
+
+            const groupedByAttendId = rawData.reduce((acc, curr) => {
+                const key = curr.timetableAttendId;
+                const dateObj = new Date(curr.attendStart);
+                const hours = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                const dayNames = ['(일)', '(월)', '(화)', '(수)', '(목)', '(금)', '(토)'];
+                const dayOfWeek = dayNames[dateObj.getDay()];
+                const date = curr.attendStart.split('T')[0];
+
+                if (!acc[key]) {
+                    acc[key] = {
+                        timetableAttendId: curr.timetableAttendId,
+                        date: date,
+                        startTime: `${hours}:${minutes}`,
+                        dayOfWeek: dayOfWeek,
+                        statusSummary: [
+                            { status: 'PRESENT', count: 0 },
+                            { status: 'LATE', count: 0 },
+                            { status: 'ABSENT', count: 0 }
+                        ]
+                    };
+                }
+
+                const target = acc[key].statusSummary.find(s => s.status === curr.status);
+                if (target) {
+                    target.count += curr.count;
+                }
+
+                return acc;
+            }, {});
+
+            const convertedData = Object.values(groupedByAttendId);
+            setAttendanceSummaries(convertedData);
+
+            // 출석률 계산 + 누적 상태
+            let total = 0, present = 0, late = 0, absent = 0;
+
+            rawData.forEach((entry) => {
+                total += entry.count;
+                if (entry.status === 'PRESENT') {
+                    present += entry.count;
+                } else if (entry.status === 'LATE') {
+                    late += entry.count;
+                } else if (entry.status === 'ABSENT') {
+                    absent += entry.count;
+                }
+            });
+
+            const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+            setAttendanceRate(rate);
+            setAttendanceSummaryStats({present, late, absent});
+
+        } catch (error) {
+            console.error('출석 요약을 불러오는 중 오류 발생:', error);
+        }
+    };
     
     // 출석 입력란 활성화 여부 =========================================================
     useEffect(() => {
@@ -151,24 +243,6 @@ const AttendStu = () => {
         return `${year}.${month}.${date} 출석`;
     };
 
-    // (임시) 이전 출석 History
-    const attendList = [
-        {
-            dateText: '25.05.09 금요일 출석',
-            dateOnly: '25.05.09 금요일',
-            present: 12,
-            late: 2,
-            absent: 1,
-        },
-        {
-            dateText: '25.05.08 목요일 출석',
-            dateOnly: '25.05.08 목요일',
-            present: 13,
-            late: 1,
-            absent: 1,
-        }
-    ];
-
     return (
         <div className='attendContainer'>
             <div className='leftContainer'>
@@ -246,17 +320,17 @@ const AttendStu = () => {
 
                     <div className='attendClass'>
                         <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '700' }}>우리 반 누적 출석률은</span> &nbsp;
-                        <span style={{ fontSize: '25px', color: '#79D7BE', fontWeight: '800' }}>(수치)%</span> &nbsp;
+                        <span style={{ fontSize: '25px', color: '#79D7BE', fontWeight: '800' }}>{attendanceRate}%</span> &nbsp;
                         <span style={{ fontSize: '25px', color: '#2E5077', fontWeight: '700' }}>!</span>
 
                         <div className="attenderWrapper">
                             <div className='attender'>
                                 <span className='attenderTitle'> 이번 달 출석왕 </span><br />
-                                <span className='attenderName'> (학생명) </span>
+                                <span className='attenderName'> {king !== null ? king.attendanceKing.name : "출석왕"} </span>
                             </div>
                             <div className='attender'>
                                 <span className='attenderTitle'> 이번 달 분발왕 </span><br />
-                                <span className='attenderName'> (학생명) </span>
+                                <span className='attenderName'> {king !== null ? king.needEffortKing.name : "분발왕"} </span>
                             </div>
                         </div>
                     </div>
@@ -264,30 +338,43 @@ const AttendStu = () => {
 
                 <span className='attendTitle'> 지난 출석 </span>
                 <div className='historyAttend'>
-                    {attendList.map((attend, index) => (
+                    {Array.isArray(attendanceSummaries) && attendanceSummaries.length > 0 ? (
+                        attendanceSummaries.map((summary, index) => (
+                            
                         <div className='historyList' key={index}>
                             <div>
                                 <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
-                                    ({attend.dateText})
+                                    {summary.date}{summary.dayOfWeek}
                                 </span>
 
-                                <span style={{ display: 'inline-block', marginRight: '10px' }}>
+                                {summary.statusSummary?.map((statusObj) => (
+                                <span key={statusObj.status} style={{ display: 'inline-block', marginRight: '10px' }}>
+                                {statusObj.status === 'PRESENT' && (
+                                    <>
                                     <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
-                                    <span className='historyCount'> ({attend.present}) </span>
-                                </span>
-
-                                <span style={{ display: 'inline-block', marginRight: '10px' }}>
+                                    <span className='historyCount'> 출석수 {statusObj.count}</span>
+                                    </>
+                                )}
+                                {statusObj.status === 'LATE' && (
+                                    <>
                                     <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
-                                    <span className='historyCount'> ({attend.late}) </span>
-                                </span>
-
-                                <span style={{ display: 'inline-block' }}>
+                                    <span className='historyCount'> 지각수 {statusObj.count}</span>
+                                    </>
+                                )}
+                                {statusObj.status === 'ABSENT' && (
+                                    <>
                                     <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
-                                    <span className='historyCount'> ({attend.absent}) </span>
+                                    <span className='historyCount'> 결석수 {statusObj.count}</span>
+                                    </>
+                                )}
                                 </span>
+                            ))}
                             </div>
                         </div>
-                    ))}
+                        ))
+                        ) : (
+                        <p>출석 기록이 없습니다.</p>
+                        )}
                 </div>
             </div>
         </div>

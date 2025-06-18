@@ -5,11 +5,15 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const orderId = searchParams.get("orderId");
+  const amount = searchParams.get("amount");
+  const paymentKey = searchParams.get("paymentKey");
+
   useEffect(() => {
     // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
     // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
     //orderId에서 enrollId 추출
-    const orderId = searchParams.get("orderId");
+    // const orderId = searchParams.get("orderId");
     let enrollId = null;
     if (orderId && orderId.startsWith("order_")) {
       // orderId: order_{가져올값}_{시간}
@@ -18,8 +22,8 @@ export function SuccessPage() {
     
     const requestData = {
       orderId,
-      amount: searchParams.get("amount"),
-      paymentKey: searchParams.get("paymentKey"),
+      amount,
+      paymentKey,
       enrollId, // 추가!
     };
 
@@ -39,7 +43,7 @@ export function SuccessPage() {
       }
     }
     confirm();
-  }, []);
+  }, [navigate, orderId, amount, paymentKey]);
 
   return (
     <div className="result wrapper">

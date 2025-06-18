@@ -1,18 +1,19 @@
 package com.example.attend.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
-import com.example.attend.dto.AttendanceHistoryDto;
-import com.example.attend.dto.AttendanceHistoryUpdateDto;
-import com.example.attend.dto.AttendanceSummaryDto;
+import com.example.attend.dto.*;
 import com.example.attend.entity.AttendancesEntity;
 import com.example.attend.entity.TimetableAttendEntity;
 import com.example.attend.repository.AttendancesRepository;
 import com.example.attend.repository.TimetableAttendRepository;
+import com.example.timetable.entity.TimetableEntity;
+import com.example.timetable.repository.TimetableRepository;
 import com.example.user.entity.StudentsEntity;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AttendanceHistoryService {
-
+    private final TimetableRepository timetableRepository;
     private final AttendancesRepository attendancesRepository;
     private final TimetableAttendRepository timetableAttendRepository;
 
@@ -72,7 +73,7 @@ public class AttendanceHistoryService {
     public List<AttendanceSummaryDto> getAttendanceSummary(int timetableId) {
         // timetableId로 timetable_attend 전부 조회
         List<TimetableAttendEntity> attendEntities =
-                timetableAttendRepository.findByTimetable_TimetableId(timetableId);
+                timetableAttendRepository.findByTimetable_TimetableIdOrderByAttendStartDesc(timetableId);
 
         //List<ClassesEntity> classesEntities =
 
@@ -127,5 +128,71 @@ public class AttendanceHistoryService {
         return summaryList;
     }
 
+    // 출석왕과 분발왕 출력
+    public AttendanceRankingDto getMonthlyRanking(int timetableId) {
+        TimetableEntity timetable = timetableRepository.findById(timetableId)
+                .orElseThrow(() -> new NotFoundException("시간표를 찾을 수 없습니다."));
+
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
+
+        Map<Integer, Integer> presentMap = new HashMap<>();
+        Map<Integer, Integer> lateMap = new HashMap<>();
+        Map<Integer, Integer> absentAdjustedMap = new HashMap<>();
+        Map<Integer, StudentsEntity> studentMap = new HashMap<>();
+
+        for(TimetableAttendEntity attend : timetable.getTimetableAttendList()) {
+            LocalDateTime attendDate = attend.getAttendStart();
+            if(attendDate == null || attendDate.isBefore(startOfMonth) || attendDate.isAfter(endOfMonth)) {
+                continue;
+            }
+
+            for(AttendancesEntity attendance : attend.getAttendances()) {
+                StudentsEntity student = attendance.getStudent();
+                int studentId = student.getStudentId();
+
+                studentMap.putIfAbsent(studentId, student); // 이후 name 조회용
+
+                switch (attendance.getStatus()) {
+                    case PRESENT:
+                        presentMap.put(studentId, presentMap.getOrDefault(studentId, 0) + 1);
+                        break;
+                    case ABSENT:
+                        absentAdjustedMap.put(studentId, absentAdjustedMap.getOrDefault(studentId, 0) + 1);
+                        break;
+                    case LATE:
+                        lateMap.put(studentId, lateMap.getOrDefault(studentId, 0) + 1);
+                        break;
+                }
+            }
+        }
+
+        // 지각 3회당 결석 1회
+        for(Map.Entry<Integer, Integer> entry : lateMap.entrySet()) {
+            int studentId = entry.getKey();
+            int lateCount = entry.getValue();
+            int convertedAbsents = lateCount / 3;
+
+            absentAdjustedMap.put(studentId, absentAdjustedMap.getOrDefault(studentId, 0) + convertedAbsents);
+        }
+
+        StudentSummaryDto attendanceKing = presentMap.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(entry -> {
+                    StudentsEntity student = studentMap.get(entry.getKey());
+                    return new StudentSummaryDto(student.getStudentId(), student.getUser().getName(), entry.getValue());
+                })
+                .orElse(null);
+
+        StudentSummaryDto needEffortKing = absentAdjustedMap.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(entry -> {
+                    StudentsEntity student = studentMap.get(entry.getKey());
+                    return new StudentSummaryDto(student.getStudentId(), student.getUser().getName(), entry.getValue());
+                })
+                .orElse(null);
+
+        return new AttendanceRankingDto(attendanceKing, needEffortKing);
+    }
 
 }

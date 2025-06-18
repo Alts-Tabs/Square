@@ -185,6 +185,8 @@
     border-radius: 10px;
     text-align: center;
     background-color: white;
+    
+    overflow-y: auto;
 }
 
 /* 반복 처리 리스트 */

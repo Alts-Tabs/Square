@@ -105,7 +105,7 @@ const MobileMypage = () => {
             </div>
           </div>
 
-            <div className='m-info-box2'>
+            <div className='m-info-box2' style={{marginTop:'25px'}}>
                 <h3 className='m-info-title'>계정 정보</h3>
                 
                 <div className='m-info-line'>

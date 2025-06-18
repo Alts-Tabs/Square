@@ -3,21 +3,28 @@ import './attend.css';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ApexCharts from 'apexcharts';
-import { attendanceChartOptions  } from './attendanceChartOptions';
+import { attendanceChartOptions } from './attendanceChartOptions';
 
 const Attend = () => {
+    const [attendanceRate, setAttendanceRate] = useState(0); // 출석률(%)
+    const [attendanceSummaryStats, setAttendanceSummaryStats] = useState({
+        present: 0,
+        late: 0,
+        absent: 0,
+    });
     const chartRef = useRef(null);
 
     // 누적 출석 차트 ===========================================================
     useEffect(() => {
         if (chartRef.current) {
-            const chart = new ApexCharts(chartRef.current, attendanceChartOptions );
+            const options = attendanceChartOptions(attendanceSummaryStats);
+            const chart = new ApexCharts(chartRef.current, options);
             chart.render();
 
             // 언마운트 시 chart 파괴
             return () => chart.destroy();
         } 
-    }, []);
+    }, [attendanceRate, attendanceSummaryStats]);
 
     
     // 현재 수업 출력 ============================================================
@@ -46,6 +53,7 @@ const Attend = () => {
         }).then(res => {
             if (res.data) {
                 setCurrentClass(res.data);
+                // console.log(res.data);
             } else {
                 setCurrentClass(null);
             }
@@ -54,12 +62,21 @@ const Attend = () => {
         });
     }, [userInfo]);
 
-    // console.log("userInfo:", userInfo);
-    // console.log('현 수업 currentClass:', currentClass);
-
+    // 출석왕 분발왕 구하기
+    const [king, setKing] = useState(null);
+    const fetchAttendRanking = async () => {
+        try {
+            const timetableId = currentClass.timetableId;
+            const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
+            // console.log(res.data);
+            setKing(res.data);
+        } catch(err) {
+            alert("랭킹 구하기 실패");
+        }
+    }
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
-    const [checkedStudents, setCheckedStudents] = useState([]);
+    // const [checkedStudents, setCheckedStudents] = useState([]);
     const [students, setStudents] = useState([]); // 학생 목록 상태 추가
 
     useEffect(() => {
@@ -128,7 +145,7 @@ const Attend = () => {
         });
     }, [userInfo]);
 
-    // 지난 출석 기록 최신화 함수(API 부르고 프론트 값 포맷)
+    // 지난 출석 기록 최신화 함수(API 부르고 프론트 값 포맷) - 출석률 계산 추가
     const fetchAttendanceSummary = async () => {
         if (!currentClass || !currentClass.timetableId || !currentClass.classId) return;
 
@@ -143,7 +160,7 @@ const Attend = () => {
                 const dateObj = new Date(curr.attendStart);
                 const hours = dateObj.getHours().toString().padStart(2, '0');
                 const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayNames = ['(일)', '(월)', '(화)', '(수)', '(목)', '(금)', '(토)'];
                 const dayOfWeek = dayNames[dateObj.getDay()];
                 const date = curr.attendStart.split('T')[0];
 
@@ -171,6 +188,25 @@ const Attend = () => {
 
             const convertedData = Object.values(groupedByAttendId);
             setAttendanceSummaries(convertedData);
+
+            // 출석률 계산 + 누적 상태
+            let total = 0, present = 0, late = 0, absent = 0;
+
+            rawData.forEach((entry) => {
+                total += entry.count;
+                if (entry.status === 'PRESENT') {
+                    present += entry.count;
+                } else if (entry.status === 'LATE') {
+                    late += entry.count;
+                } else if (entry.status === 'ABSENT') {
+                    absent += entry.count;
+                }
+            });
+
+            const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+            setAttendanceRate(rate);
+            setAttendanceSummaryStats({present, late, absent});
+
         } catch (error) {
             console.error('출석 요약을 불러오는 중 오류 발생:', error);
         }
@@ -200,6 +236,7 @@ const Attend = () => {
 
             // 출석 종료 후 우측에 지난 출석 실시간 추가 - 출석 요약 신규 부르기
             await fetchAttendanceSummary();
+            fetchAttendRanking();
 
             setAttending(false);
             setAttendanceEnded(true);
@@ -243,7 +280,9 @@ const Attend = () => {
     const [attendanceSummaries, setAttendanceSummaries] = useState([]);
     
     useEffect(() => {
+        if(!currentClass) return;
         fetchAttendanceSummary();
+        fetchAttendRanking();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentClass]);
 
@@ -344,11 +383,11 @@ const Attend = () => {
                             {/* 수강생 반복 출력 영역 =======================================*/}
                             {students.map((student) => (
                                 <div className='studentList' key={student.username}>
-                                    <div className='studentProfileCircle'>
+                                    {/* <div className='studentProfileCircle'>
                                         {checkedStudents.includes(student.name) && (
                                             <i className="bi bi-check-circle-fill checkIcon"></i>
                                         )}
-                                    </div>
+                                    </div> */}
                                     <hr style={{ border: '1px solid #7D8A8A' }} />
                                     <span className='attenderTitle'>{student.name}</span>
                                 </div>
@@ -369,18 +408,18 @@ const Attend = () => {
                         {/* 반 누적 % */}
                         <div className='attendClass'>
                             <span style={{fontSize:'25px', color:'#2E5077', fontWeight:'700'}}> 우리 반 누적 출석률은 </span> &nbsp;        
-                            <span style={{fontSize:'25px', color:'#79D7BE', fontWeight:'800'}}> (수치)% </span> &nbsp;                               
+                            <span style={{fontSize:'25px', color:'#79D7BE', fontWeight:'800'}}> {attendanceRate}% </span> &nbsp;                               
                             <span style={{fontSize:'25px', color:'#2E5077', fontWeight:'700'}}> ! </span>
                             
                             <div className="attenderWrapper">
                                 <div className='attender'>
                                     <span className='attenderTitle'> 이번 달 출석왕 </span> <br />
-                                    <span className='attenderName'> (학생명) </span>
+                                    <span className='attenderName'> {king !== null ? king.attendanceKing.name : "출석왕"} </span>
                                 </div>
 
                                 <div className='attender'>
                                     <span className='attenderTitle'> 이번 달 분발왕 </span> <br />
-                                    <span className='attenderName'> (학생명) </span>
+                                    <span className='attenderName'> {king !== null ? king.needEffortKing.name : "분발왕"} </span>
                                 </div>
                             </div>
                         </div>
