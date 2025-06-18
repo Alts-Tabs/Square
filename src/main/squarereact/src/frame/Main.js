@@ -217,7 +217,7 @@ const Main = () => {
                             {/* [출석 관리] - Role에 따라 각각 다른 페이지 로드 */}
                             {
                                 userInfo.role === "학생" ? ( // 학생 로그인
-                                    <Link to={`attend-stu/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    <Link to={`attend-stu/${userInfo.acaId}`} state={{ userInfo }} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
                                 ) : userInfo.role === "강사" ? ( // 강사 로그인

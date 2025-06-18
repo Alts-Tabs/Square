@@ -59,7 +59,7 @@ const MobileNavi = () => {
            state={{acaId: userInfo.acaId}}>일정확인</Link>
           <Link to='timetable' className='mobile-menu-item'>시간표</Link>
           {userInfo.role === "학생" && ( // 학생 로그인
-            <Link to={`attend-student/${userInfo.acaId}`} className='mobile-menu-item'>
+            <Link to={`attend-student/${userInfo.acaId}`} state={{ userInfo }} className='mobile-menu-item'>
                 출석 관리
             </Link>
           )}
