@@ -79,6 +79,14 @@ public class ReferenceController {
         return ResponseEntity.ok().build();
     }
 
+    // 카테고리 삭제
+    @DeleteMapping("/th/{categoryIdx}/deleteCategory")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryIdx) {
+        referenceService.deleteCategory(categoryIdx);
+        return ResponseEntity.ok().build();
+    }
+
+
     // 자료실 글 생성 (파일 업로드 포함)
     @PostMapping(value = "/th/{academyId}/references", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createReference(
@@ -106,6 +114,29 @@ public class ReferenceController {
     public ResponseEntity<?> deleteReference(@PathVariable Long referenceId) {
         referenceService.deleteReference(referenceId);
         return ResponseEntity.ok().build();
+    }
+
+    // (1) 자료실 글의 좋아요 수 조회
+    @GetMapping("/public/{referenceId}/likes/countReference")
+    public ResponseEntity<Long> getLikeCount(@PathVariable Long referenceId) {
+        long count = referenceService.getLikeCount(referenceId);
+        return ResponseEntity.ok(count);
+    }
+
+    // (2) 특정 유저의 해당 글 좋아요 여부 조회
+    @GetMapping("/student/{referenceId}/likes/statusReference")
+    public ResponseEntity<Boolean> getLikeStatus(@PathVariable Long referenceId,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+        boolean status = referenceService.getLikeStatus(referenceId, userDetails.getUserId());
+        return ResponseEntity.ok(status);
+    }
+
+    // (3) 좋아요 토글 (누르면 등록/삭제됨)
+    @PostMapping("/student/{referenceId}/likes/toggleReference")
+    public ResponseEntity<Boolean> toggleLike(@PathVariable Long referenceId,
+                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        boolean newStatus = referenceService.toggleLike(referenceId, userDetails.getUserId());
+        return ResponseEntity.ok(newStatus);
     }
 
 }

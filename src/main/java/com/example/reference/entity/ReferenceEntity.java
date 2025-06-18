@@ -48,6 +48,10 @@ public class ReferenceEntity {
     @Builder.Default
     private List<CategoryMappingEntity> categories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reference", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<ReferenceLikeEntity> likes = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
