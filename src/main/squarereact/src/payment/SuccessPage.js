@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import './successPage.css';
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function SuccessPage() {
@@ -44,15 +45,29 @@ export function SuccessPage() {
   return (
     <div className="result wrapper">
       <div className="box_section">
-        <h2>
-          결제 성공
-        </h2>
-        <p>{`주문번호: ${searchParams.get("orderId")}`}</p>
-        <p>{`결제 금액: ${Number(
-          searchParams.get("amount")
-        ).toLocaleString()}원`}</p>
-        <p>{`paymentKey: ${searchParams.get("paymentKey")}`}</p>
-      </div>
+            <h2>
+              결제 완료!
+            </h2>
+
+            <div className='payInfo'>
+                  <span className='graytext'> 결제 내역 상세 </span>
+                  <hr />
+
+                  <div className="row">
+                      <span className="payInfoItem"> 결제 번호 </span>
+                      <span className="payInfoContent"> {searchParams.get("orderId")} </span>
+                  </div>
+                  <div className="row">
+                      <span className="payInfoItem"> 결제 금액 </span>
+                      <span className="payInfoContent"> {Number(searchParams.get("amount")).toLocaleString()}원 </span>
+                  </div>
+                  <div className="row">
+                      <span className="payInfoItem"> paymentKey </span>
+                      <span className="payInfoContent"> {searchParams.get("paymentKey")} </span>
+                  </div>
+                  <hr />
+            </div>
+        </div>
     </div>
   );
 }

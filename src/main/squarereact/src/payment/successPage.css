@@ -1,0 +1,67 @@
+.box_section {
+    width: 28%;
+    padding: 30px;
+    padding-top: 50px;
+    border-radius: 10px;
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 영수증 하단 효과 */
+.box_section::after {
+    content: "";
+    position: absolute;
+    bottom: -11.5px; /* height의 절반만큼 내림 */
+    left: 0;
+    width: 100%;
+    height: 23px;
+    background: radial-gradient(circle at 11.5px 11.5px, #f0f4f4 11.5px, #f0f4f4 11.5px, transparent 11.6px) repeat-x;
+    background-size: 23px 23px;
+    z-index: 1;
+}
+
+
+/* 결제 성공! */
+.box_section h2 {
+    margin-bottom: 40px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #2E5077;
+}
+
+/* 결제 내역 상세 */
+.payInfo .graytext {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.payInfo hr:first-of-type{
+    margin-top: 13px;
+    margin-bottom: 25px;
+}
+
+/* 결제 내역 ========================================*/
+.row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.payInfoItem {
+  width: 175px;        
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.payInfoContent {
+  flex: 1;
+  font-size: 19px;
+  word-break: break-all; /* 긴 문자열 줄바꿈 허용 */
+}
+/* ===================================================== */
+
+.payInfo hr:last-of-type {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
