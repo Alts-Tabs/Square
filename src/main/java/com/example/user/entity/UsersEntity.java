@@ -1,6 +1,7 @@
 package com.example.user.entity;
 
 import com.example.reference.entity.ReferenceEntity;
+import com.example.reference.entity.ReferenceLikeEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -72,6 +73,10 @@ public class UsersEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ReferenceEntity> references = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReferenceLikeEntity> likes = new ArrayList<>();
 
     public Integer resolveAcademyId() {
         // 소속 학원 알아내는 헬퍼 함수 - JWT에 필요

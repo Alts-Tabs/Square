@@ -84,14 +84,24 @@ const Reference = () => {
     }
   };
 
-  const onDeleteFiles = () => {
+  const onDeleteFiles = async () => {
     if (checkedFiles.size === 0) return alert('삭제할 파일을 선택하세요.');
     if (!window.confirm('선택한 파일을 삭제하시겠습니까?')) return;
 
-    // 실제 삭제 로직은 서버 요청이 있어야 합니다.
-    setAllFiles(prev => prev.filter(file => !checkedFiles.has(file.id)));
-    setCheckedFiles(new Set());
-    setAllChecked(false);
+    try {
+      const idsToDelete = Array.from(checkedFiles);
+      await Promise.all(
+        idsToDelete.map(id =>
+          axios.delete(`/th/${id}/deleteReference`, { withCredentials: true })
+        )
+      );
+
+      setAllFiles(prev => prev.filter(file => !checkedFiles.has(file.id)));
+      setCheckedFiles(new Set());
+      setAllChecked(false);
+    } catch(err) {
+      alert("자료 삭제를 실패했습니다");
+    }
   };
 
   // 폴더 관리
@@ -131,20 +141,18 @@ const Reference = () => {
     setCurrentPage(1);
   };
 
-  const onDeleteFolder = (e, name) => {
+  const onDeleteFolder = async (e, idx, name) => {
     e.preventDefault();
+    
     if (!window.confirm(`폴더 "${name}"를 삭제하시겠습니까?`)) return;
-    setFolders(prev =>
-      prev.map(folder =>
-        folder.name === '모의고사'
-          ? {
-              ...folder,
-              children: folder.children.filter(child => child !== name),
-            }
-          : folder
-      )
-    );
-    if (selectedFolder === name) setSelectedFolder('');
+    try {
+      await axios.delete(`/th/${idx}/deleteCategory`, {withCredentials: true});
+
+      setFolders(prev => prev.filter(f => f.category !== name));
+      if (selectedFolder === name) setSelectedFolder('');
+    } catch(err) {
+      alert("폴더 삭제 실패");
+    }
   };
 
   // 검색
@@ -184,7 +192,7 @@ const Reference = () => {
                 <li key={folder.idx}
                  className={folder.category === selectedFolder ? 'selected-folder' : ''}
                  onClick={() => onSelectFolder(folder.category)}
-                 onContextMenu={e => onDeleteFolder(e, folder.idx)}>
+                 onContextMenu={e => onDeleteFolder(e, folder.idx, folder.category)}>
                   {folder.category}
                 </li>
               ))}

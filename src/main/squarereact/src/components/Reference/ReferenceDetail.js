@@ -13,16 +13,11 @@ function ReferenceDetail() {
   const navigate = useNavigate();
   const { fileId } = useParams();
 
-  const currentUser = '용가뤼 원장'; // 로그인된 사용자명 (하드코딩)
-
   // 게시글 상태
   const [reference, setReference] = useState(null);
   // 좋아요 상태
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
-  // 댓글 상태
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
     // 게시글, 댓글, 좋아요 정보 API 호출
@@ -30,13 +25,30 @@ function ReferenceDetail() {
       .then(res => {
         const data = res.data;
         setReference(data);
-        // setLikeCount(data.likeCount || 0);
-        // setComments(data.comments || []);
       })
       .catch(err => {
         console.error(err);
         alert('게시글 정보를 불러오는 데 실패했습니다.');
       });
+    
+     // 2. 좋아요 수
+    axios.get(`/public/${fileId}/likes/countReference`, { withCredentials: true })
+      .then(res => {
+        setLikeCount(res.data);
+      })
+      .catch(err => {
+        console.error('좋아요 수 로드 실패', err);
+      });
+
+    // 3. 좋아요 상태
+    axios.get(`/student/${fileId}/likes/statusReference`, { withCredentials: true })
+      .then(res => {
+        setLiked(res.data);
+      })
+      .catch(err => {
+        console.error('좋아요 상태 로드 실패', err);
+      });
+      
   }, [fileId]);
 
   const handleFileDownload = async (fileUrl, originalFilename) => {
@@ -87,33 +99,15 @@ function ReferenceDetail() {
     }
   }
 
-  // 댓글 등록
-  const handleSubmit = () => {
-    const trimmed = newComment.trim();
-    if (!trimmed) return;
-
-    axios.post(`/api/references/${fileId}/comments`, {
-      author: currentUser,
-      text: trimmed,
-    })
-      .then(res => {
-        setComments(prev => [...prev, res.data]);
-        setNewComment('');
-      })
-      .catch(() => {
-        alert('댓글 등록 실패');
-      });
-  };
-
   // 좋아요 클릭
   const handleLikeClick = () => {
-    if (liked) return;
-    axios.post(`/api/references/${fileId}/like`)
-      .then(() => {
-        setLikeCount(prev => prev + 1);
-        setLiked(true);
+    axios.post(`/student/${fileId}/likes/toggleReference`, {withCredentials: true})
+      .then(res => {
+        const newLiked = res.data;
+        setLiked(newLiked);
+        setLikeCount(prev => newLiked ? prev + 1 : prev - 1)
       })
-      .catch(() => {
+      .catch(err => {
         alert('좋아요 실패');
       });
   };
@@ -172,25 +166,6 @@ function ReferenceDetail() {
             <button className={`like-button${liked ? ' liked' : ''}`} onClick={handleLikeClick}>
               <i className="bi bi-suit-heart-fill"></i> 좋아요 {likeCount}
             </button>
-            <span className="comment-count">댓글 {comments.length}</span>
-          </div>
-
-          {/* 댓글 리스트 렌더링... (기존과 비슷하게) */}
-
-          <div className="comment-write">
-            <div className="comment-author-label">{currentUser}</div>
-            <div className="comment-input-area">
-              <input
-                type="text"
-                placeholder="댓글을 입력하세요"
-                value={newComment}
-                onChange={e => setNewComment(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-              />
-              <button className="submit-button" onClick={handleSubmit}>
-                등록
-              </button>
-            </div>
           </div>
         </div>
       </div>
