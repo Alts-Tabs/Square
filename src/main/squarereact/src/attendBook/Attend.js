@@ -396,7 +396,7 @@ const Attend = () => {
                         <div className='historyList' key={index}>
                             <div>
                                 <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
-                                    {summary.date}{summary.dayOfWeek}
+                                    {summary.date} ({summary.dayOfWeek})
                                 </span>
 
                                 {summary.statusSummary?.map((statusObj) => (

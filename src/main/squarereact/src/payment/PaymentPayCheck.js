@@ -3,6 +3,7 @@ import './PaymentPayCheck.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { loadTossPayments } from "@tosspayments/payment-sdk";
+import './successPage.css';
 
 const PaymentPayCheck = () => {
     //라우팅 경로 상에서 받아 낼 파라미터
@@ -328,6 +329,7 @@ const PaymentPayCheck = () => {
                     </div>
                 </div>    
             </div>  
+
         </div>
     );
 };
