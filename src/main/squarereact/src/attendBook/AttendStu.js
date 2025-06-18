@@ -106,7 +106,7 @@ const AttendStu = () => {
                 const dateObj = new Date(curr.attendStart);
                 const hours = dateObj.getHours().toString().padStart(2, '0');
                 const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                const dayNames = ['(일)', '(월)', '(화)', '(수)', '(목)', '(금)', '(토)'];
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const dayOfWeek = dayNames[dateObj.getDay()];
                 const date = curr.attendStart.split('T')[0];
 
@@ -167,7 +167,6 @@ const AttendStu = () => {
         .then(res => {
             if(res.data !== null) {
                 setIsEditable(true); // true이면 출석창 활성화
-
             } else {
                 setIsEditable(false);
             }
@@ -344,7 +343,7 @@ const AttendStu = () => {
                         <div className='historyList' key={index}>
                             <div>
                                 <span style={{ fontSize: '23px', color: '#2E5077', fontWeight: '700', display: 'inline-block', marginRight: '20px' }}>
-                                    {summary.date}{summary.dayOfWeek}
+                                    {summary.date} ({summary.dayOfWeek})
                                 </span>
 
                                 {summary.statusSummary?.map((statusObj) => (
