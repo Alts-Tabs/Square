@@ -35,6 +35,23 @@ const SubCode = () => {
     setWarn3(false);
   }
 
+  // 핸드폰 번호 포맷
+  const formatPhoneNumber = (value) => {
+    // 숫자만 추출
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length < 4) return digits;
+    if (digits.length < 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    if (digits.length <= 11)
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+
+    return digits;
+  };
+  const handlePhoneInputChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
   // 코드 버튼 이벤트
   const clickBtn = () => {
     setWarns();
@@ -164,8 +181,8 @@ const SubCode = () => {
              value={pwdChk} onChange={(e)=>setPwdChk(e.target.value)} />
 
             <input type="tel" placeholder="핸드폰 번호(- 없이 작성)"
-             className="form-control inputs" required
-             value={phone} onChange={(e)=>setPhone(e.target.value)} />
+             className="form-control inputs" maxLength={13} required
+             value={phone} onChange={handlePhoneInputChange} />
             <input type="email" placeholder="이메일"
              className="form-control inputs" required
              value={email} onChange={(e)=>setEmail(e.target.value)} />

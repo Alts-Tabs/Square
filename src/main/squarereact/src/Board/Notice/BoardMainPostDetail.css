@@ -1,9 +1,8 @@
 .detailBoardcontainer {
-  width: 100%;
-  max-width: calc(100vw - 343px);
+  width: 100%;  
   height: 100%;
   max-height: calc(100vh - 110px);
-  overflow: auto;
+  overflow: auto; /* 스크롤 가능하도록 유지 */
   box-sizing: border-box;
   padding-bottom: 200px;
   position: relative;
@@ -59,7 +58,7 @@
   position: relative;
   margin-left: 16px;
   flex-shrink: 0;
-  z-index: 10001;
+  z-index: 1001; /* 드롭다운 위에 표시되도록 */
 }
 
 .menu-button {
@@ -85,18 +84,18 @@
 }
 
 .dropdown-menu {
-  background: white !important;
   position: absolute;
-  top: 90%;
+  top: 100%; /* 버튼 바로 아래 */
   right: 0;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10001;
+  z-index: 1010; /* z-index 증가 */
   min-width: 120px;
-  overflow: visible;
+  padding: 4px 0; /* 내부 여백 추가 */
   animation: dropdownFade 0.15s ease-out;
+  display: block; /* 초기 상태에서 숨김 방지 */
 }
 
 @keyframes dropdownFade {
@@ -119,6 +118,7 @@
   font-size: 14px;
   color: #333;
   cursor: pointer;
+  padding: 8px 16px; /* 여백 추가 */
   transition: background-color 0.2s;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -141,7 +141,8 @@
   border-radius: 0 0 14px 14px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   padding: 32px 32px 0 32px;
-  margin-bottom: 32px;
+  margin-bottom: 10px;
+  position: relative; /* comment-input-fixed의 기준으로 사용 */
 }
 
 .author-info {
@@ -195,6 +196,16 @@
   margin: 36px 0 0 0;
   display: flex;  
   align-items: center;
+  all: initial; /* 기본 스타일 초기화 */
+ font-family: inherit !important;
+  max-width: 100%;
+  box-sizing: border-box;  
+}
+
+.post-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+  /* font-family: inherit !important; */
 }
 
 .dividerHeader {
@@ -302,13 +313,38 @@
 }
 
 .comment-input-fixed {
-  position: fixed;
-  bottom: 20px;
+  position: absolute; /* fixed에서 absolute로 변경 */
   background: #FFFFFF;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 5px 10px rgba(58, 58, 58, 0.4);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   z-index: 1000;
+  box-sizing: border-box;
+  left: 1px;
+  width: 100%;
+}
+
+/* 미디어 쿼리는 보조적으로 사용 */
+@media (max-width: 1024px) {
+  .comment-input-fixed {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .comment-input-fixed {
+    padding: 10px;
+    width: 100%;
+    left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment-input-fixed {
+    padding: 8px;
+    width: 100%;
+    left: 0;
+  }
 }
 
 .comment-input-box {
@@ -386,6 +422,52 @@
   color: #aaa;
 }
 
+.attached-files {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.attached-files h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.file-item {
+  margin: 5px 0;
+}
+.attached-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+.file-link {
+  color: #4da1a9;
+  text-decoration: none;
+}
+.file-link:hover {
+  text-decoration: underline;
+}
+
+.download-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+}
+
+.download-btn {
+  padding: 5px 10px;
+  background-color: #4da1a9;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background-color: #41878d;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
   .detailBoardcontainer {
@@ -399,10 +481,6 @@
 
   .detailMain-Body {
     padding: 20px;
-  }
-
-  .comment-input-fixed {
-    padding: 15px;
   }
 }
 
@@ -427,35 +505,6 @@
   .post-title {
     font-size: 1.3rem;
   }
-
-  .comment-input-fixed {
-    padding: 10px;
-  }
-
-  .comment-input-field {
-    font-size: 0.9rem;
-    padding: 10px;
-  }
-
-  .comment-input-submit {
-    padding: 6px 12px;
-    font-size: 0.9rem;
-  }
-
-  .menu-button {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-
-  .dropdown-menu {
-    min-width: 100px;
-  }
-
-  .dropdown-item {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -477,59 +526,5 @@
 
   .post-title {
     font-size: 1.2rem;
-  }
-
-  .profileImage {
-    width: 36px;
-    height: 36px;
-  }
-
-  .comment-author {
-    font-size: 0.9rem;
-  }
-
-  .comment-content {
-    font-size: 0.95rem;
-  }
-
-  .comment-date {
-    font-size: 0.78rem;
-  }
-
-  .action-btn {
-    font-size: 0.78rem;
-  }
-
-  .comment-input-fixed {
-    padding: 8px;
-  }
-
-  .comment-input-field {
-    font-size: 0.85rem;
-    padding: 8px;
-  }
-
-  .comment-input-submit {
-    padding: 5px 10px;
-    font-size: 0.85rem;
-  }
-
-  .comment-icon-btn {
-    font-size: 1.1rem;
-  }
-
-  .menu-button {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
-
-  .dropdown-menu {
-    min-width: 90px;
-  }
-
-  .dropdown-item {
-    padding: 8px 12px;
-    font-size: 12px;
   }
 }

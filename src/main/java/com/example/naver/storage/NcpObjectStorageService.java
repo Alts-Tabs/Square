@@ -75,4 +75,7 @@ public class NcpObjectStorageService implements ObjectStorageService {
         }
     }
 
+    public String getFileUrl(String bucketName, String fileName) {
+        return bucketName;
+    }
 }

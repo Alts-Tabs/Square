@@ -3,14 +3,8 @@ package com.example.reference.service;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.example.naver.storage.NcpObjectStorageService;
 import com.example.reference.dto.*;
-import com.example.reference.entity.CategoryMappingEntity;
-import com.example.reference.entity.ReferenceCategoryEntity;
-import com.example.reference.entity.ReferenceEntity;
-import com.example.reference.entity.ReferenceFileEntity;
-import com.example.reference.jpa.CategoryMappingRepository;
-import com.example.reference.jpa.ReferenceCategoryRepository;
-import com.example.reference.jpa.ReferenceFileRepository;
-import com.example.reference.jpa.ReferenceRepository;
+import com.example.reference.entity.*;
+import com.example.reference.jpa.*;
 import com.example.user.entity.AcademiesEntity;
 import com.example.user.entity.UsersEntity;
 import com.example.user.jpa.AcademiesRepository;
@@ -18,7 +12,6 @@ import com.example.user.jpa.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +28,7 @@ public class ReferenceService {
     private final ReferenceFileRepository fileRepository;
     private final ReferenceCategoryRepository categoryRepository;
     private final CategoryMappingRepository mappingRepository;
+    private final ReferenceLikeRepository likeRepository;
     private final NcpObjectStorageService objectStorageService;
 
     private String bucketName = "square";
@@ -226,6 +220,19 @@ public class ReferenceService {
         categoryRepository.save(category);
     }
 
+    // 카테고리 삭제
+    @Transactional
+    public void deleteCategory(Long idx) {
+        ReferenceCategoryEntity category = categoryRepository.findById(idx)
+                .orElseThrow(() -> new NotFoundException("NOT FOUND CATEGORY"));
+
+        List<CategoryMappingEntity> mappings = mappingRepository.findByCategory(category);
+        for(CategoryMappingEntity mapping : mappings) {
+            mappingRepository.delete(mapping);
+        }
+        categoryRepository.delete(category);
+    }
+
     // 게시글 삭제
     @Transactional
     public void deleteReference(Long id) {
@@ -244,5 +251,42 @@ public class ReferenceService {
         referenceRepository.delete(reference);
     }
 
+    // 좋아요 수 조회
+    public long getLikeCount(Long referenceId) {
+        return likeRepository.countByReference_IdAndStatusTrue(referenceId);
+    }
+
+    // 좋아요 상태 조회
+    public boolean getLikeStatus(Long referenceId, Integer userId) {
+        ReferenceEntity reference = referenceRepository.findById(referenceId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 자료가 존재하지 않습니다."));
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        return likeRepository.findByUserAndReference(user, reference)
+                .map(ReferenceLikeEntity::isStatus)
+                .orElse(false);
+    }
+
+    // 좋아요 토글
+    @Transactional
+    public boolean toggleLike(Long referenceId, Integer userId) {
+        ReferenceEntity reference = referenceRepository.findById(referenceId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 자료가 존재하지 않습니다."));
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        ReferenceLikeEntity like = likeRepository.findByUserAndReference(user, reference)
+                .orElse(ReferenceLikeEntity.builder()
+                        .reference(reference)
+                        .user(user)
+                        .status(false)
+                        .build());
+
+        like.setStatus(!like.isStatus());
+        likeRepository.save(like);
+
+        return like.isStatus(); // true: 좋아요, false: 취소됨
+    }
 
 }

@@ -364,7 +364,7 @@ const UpdateTimetable = () => {
                     {/* 시간표 미리보기 ============================================ */}
                     <div className='TimeTab-rightContainer'>
                         <div className="createTimeTabContents">
-                            
+                            <div className="TimeTabTableScroll">
                             <table className='timeTable'>
                                 <thead>
                                     <tr>
@@ -448,6 +448,7 @@ const UpdateTimetable = () => {
                                 )}
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>

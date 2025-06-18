@@ -66,6 +66,24 @@ const JoinPage = () => {
     }
   }
 
+
+  // 핸드폰 번호 포맷
+  const formatPhoneNumber = (value) => {
+    // 숫자만 추출
+    const digits = value.replace(/\D/g, "");
+
+    if (digits.length < 4) return digits;
+    if (digits.length < 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    if (digits.length <= 11)
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+
+    return digits;
+  };
+  const handlePhoneInputChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
   // 전체 유효성 검사
   const onInvalidCheck = async () => {
     await btnIdCheck();
@@ -156,10 +174,10 @@ const JoinPage = () => {
           </label><br />
           <label>
             개인 정보<br />
-            <input type='tel' placeholder='010XXXXYYYY'
-             className='form-control' required
+            <input type='tel' placeholder='010-XXXX-YYYY'
+             className='form-control' maxLength={13} required
              value={phone}
-             onChange={(e) => setPhone(e.target.value)} />
+             onChange={handlePhoneInputChange} />
             <input type='email' placeholder='square@AAA.com'
              className='form-control' required
              value={email}

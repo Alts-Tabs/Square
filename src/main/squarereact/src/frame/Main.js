@@ -212,7 +212,7 @@ const Main = () => {
                         }
                         
 
-                        <span className='naviContent'>
+                        {userInfo.role !== "원장" && userInfo.role !== "학부모" && (<><span className='naviContent'>
                             <i className="bi bi-clipboard-check"></i>&nbsp;&nbsp;
                             {/* [출석 관리] - Role에 따라 각각 다른 페이지 로드 */}
                             {
@@ -220,21 +220,15 @@ const Main = () => {
                                     <Link to={`attend-stu/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
-                                ) : userInfo.role === "학부모" ? ( // 학부모 로그인
-                                    <Link to="attend-parent" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        출석 관리
-                                    </Link>
-                                ) : userInfo.role ? ( // 원장, 강사 로그인
+                                ) : userInfo.role === "강사" ? ( // 강사 로그인
                                     <Link to={`attend/${userInfo.acaId}`} state={{ userInfo }} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         출석 관리
                                     </Link>
-                                ) : ( // userInfo.role이 아직 로드되지 않았을 경우
-                                    <span style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        출석 관리
-                                    </span>
+                                ) : (
+                                    <></>
                                 )
                             }
-                        </span> <br />
+                        </span> <br /></>)}
 
                         <span className='naviContent'> 
                             <i className="bi bi-pencil"></i>&nbsp;&nbsp;
@@ -271,12 +265,6 @@ const Main = () => {
                             </Link>
                         </span> <br />
                         <span className='naviContent'>
-                            <i className="bi bi-question-circle"></i>&nbsp;&nbsp;
-                            <Link to="qnaboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                Q&A 게시판
-                            </Link>
-                        </span> <br />
-                        <span className='naviContent'>
                             <i className="bi bi-calendar2-check"></i>&nbsp;&nbsp;
                             <Link to="consultation"
                              state={{ acaId: userInfo.acaId, role: userInfo.role }}
@@ -287,6 +275,7 @@ const Main = () => {
                     </div>
 
                     {/* Navi3 - 수강료 =================================================================== */}
+                    {userInfo.role !== "강사" &&
                     <div className='payment naviForm'>
                         <span className='naviTitle'> 수강료 </span> <br />
                         {/*
@@ -304,6 +293,13 @@ const Main = () => {
                                         <Link to={`paymentManagement/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                             수강료 관리
                                         </Link>
+                                    </span>
+                                    <br />
+                                    <span className='naviContent'>
+                                    <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
+                                    <Link to={`nonPayCheck/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        미납 관리
+                                    </Link>
                                     </span>
                                     <br />
                                 </>
@@ -331,23 +327,7 @@ const Main = () => {
                                 </>
                             ) : null
                         }
-
-                        {/* [미납 관리] - 학생 & 학부모 외 모두 접근 가능 */}
-                        {
-                            userInfo.role !== "학생" && userInfo.role !== "학부모" ? (
-                                <>
-                                    <span className='naviContent'>
-                                    <i className="bi bi-exclamation-triangle"></i>&nbsp;&nbsp;
-                                    <Link to={`nonPayCheck/${userInfo.acaId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                        미납 관리
-                                    </Link>
-                                    </span>
-                                    <br />
-                                </>
-                            ) : null
-                        }
-
-                    </div>
+                    </div>}
 
                     {/*  Navi4 - 학습 관리 =========================================================== */}
                     <div className='study naviForm'>
@@ -431,7 +411,7 @@ const Main = () => {
 
                 {/* 본문 컨텐츠 영역 */}
                 <div className='contents'>
-                    <Outlet />
+                    <Outlet context={userInfo} />
                 </div>
             </div>
         </div>
