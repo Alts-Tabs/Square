@@ -12,6 +12,10 @@ const BoardEditer = () => {
   const categoryParam = queryParams.get('category') || '공지사항';
   const [isEditMode, setIsEditMode] = useState(!!editPostId);
 
+  useEffect(() => {
+    setIsEditMode(!!editPostId); // editPostId 변경 시 isEditMode 업데이트
+  }, [editPostId]);
+
   const [category, setCategory] = useState(categoryParam);
   const [division, setDivision] = useState('전체');
   const [title, setTitle] = useState('');
@@ -24,6 +28,7 @@ const BoardEditer = () => {
   const fileInputRef = useRef(null);
 
   const MAX_TITLE_LENGTH = 50;
+  const MAX_FILES = 5;
 
   useEffect(() => {
     if (isEditMode) {
@@ -50,17 +55,31 @@ const BoardEditer = () => {
 
   const handleTitleChange = (e) => {
     const val = e.target.value;
-    if (val.length <= MAX_TITLE_LENGTH) setTitle(val);
+    if (val.length > MAX_TITLE_LENGTH) {
+      alert(`제목은 최대 ${MAX_TITLE_LENGTH}자까지만 입력 가능합니다.`);
+      return; // 초과 시 입력 무시
+    }
+    setTitle(val);
   };
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
+    const totalFiles = files.length + selectedFiles.length;
+    if (totalFiles > MAX_FILES) {
+      alert(`최대 ${MAX_FILES}개 파일까지만 첨부 가능합니다. 현재 ${files.length}개, 추가 ${selectedFiles.length}개로 초과됩니다.`);
+      return; // 초과 시 업로드 무시
+    }
     setFiles((prev) => [...prev, ...selectedFiles]);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFiles = Array.from(e.dataTransfer.files);
+    const totalFiles = files.length + droppedFiles.length;
+    if (totalFiles > MAX_FILES) {
+      alert(`최대 ${MAX_FILES}개 파일까지만 첨부 가능합니다. 현재 ${files.length}개, 추가 ${droppedFiles.length}개로 초과됩니다.`);
+      return; // 초과 시 드롭 무시
+    }
     setFiles((prev) => [...prev, ...droppedFiles]);
   };
 
