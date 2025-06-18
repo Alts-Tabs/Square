@@ -1,28 +1,28 @@
 .boardMainTable {
-  width: 100%; /* 부모(.contents)에 맞춤 */
-  max-width: calc(100vw - 343px); /* 뷰포트 너비 - navi(343px) - contents margin(45px+25px) */
+  width: 100%; 
+  /* max-width: calc(100vw - var(--navi-width) - 70px);  */
   height: 100%; /* 고정 높이 */
-  max-height: calc(100vh - 110px); /* 뷰포트 높이 - 헤더(110px) - contents margin(30px+25px) */
+  max-height: calc(100vh - 110px); 
   overflow: auto;
-  box-sizing: border-box;
+  box-sizing: border-box;   
+  border-radius: 10px;  
 }
 
 .boardMainTitle {
   text-align: left;
-  padding: 10px 20px;
+  padding: 10px 0;
   color: #4da1a9;
   font-size: 30px;
   font-weight: 700;
-  margin-left: -19px;
-  font-size: 30px;
-  font-weight: 700; 
+  margin-bottom: 10px;
+  margin-left: 20px;
 }
 
 .boardMainTab {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .boardMainTab.overlap-group {
@@ -30,23 +30,23 @@
   width: 100%;
   background: #fff;
   border-radius: 10px 10px 0 0;
-  padding: 15px 20px 0;
-  gap: 250px;
-  justify-content: center;
+  padding: 10px 20px;
+  gap: 280px; /* 간격을 250px에서 20px로 줄임, 두 번째 이미지 스타일에 맞게 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 입체감 추가 */
 }
 
 .boardMainTabButton {
-  font-size: 28px;
+  font-size: 18px; /* 글자 크기를 28px에서 18px로 줄임, 두 번째 이미지에 맞게 */
   font-weight: 600;
-  color: #7c8a8a80;
-  padding: 5px 20px;
-  min-width: 200px;
+  color: #7c8a8a;
+  padding: 10px 20px;
+  min-width: 150px; /* 최소 너비를 200px에서 150px로 조정 */
   text-align: center;
   cursor: pointer;
-  border-radius: 10px 10px 0 0;
-  transition: color 0.3s;
-  flex: 1;
-  max-width: 300px;
+  border: none;
+  background: none;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-radius: 5px 5px 0 0; /* 약간의 둥근 모서리 추가 */
 }
 
 .boardMainTabButton.active {
@@ -62,38 +62,51 @@
   background: #fff;
   padding: 15px 20px;
   border-radius: 0 0 10px 10px;
-  margin-bottom: -10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 입체감 추가 */
+  margin-bottom: -3px;
+}
+
+.boardMainSubHeader > div {
+  display: flex;
+  align-items: center; /* 수평 정렬 */
+  flex-wrap: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
+  gap: 40px;
 }
 
 .boardMainSubTitle {
   color: #79d7be;
-  font-size: 33px;
+  font-size: 24px; /* 33px에서 24px로 조정, 두 번째 이미지에 맞게 */
   font-weight: 700;
-  letter-spacing: 2.8px;
+  letter-spacing: 1px; /* 2.8px에서 1px로 줄임 */
+  margin: 0; /* 기본 마진 제거 */
+  white-space: nowrap; /* 텍스트가 한 줄에 유지되도록 */
 }
 
 .boardMainSubDesc {
-  color: #7c8a8a80;
-  font-size: 14px;
-  margin-left: 20px;
+  color: #7c8a8a;
+  font-size: 16px;
+  margin-left: 10px; /* 20px에서 10px로 줄임 */
+  white-space: nowrap; /* 텍스트가 한 줄에 유지되도록 */
+  margin: 0; /* 기본 마진 제거 */
 }
 
 .boardMainWriteButton {
-  padding: 10px 20px;
-  background: #ffffff;
+  padding: 8px 15px; /* 10px 20px에서 8px 15px로 조정 */
+  background: #fff;
   border: 1px solid #79d7be;
   border-radius: 5px;
   color: #79d7be;
-  font-size: 16px;
+  font-size: 14px; /* 16px에서 14px로 조정 */
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-.write-button:hover {
+.boardMainWriteButton:hover {
   background: #e5e9e9;
 }
 
 .table-wrapper.boardMainTable {
-  flex-grow: 1;/* 테이블이 남은 공간을 채우도록 */
+  flex-grow: 1; /* 테이블이 남은 공간을 채우도록 */
   max-height: none; /* 테이블 높이 제한 */
   height: auto;
   overflow-y: auto;
@@ -103,21 +116,21 @@
 .post-table.boardMain {
   width: 100%;  
   border-collapse: collapse;  
-  font-size: 18px;
+  font-size: 16px; /* 18px에서 16px로 조정 */
   background: #fff;
   border-spacing: 0;  
 }
 
 .post-table.boardMain th {
-  background: #F6F4F0;
+  background: #f6f4f0;
   color: #4da1a9;
-  padding: 15px;
+  padding: 12px; /* 15px에서 12px로 조정 */
   text-align: center;
   font-weight: 600;
 }
 
 .post-table.boardMain td {
-  padding: 15px;
+  padding: 12px; /* 15px에서 12px로 조정 */
   text-align: center;
   border-bottom: 1px solid #eee;  
 }
@@ -200,6 +213,7 @@
   border-left: none;
   border-right: none;
   width: 150px;
+  height: 47px;
 }
 
 .search-button {
@@ -224,69 +238,46 @@
     overflow-x: auto;
   }
 
-  .label .text-wrapper {
-    font-size: 24px;
-  }
-
-  .menu.overlap-group {
-    gap: 10px;
-    padding: 10px 15px 0;
-  }
-
-  .tab-btn {
-    font-size: 20px;
-    padding: 5px 10px;
-    min-width: 100px;
-    max-width: 150px;
-  }
-
-  .sub-header {
-    flex-direction: row;
+  .boardMainTab.overlap-group {
+    gap: 10px; /* 작은 화면에서 간격 더 줄임 */
     padding: 10px 15px;
   }
 
-  .sub-title {
-    font-size: 26px;
-    letter-spacing: 2px;
+  .boardMainTabButton {
+    font-size: 16px;
+    padding: 5px 10px;
+    min-width: 100px;
   }
 
-  .sub-desc {
+  .boardMainSubTitle {
+    font-size: 20px;
+  }
+
+  .boardMainSubDesc {
     font-size: 12px;
-    margin-left: 10px;
   }
 
-  .write-button {
-    padding: 8px 15px;
+  .boardMainWriteButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .post-table.boardMain {
     font-size: 14px;
   }
 
-  .post-table {
-    font-size: 14px;
-  }
-
-  .post-table th,
-  .post-table td {
+  .post-table.boardMain th,
+  .post-table.boardMain td {
     padding: 10px;
   }
 
-  .pagination-container {
+  .pagination-container.boardMain {
     gap: 10px;
   }
 
-  .pagination span {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  .search-container {
-    max-width: 300px;
-  }
-
-  .search-select,
-  .search-input,
-  .search-button {
-    font-size: 14px;
-    padding: 8px;
+  .boardMainPagination button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
 
   .search-input {
@@ -304,50 +295,44 @@
     overflow-x: auto;
   }
 
-  .label .text-wrapper {
-    font-size: 20px;
-  }
-
-  .menu.overlap-group {
+  .boardMainTab.overlap-group {
     gap: 5px;
-    justify-content: center;
+    padding: 5px 10px;
   }
 
-  .tab-btn {
-    font-size: 16px;
+  .boardMainTabButton {
+    font-size: 14px;
     padding: 5px;
     min-width: 80px;
   }
 
-  .sub-title {
-    font-size: 20px;
-    letter-spacing: 1.5px;
+  .boardMainSubTitle {
+    font-size: 18px;
   }
 
-  .sub-desc {
+  .boardMainSubDesc {
     font-size: 10px;
-    margin-left: 5px;
   }
 
-  .write-button {
-    padding: 6px 12px;
-    font-size: 12px;
+  .boardMainWriteButton {
+    padding: 5px 10px;
+    font-size: 10px;
   }
 
-  .post-table {
+  .post-table.boardMain {
     display: block;
   }
 
-  .post-table thead {
+  .post-table.boardMain thead {
     display: none;
   }
 
-  .post-table tbody,
-  .post-table tr {
+  .post-table.boardMain tbody,
+  .post-table.boardMain tr {
     display: block;
   }
 
-  .post-table tr {
+  .post-table.boardMain tr {
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -355,7 +340,7 @@
     background: #fff;
   }
 
-  .post-table td {
+  .post-table.boardMain td {
     display: flex;
     justify-content: space-between;
     text-align: left;
@@ -364,28 +349,17 @@
     width: 100%;
   }
 
-  .post-table td:before {
+  .post-table.boardMain td:before {
     content: attr(data-label);
     font-weight: 600;
     color: #4da1a9;
     width: 40%;
   }
 
-  .pagination span {
-    padding: 6px 10px;
-    font-size: 12px;
+  .boardMainPagination button {
+    padding: 5px 8px;
+    font-size: 10px;
     margin: 0 3px;
-  }
-
-  .search-container {
-    max-width: 250px;
-  }
-
-  .search-select,
-  .search-input,
-  .search-button {
-    font-size: 12px;
-    padding: 6px;
   }
 
   .search-input {
@@ -394,8 +368,21 @@
 }
 
 /* navi 접힌 상태(80px)에 따른 조정 */
+@media (max-width: 800px) {
+  .boardMainTable {
+    max-width: calc(100vw - var(--navi-width) - 70px);
+    min-width: 320px;
+  }
+}
+
+@media (max-width: 576px) {
+  .boardMainTable {
+    max-width: calc(100vw - var(--navi-width) - 70px);
+  }
+}
+
 @media (max-width: 423px) {
   .boardMainTable {
-    max-width: calc(100vw - 80px - 70px); /* navi 접힌 상태(80px) 기준 */
+    max-width: calc(100vw - var(--navi-width) - 70px);
   }
 }
