@@ -83,16 +83,6 @@ const StudentsManage = () => {
               classes.find(cls => cls.id.toString() === selectedClassId)?.name ||
               '' : '전체'}
           </span>
-
-          {/* 출석률 필터 */}
-          <select className='classFilter' style={{ width: '14%', marginRight: '10px' }}>
-            <option value=''> 출석률 선택 </option>
-            <option value=''> 90% </option>
-            <option value=''> 80% </option>
-            <option value=''> 70% </option>
-            <option value=''> 60% 미만 </option>
-          </select>
-          <span className='selectFilterValue'>?%{/* 출석률 선택값 출력 */}</span>
         </>)}
       </div>
 

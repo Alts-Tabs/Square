@@ -160,7 +160,7 @@ const Attend = () => {
                 const dateObj = new Date(curr.attendStart);
                 const hours = dateObj.getHours().toString().padStart(2, '0');
                 const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-                const dayNames = ['(일)', '(월)', '(화)', '(수)', '(목)', '(금)', '(토)'];
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const dayOfWeek = dayNames[dateObj.getDay()];
                 const date = curr.attendStart.split('T')[0];
 
