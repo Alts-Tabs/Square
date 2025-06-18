@@ -90,7 +90,6 @@ public class Boardservice {
 
     @Transactional
     public BoardEntity createBoard(BoardRequestDto dto, String author, String role, List<String> fileNames) {
-        // HTML 콘텐츠 정화
         String sanitizedContent = Jsoup.clean(dto.getContent(), Safelist.relaxed()
                 .addTags("span", "div")
                 .addAttributes("span", "style")
