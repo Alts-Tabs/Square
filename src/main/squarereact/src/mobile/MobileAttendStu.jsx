@@ -139,36 +139,53 @@ const MobileAttendStu = () => {
 
 
     // 출석 코드 제출 ==================================================================
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            const inputCode = parseInt(e.target.value);
-            if (isNaN(inputCode)) {
-                alert("숫자만 입력해주세요.");
-                return;
-            }
+    // 출석 코드 제출 함수 (공통 로직 분리)
+function submitAttendance(inputCode) {
+    if (isNaN(inputCode)) {
+        alert("숫자만 입력해주세요.");
+        return;
+    }
 
-            axios.post('/student/attendance-submit', null, {
-                params: {
-                    submittedCode: inputCode
-                },
-                withCredentials: true
-            })
-            .then((res) => {
-                if (res.data === true) {
-                    alert("출석이 완료되었습니다.");
-                    // setCheckedStudents(prev => [...prev, userInfo.userId]);
-                    setIsEditable(false); // 출석창 비활성화
-                } else {
-                    alert("출석 코드가 유효하지 않습니다.");
-                }
-            })
-            .catch(err => {
-                console.error("출석 제출 실패:", err);
-                const msg = err?.response?.data || "출석 처리 중 오류가 발생했습니다.";
-                alert(msg);
-            });
+    axios.post('/student/attendance-submit', null, {
+        params: {
+            submittedCode: inputCode
+        },
+        withCredentials: true
+    })
+    .then((res) => {
+        if (res.data === true) {
+            alert("출석이 완료되었습니다.");
+            setIsEditable(false); // 출석창 비활성화
+        } else {
+            alert("출석 코드가 유효하지 않습니다.");
         }
-    };
+    })
+    .catch(err => {
+        console.error("출석 제출 실패:", err);
+        const msg = err?.response?.data || "출석 처리 중 오류가 발생했습니다.";
+        alert(msg);
+    });
+}
+
+// Enter 키 눌렀을 때
+const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        const inputCode = parseInt(e.target.value);
+        submitAttendance(inputCode);
+    }
+};
+
+// 클릭으로 출석 처리
+const handleClickAttend = () => {
+    const input = document.querySelector('.m-nowAttend');
+    if (input && input.value) {
+        const inputCode = parseInt(input.value);
+        submitAttendance(inputCode);
+    } else {
+        alert("출석 코드를 입력해주세요.");
+    }
+};
+
 
     // console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
 
@@ -241,8 +258,9 @@ const MobileAttendStu = () => {
                     />
                     <br />
                     {isEditable && (
-                        <span style={{ fontSize: "15px", display: "inline-block", marginBottom: "25px" }}>
-                            화면에 보이는 숫자를 입력한 후 Enter를 눌러주세요.
+                        <span style={{ fontSize: "15px", display: "inline-block", marginBottom: "25px", cursor:'pointer' }}
+                         onClick={handleClickAttend}>
+                            출석하기
                         </span>
                     )}
                 </div>
