@@ -259,7 +259,7 @@ const Attend = () => {
 
     try {
         await axios.post(`/th/${timetableAttendIdx}/attendance-cancel`, null, {
-            withCredentials: true
+        withCredentials: true,
         });
 
         setAttending(false);
@@ -267,6 +267,12 @@ const Attend = () => {
         setRandomNumber(null);
         setTimetableAttendIdx(null);
         localStorage.removeItem(`attendanceNumber_${userInfo.userId}`);
+
+        axios.get(`/th/${timetableAttendIdx}/student-color`)
+        .then((res) => {
+            // 출석 취소 시 출석한 학생이 있더라도 색상이 원상 복귀되도록 학생 리스트 재호출
+            setPresentStudents(res.data);
+        });
 
         alert("출석이 성공적으로 취소되었습니다.");
         } catch (err) {
@@ -285,6 +291,25 @@ const Attend = () => {
         fetchAttendRanking();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentClass]);
+
+
+    // 💚 출석한 학생 색상 변화 ===========================================================
+    const [presentStudents, setPresentStudents] = useState([]);
+    const presentUsernames = presentStudents.map((s) => s.username);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            axios.get(`/th/${timetableAttendIdx}/student-color`)
+                .then((res) => {
+                    console.log('🎯 API 응답 값:', res.data);
+                    setPresentStudents(res.data); 
+                })
+                .catch((err) => console.error(err));
+        }, 3000); // 3초마다 Polling
+
+        return () => clearInterval(interval);
+    }, [timetableAttendIdx]);
+
 
     return (
             <div className='attendContainer'>
@@ -380,19 +405,27 @@ const Attend = () => {
                                 </div>
                             )}
 
-                            {/* 수강생 반복 출력 영역 =======================================*/}
-                            {students.map((student) => (
-                                <div className='studentList' key={student.username}>
-                                    {/* <div className='studentProfileCircle'>
-                                        {checkedStudents.includes(student.name) && (
-                                            <i className="bi bi-check-circle-fill checkIcon"></i>
-                                        )}
-                                    </div> */}
-                                    <hr style={{ border: '1px solid #7D8A8A' }} />
-                                    <span className='attenderTitle'>{student.name}</span>
-                                </div>
-                            ))}
-                            {/* ============================================================ */}
+                            {/* 💚 수강생 반복 출력 영역 =======================================================*/}
+                            {students.map((student) => {
+                                const isPresent = presentUsernames.includes(student.username);
+
+                                return (
+                                    <div className='studentList' 
+                                        key={student.username}
+                                        style={{border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A'}}
+                                    >
+                                        <div className='studentListHeader' style={{backgroundColor: isPresent ? '#79D7BE' : 'rgba(125, 138, 138, 0.25)'}}></div>
+                                        <hr style={{ border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A' }} />
+                                        <span
+                                            className='attenderTitle'
+                                            style={{ color: isPresent ? '#79D7BE' : '#7D8A8A' }}
+                                        >
+                                            {student.name}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                            {/* =============================================================================== */}
                         </div>
                     </div>
                 </div>
@@ -443,19 +476,19 @@ const Attend = () => {
                                 {statusObj.status === 'PRESENT' && (
                                     <>
                                     <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
-                                    <span className='historyCount'> 출석수 {statusObj.count}</span>
+                                    <span className='historyCount'> 출석 {statusObj.count}</span>
                                     </>
                                 )}
                                 {statusObj.status === 'LATE' && (
                                     <>
                                     <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
-                                    <span className='historyCount'> 지각수 {statusObj.count}</span>
+                                    <span className='historyCount'> 지각 {statusObj.count}</span>
                                     </>
                                 )}
                                 {statusObj.status === 'ABSENT' && (
                                     <>
                                     <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
-                                    <span className='historyCount'> 결석수 {statusObj.count}</span>
+                                    <span className='historyCount'> 결석 {statusObj.count}</span>
                                     </>
                                 )}
                                 </span>

@@ -75,7 +75,7 @@ const AttendStu = () => {
         try {
             const timetableId = currentClass.timetableId;
             const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
-            // console.log(res.data);
+            console.log(res.data);
             setKing(res.data);
         } catch(err) {
             alert("랭킹 구하기 실패");
@@ -165,7 +165,7 @@ const AttendStu = () => {
         // 출석 활성 여부 확인
         axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
-            if(res.data !== null) {
+            if(res.data !== "") {
                 setIsEditable(true); // true이면 출석창 활성화
             } else {
                 setIsEditable(false);
@@ -242,6 +242,42 @@ const AttendStu = () => {
         return `${year}.${month}.${date} 출석`;
     };
 
+    // 💚 출석한 학생 색상 변화 ===========================================================
+    const [timetableAttendIdx, setTimetableAttendIdx] = useState();
+    const [presentStudents, setPresentStudents] = useState([]);
+    const presentUsernames = presentStudents.map((s) => s.username);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            axios.get(`/th/${timetableAttendIdx}/student-color`)
+                .then((res) => {
+                    console.log('🎯 API 응답 값:', res.data);
+                    setPresentStudents(res.data); 
+                })
+                .catch((err) => console.error(err));
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [timetableAttendIdx]);
+
+    useEffect(() => {
+    if (!userInfo?.userId) return;
+
+    // 출석 활성 timetableAttendIdx 가져오기
+    axios.get('/student/attendance-active', { withCredentials: true })
+        .then(res => {
+            if (res.data !== "") {
+                setTimetableAttendIdx(res.data);
+            } else {
+                setTimetableAttendIdx(); // 출석 중이 아니라면 초기화
+            }
+        })
+        .catch(err => {
+            setTimetableAttendIdx();
+        });
+    }, [userInfo]);
+
+
     return (
         <div className='attendContainer'>
             <div className='leftContainer'>
@@ -295,19 +331,27 @@ const AttendStu = () => {
                             </div>
                         )}
 
-                        {/* 수강생 반복 출력 영역 =======================================*/}
-                        {students.map((student) => (
-                            <div className='studentList' key={student.username}>
-                                <div className='studentProfileCircle'>
-                                    {checkedStudents.includes(student.name) && (
-                                        <i className="bi bi-check-circle-fill checkIcon"></i>
-                                    )}
+                        {/* 💚 수강생 반복 출력 영역 =======================================================*/}
+                        {students.map((student) => {
+                            const isPresent = presentUsernames.includes(student.username);
+
+                            return (
+                                <div className='studentList' 
+                                    key={student.username}
+                                    style={{border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A'}}
+                                >
+                                    <div className='studentListHeader' style={{backgroundColor: isPresent ? '#79D7BE' : 'rgba(125, 138, 138, 0.25)'}}></div>
+                                    <hr style={{ border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A' }} />
+                                    <span
+                                        className='attenderTitle'
+                                        style={{ color: isPresent ? '#79D7BE' : '#7D8A8A' }}
+                                    >
+                                        {student.name}
+                                    </span>
                                 </div>
-                                <hr style={{ border: '1px solid #7D8A8A' }} />
-                                <span className='attenderTitle'>{student.name}</span>
-                            </div>
-                        ))}
-                        {/* ============================================================ */}
+                            );
+                        })}
+                        {/* =============================================================================== */}
                     </div>
                 </div>
             </div>

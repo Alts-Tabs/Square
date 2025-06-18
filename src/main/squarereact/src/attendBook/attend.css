@@ -86,16 +86,26 @@
     gap: 10px;
 }
 
-/* 반복 처리 리스트 */
+/* 수강생 반복 출력 리스트 */
 .studentList {
     width: 120px;
-    height: 125px;
+    height: 110px;
     margin: 20px;
     text-align: center;
+    line-height: 50px;
     border-radius: 10px;
     border: 1px solid #7D8A8A;
 }
 
+.studentListHeader {
+    width: 100%;
+    height: 16%;
+    border-radius: 10px 10px 0 0;
+}
+
+.studentList hr {
+    margin-top: 0;
+}
 
 
 /* 오른쪽 영역 =============================================== */
