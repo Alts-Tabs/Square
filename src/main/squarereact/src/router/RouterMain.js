@@ -6,7 +6,6 @@ import { JoinPage, LoginPage, SearchUser, SubCode, SubUserRegistry } from '../me
 import { PaymentManagement, NonPayCheck, PaymentPayCheck, PaymentCheck } from '../payment';
 import { EvalAdmin, EvalParents, EvalStudent } from '../evaluations';
 import { BoardMainPage, BoardMainPostDetail, BoardMainPostForm } from '../Board/Notice';
-import { QnABoardMainPage, QnABoardMainPostDetail, QnABoardMainPostForm } from '../Board/QnA';
 import ChatbotPage from '../ChatBot/ChatbotPage';
 
 import ClassSetting from '../settings/ClassSetting';
@@ -21,6 +20,7 @@ import { SuccessPage } from '../payment/SuccessPage';
 import { FailPage } from '../payment/FailPage';
 import { StudentsManage, TeachersManage, ClassStudentsManage } from '../studentsManage';
 import { MobileAttendStu, MobileCalendar, MobileMypage, MobileNavi, MobileTimetable } from '../mobile';
+import BoardEditer from '../Board/Notice/BoardEditer';
 
 const RouterMain = () => {
     return (
@@ -48,11 +48,7 @@ const RouterMain = () => {
                     <Route path="board" element={<BoardMainPage/>} />
                     <Route path="board/:postId" element={<BoardMainPostDetail/>} />
                     <Route path="post/boardcreate" element={<BoardMainPostForm/>} />
-                    <Route path="qnaboard" element={<QnABoardMainPage/>} />
-                    <Route path="post/consulting/:postId" element={<QnABoardMainPostDetail />} />
-                    <Route path="post/qna/:postId" element={<QnABoardMainPostDetail />} />
-                    <Route path="post/faq/:postId" element={<QnABoardMainPostDetail />} />
-                    <Route path="post/qnacreate" element={<QnABoardMainPostForm/>} />
+                    <Route path="post/BoardEditer" element={<BoardEditer/>} />
                     <Route path='consultation' element={<Consultation />} />
 
 
