@@ -171,7 +171,8 @@ const PaymentPayCheck = () => {
                                 <table border={0} className='enrollWaitTable'>
                                     <tbody>
                                         <tr>
-                                        <td> </td>
+                                        <td></td>
+                                        <td> <b> 기간 </b></td>
                                         <td> <b> 수업명 </b></td>
                                         <td><b> 금액 </b></td>
                                         </tr>
@@ -179,8 +180,13 @@ const PaymentPayCheck = () => {
                                         {prevPay.map((pp, index) => (
                                         <tr key={pp.id}>
                                             <td>{index + 1}</td>
+                                            <td>{pp.duration}</td>
                                             <td>{pp.className}</td>
-                                            <td>{pp.tuition}원</td>
+                                            <td>
+                                                {pp.tuition
+                                                .toString()
+                                                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원
+                                            </td>
                                         </tr>
                                         ))}
                                     </tbody>
@@ -308,7 +314,8 @@ const PaymentPayCheck = () => {
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <b>{el.tuition}원</b>
+                                                    <b>{el.tuition.toString()
+                                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</b>
                                                 </td>
                                                 <td>
                                                     <button onClick={() => handleRemoveEnroll(el.enrollId)}>
