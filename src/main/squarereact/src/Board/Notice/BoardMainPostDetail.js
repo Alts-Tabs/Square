@@ -99,23 +99,28 @@ const BoardMainPostDetail = () => {
   const [newComment, setNewComment] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const fetchPost = async () => {
-    try {
-      const response = await axios.get(`/public/api/board/${postId}`);
-      setPost(response.data);
-    } catch (error) {
-      alert('게시글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
-    }
-  };
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`/public/api/board/${postId}`);
+        setPost(response.data);
+      } catch (error) {
+        alert('게시글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    };
 
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(`/public/api/board/${postId}/comments`);
-      setComments(response.data);
-    } catch (error) {
-      // 댓글 조회 실패 시 무시
-    }
-  };
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`/public/api/board/${postId}/comments`);
+        setComments(response.data);
+      } catch (error) {
+        // 댓글 조회 실패 시 무시
+      }
+    };
+
+    fetchPost();
+    fetchComments();
+  }, [postId]); // postId만 의존성으로 충분
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -195,14 +200,10 @@ const BoardMainPostDetail = () => {
   const adjustCommentInputPosition = () => {
     if (containerRef.current && commentInputRef.current) {
       const bodyElement = containerRef.current.querySelector('.detailMain-Body');
-      const navElement = document.querySelector('.navi');
-      const navWidth = navElement ? navElement.offsetWidth : 343;
-
       if (bodyElement) {
         const { top, left, width } = bodyElement.getBoundingClientRect();
         const containerRect = containerRef.current.getBoundingClientRect();
         const padding = 64;
-        const extraWidth = navWidth === 80 ? 263 : 0;
         const maxWidth = width - padding;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -220,24 +221,6 @@ const BoardMainPostDetail = () => {
       }
     }
   };
-
-  useEffect(() => {
-    fetchPost();
-    fetchComments();
-  }, [postId]);
-
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Caprasimo&family=Edu+NSW+ACT+Hand+Pre:wght@400;500;600;700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap';
-    link.rel = 'stylesheet';
-    link.id = 'dynamic-google-fonts';
-    document.head.appendChild(link);
-
-    return () => {
-      const existingLink = document.getElementById('dynamic-google-fonts');
-      if (existingLink) document.head.removeChild(existingLink);
-    };
-  }, []);
 
   useEffect(() => {
     adjustCommentInputPosition();
