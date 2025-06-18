@@ -48,6 +48,11 @@ const Timetable = () => {
         const calendarApi = calendarRef.current?.getApi();
         if(!calendarApi) return;
 
+        if (direction === '오늘') {
+            calendarApi.today(); // 오늘 날짜로 이동
+            return;
+        }
+
         if(selectedPeriod === '일'){
             if(direction === '<'){
                 calendarApi.prev();//이전 날짜
@@ -248,7 +253,7 @@ const Timetable = () => {
 
                 <div className='time-cal-buttons'>
                 <div className='buttonsWrapper3'>
-                        <button className='time-selectToday' onClick={() => handleDateNavigate()} style={{fontSize:'25px'}}
+                        <button className='time-selectToday' onClick={() => handleDateNavigate('오늘')} style={{fontSize:'25px'}}
                         >오늘</button>
                 </div>
 
