@@ -120,7 +120,7 @@ const BoardMainPostDetail = () => {
 
     fetchPost();
     fetchComments();
-  }, [postId]); // postId만 의존성으로 충분
+  }, [postId]);
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -197,49 +197,6 @@ const BoardMainPostDetail = () => {
     }
   };
 
-  const adjustCommentInputPosition = () => {
-    if (containerRef.current && commentInputRef.current) {
-      const bodyElement = containerRef.current.querySelector('.detailMain-Body');
-      if (bodyElement) {
-        const { top, left, width } = bodyElement.getBoundingClientRect();
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const padding = 64;
-        const maxWidth = width - padding;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        const newTop = containerRect.top + top + bodyElement.offsetHeight + scrollTop;
-
-        commentInputRef.current.style.cssText = `
-          position: absolute;
-          top: ${newTop}px;
-          left: ${left}px;
-          max-width: ${maxWidth}px;
-          width: ${maxWidth}px;
-          transform: none;
-          box-sizing: border-box;
-        `;
-      }
-    }
-  };
-
-  useEffect(() => {
-    adjustCommentInputPosition();
-    const handleResize = () => adjustCommentInputPosition();
-    const handleScroll = () => adjustCommentInputPosition();
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', handleScroll);
-    const observer = new MutationObserver(adjustCommentInputPosition);
-    const navElement = document.querySelector('.navi');
-    if (navElement) {
-      observer.observe(navElement, { attributes: true, attributeFilter: ['style'] });
-    }
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
-      if (observer) observer.disconnect();
-    };
-  }, []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -270,7 +227,7 @@ const BoardMainPostDetail = () => {
       <h1 className="board-title11">학원 게시판</h1>
       <div className="detailMain-header">
         <div className="back-to-list">
-          <span className="back-to-list-text" onClick={() => navigate('/main/board')}>⟨ 목록</span>
+          <span className="back-to-list-text" onClick={() => navigate(-1)}>⟨ 목록</span>
         </div>
         <div className="post-detail1">
           <div className="post-header-content">
