@@ -54,7 +54,7 @@ const AttendHistory = () => {
     const handleStatusChange = (index, newStatus) => {
         const updated = [...studentStatuses];
         updated[index].status = newStatus;
-        console.log(updated[index]);
+        // console.log(updated[index]);
         setStudentStatuses(updated);
     };
 

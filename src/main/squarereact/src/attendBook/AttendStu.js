@@ -14,7 +14,7 @@ const AttendStu = () => {
         absent: 0,
     });
     const [isEditable, setIsEditable] = useState(false);
-    const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
+    // const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
     
     const chartRef = useRef(null);
 
@@ -59,10 +59,10 @@ const AttendStu = () => {
         }).then(res => {
             if (res.data) {
                 setCurrentClass(res.data);
-                console.log(res.data);
+                // console.log(res.data);
             } else {
                 setCurrentClass(null);
-                console.log(res.data);
+                // console.log(res.data);
             }
         }).catch(err => {
             console.error('현재 수업 정보를 불러오는 중 오류 발생:', err);
@@ -165,7 +165,7 @@ const AttendStu = () => {
         // 출석 활성 여부 확인
         axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
-            if(res.data !== null) {
+            if(res.data !== "") {
                 setIsEditable(true); // true이면 출석창 활성화
             } else {
                 setIsEditable(false);
@@ -196,7 +196,7 @@ const AttendStu = () => {
             .then((res) => {
                 if (res.data === true) {
                     alert("출석이 완료되었습니다.");
-                    setCheckedStudents(prev => [...prev, userInfo.userId]);
+                    // setCheckedStudents(prev => [...prev, userInfo.userId]);
                     setIsEditable(false); // 출석창 비활성화
                 } else {
                     alert("출석 코드가 유효하지 않습니다.");
@@ -209,9 +209,6 @@ const AttendStu = () => {
             });
         }
     };
-
-    // console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
-
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
     const [students, setStudents] = useState([]); // 학생 목록 상태 추가
@@ -241,6 +238,43 @@ const AttendStu = () => {
         const date = String(today.getDate()).padStart(2, '0');
         return `${year}.${month}.${date} 출석`;
     };
+
+    // 💚 출석한 학생 색상 변화 ===========================================================
+    const [timetableAttendIdx, setTimetableAttendIdx] = useState();
+    const [presentStudents, setPresentStudents] = useState([]);
+    const presentUsernames = presentStudents.map((s) => s.username);
+
+    useEffect(() => {
+        if(!timetableAttendIdx) return;
+
+        const interval = setInterval(() => {
+            axios.get(`/student/${timetableAttendIdx}/student-color`)
+                .then((res) => {
+                    // console.log('🎯 API 응답 값:', res.data);
+                    setPresentStudents(res.data); 
+                })
+                .catch((err) => console.error(err));
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [timetableAttendIdx]);
+
+    useEffect(() => {
+        if (!userInfo?.userId) return;
+
+        // 출석 활성 timetableAttendIdx 가져오기
+        axios.get('/student/attendance-active', { withCredentials: true })
+            .then(res => {
+                if (res.data !== "") {
+                    setTimetableAttendIdx(res.data);
+                } else {
+                    setTimetableAttendIdx(); // 출석 중이 아니라면 초기화
+                }
+            })
+            .catch(err => {
+                setTimetableAttendIdx();
+            });
+    }, [userInfo]);
 
     return (
         <div className='attendContainer'>
@@ -295,19 +329,27 @@ const AttendStu = () => {
                             </div>
                         )}
 
-                        {/* 수강생 반복 출력 영역 =======================================*/}
-                        {students.map((student) => (
-                            <div className='studentList' key={student.username}>
-                                <div className='studentProfileCircle'>
-                                    {checkedStudents.includes(student.name) && (
-                                        <i className="bi bi-check-circle-fill checkIcon"></i>
-                                    )}
+                        {/* 💚 수강생 반복 출력 영역 =======================================================*/}
+                        {students.map((student) => {
+                            const isPresent = presentUsernames.includes(student.username);
+
+                            return (
+                                <div className='studentList' 
+                                    key={student.username}
+                                    style={{border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A'}}
+                                >
+                                    <div className='studentListHeader' style={{backgroundColor: isPresent ? '#79D7BE' : 'rgba(125, 138, 138, 0.25)'}}></div>
+                                    <hr style={{ border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A' }} />
+                                    <span
+                                        className='attenderTitle'
+                                        style={{ color: isPresent ? '#79D7BE' : '#7D8A8A' }}
+                                    >
+                                        {student.name}
+                                    </span>
                                 </div>
-                                <hr style={{ border: '1px solid #7D8A8A' }} />
-                                <span className='attenderTitle'>{student.name}</span>
-                            </div>
-                        ))}
-                        {/* ============================================================ */}
+                            );
+                        })}
+                        {/* =============================================================================== */}
                     </div>
                 </div>
             </div>
