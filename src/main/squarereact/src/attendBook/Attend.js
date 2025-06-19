@@ -63,13 +63,15 @@ const Attend = () => {
     }, [userInfo]);
 
     // 출석왕 분발왕 구하기
-    const [king, setKing] = useState(null);
+    const [needEffortKing, setNeedEffortKing] = useState(null);
+    const [attendanceKing, setAttendanceKing] = useState(null);
     const fetchAttendRanking = async () => {
         try {
             const timetableId = currentClass.timetableId;
             const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
             // console.log(res.data);
-            setKing(res.data);
+            setAttendanceKing(res.data.attendanceKing);
+            setNeedEffortKing(res.data.needEffortKing);
         } catch(err) {
             alert("랭킹 구하기 실패");
         }
@@ -185,8 +187,10 @@ const Attend = () => {
 
                 return acc;
             }, {});
+            console.log(groupedByAttendId);
 
             const convertedData = Object.values(groupedByAttendId);
+            console.log(convertedData);
             setAttendanceSummaries(convertedData);
 
             // 출석률 계산 + 누적 상태
@@ -404,7 +408,7 @@ const Attend = () => {
 
                                 return (
                                     <div className='studentList' 
-                                        key={student.username}
+                                        key={student.username ?? student.name}
                                         style={{border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A'}}
                                     >
                                         <div className='studentListHeader' style={{backgroundColor: isPresent ? '#79D7BE' : 'rgba(125, 138, 138, 0.25)'}}></div>
@@ -440,12 +444,12 @@ const Attend = () => {
                             <div className="attenderWrapper">
                                 <div className='attender'>
                                     <span className='attenderTitle'> 이번 달 출석왕 </span> <br />
-                                    <span className='attenderName'> {king !== null ? king.attendanceKing.name : "출석왕"} </span>
+                                    <span className='attenderName'> {attendanceKing !== null ? attendanceKing.name : "출석왕"} </span>
                                 </div>
 
                                 <div className='attender'>
                                     <span className='attenderTitle'> 이번 달 분발왕 </span> <br />
-                                    <span className='attenderName'> {king !== null ? king.needEffortKing.name : "분발왕"} </span>
+                                    <span className='attenderName'> {needEffortKing !== null ? needEffortKing.name : "분발왕"} </span>
                                 </div>
                             </div>
                         </div>
