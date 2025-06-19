@@ -14,7 +14,7 @@ const AttendStu = () => {
         absent: 0,
     });
     const [isEditable, setIsEditable] = useState(false);
-    const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
+    // const [checkedStudents, setCheckedStudents] = useState([]);  // 출석 완료 학생 리스트
     
     const chartRef = useRef(null);
 
@@ -59,10 +59,10 @@ const AttendStu = () => {
         }).then(res => {
             if (res.data) {
                 setCurrentClass(res.data);
-                console.log(res.data);
+                // console.log(res.data);
             } else {
                 setCurrentClass(null);
-                console.log(res.data);
+                // console.log(res.data);
             }
         }).catch(err => {
             console.error('현재 수업 정보를 불러오는 중 오류 발생:', err);
@@ -75,7 +75,7 @@ const AttendStu = () => {
         try {
             const timetableId = currentClass.timetableId;
             const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
-            console.log(res.data);
+            // console.log(res.data);
             setKing(res.data);
         } catch(err) {
             alert("랭킹 구하기 실패");
@@ -196,7 +196,7 @@ const AttendStu = () => {
             .then((res) => {
                 if (res.data === true) {
                     alert("출석이 완료되었습니다.");
-                    setCheckedStudents(prev => [...prev, userInfo.userId]);
+                    // setCheckedStudents(prev => [...prev, userInfo.userId]);
                     setIsEditable(false); // 출석창 비활성화
                 } else {
                     alert("출석 코드가 유효하지 않습니다.");
@@ -209,9 +209,6 @@ const AttendStu = () => {
             });
         }
     };
-
-    // console.log("currentClass?.timetableIdx: ", currentClass?.timetableIdx);
-
 
     // 현재 수업에 해당하는 학생 목록 출력 ============================================
     const [students, setStudents] = useState([]); // 학생 목록 상태 추가
@@ -248,10 +245,12 @@ const AttendStu = () => {
     const presentUsernames = presentStudents.map((s) => s.username);
 
     useEffect(() => {
+        if(!timetableAttendIdx) return;
+
         const interval = setInterval(() => {
-            axios.get(`/th/${timetableAttendIdx}/student-color`)
+            axios.get(`/student/${timetableAttendIdx}/student-color`)
                 .then((res) => {
-                    console.log('🎯 API 응답 값:', res.data);
+                    // console.log('🎯 API 응답 값:', res.data);
                     setPresentStudents(res.data); 
                 })
                 .catch((err) => console.error(err));
@@ -261,22 +260,21 @@ const AttendStu = () => {
     }, [timetableAttendIdx]);
 
     useEffect(() => {
-    if (!userInfo?.userId) return;
+        if (!userInfo?.userId) return;
 
-    // 출석 활성 timetableAttendIdx 가져오기
-    axios.get('/student/attendance-active', { withCredentials: true })
-        .then(res => {
-            if (res.data !== "") {
-                setTimetableAttendIdx(res.data);
-            } else {
-                setTimetableAttendIdx(); // 출석 중이 아니라면 초기화
-            }
-        })
-        .catch(err => {
-            setTimetableAttendIdx();
-        });
+        // 출석 활성 timetableAttendIdx 가져오기
+        axios.get('/student/attendance-active', { withCredentials: true })
+            .then(res => {
+                if (res.data !== "") {
+                    setTimetableAttendIdx(res.data);
+                } else {
+                    setTimetableAttendIdx(); // 출석 중이 아니라면 초기화
+                }
+            })
+            .catch(err => {
+                setTimetableAttendIdx();
+            });
     }, [userInfo]);
-
 
     return (
         <div className='attendContainer'>

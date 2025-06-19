@@ -247,7 +247,6 @@ public class AttendanceService {
         return true;
     }
 
-
     // 출석한 학생 색상 변화 ==============================================================================================
     @Transactional(readOnly = true)
     public List<StudentColorDto> getPresentStudents(int timetableAttendIdx) {

@@ -130,7 +130,7 @@ const Attend = () => {
         // 출석 활성 여부 확인
         axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
-                console.log("출석 활성 여부:",res);
+                // console.log("출석 활성 여부:",res);
             if(res.data !== "") { // !== null이 아니었음...
                 setTimetableAttendIdx(res.data);
                 setAttending(true);
@@ -259,7 +259,7 @@ const Attend = () => {
 
     try {
         await axios.post(`/th/${timetableAttendIdx}/attendance-cancel`, null, {
-        withCredentials: true,
+            withCredentials: true
         });
 
         setAttending(false);
@@ -267,12 +267,6 @@ const Attend = () => {
         setRandomNumber(null);
         setTimetableAttendIdx(null);
         localStorage.removeItem(`attendanceNumber_${userInfo.userId}`);
-
-        axios.get(`/th/${timetableAttendIdx}/student-color`)
-        .then((res) => {
-            // 출석 취소 시 출석한 학생이 있더라도 색상이 원상 복귀되도록 학생 리스트 재호출
-            setPresentStudents(res.data);
-        });
 
         alert("출석이 성공적으로 취소되었습니다.");
         } catch (err) {
@@ -292,16 +286,16 @@ const Attend = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentClass]);
 
-
-    // 💚 출석한 학생 색상 변화 ===========================================================
+     // 💚 출석한 학생 색상 변화 ===========================================================
     const [presentStudents, setPresentStudents] = useState([]);
     const presentUsernames = presentStudents.map((s) => s.username);
 
     useEffect(() => {
+        if(!timetableAttendIdx) return;
         const interval = setInterval(() => {
-            axios.get(`/th/${timetableAttendIdx}/student-color`)
+            axios.get(`/student/${timetableAttendIdx}/student-color`)
                 .then((res) => {
-                    console.log('🎯 API 응답 값:', res.data);
+                    // console.log('🎯 API 응답 값:', res.data);
                     setPresentStudents(res.data); 
                 })
                 .catch((err) => console.error(err));
@@ -309,7 +303,6 @@ const Attend = () => {
 
         return () => clearInterval(interval);
     }, [timetableAttendIdx]);
-
 
     return (
             <div className='attendContainer'>
@@ -476,19 +469,19 @@ const Attend = () => {
                                 {statusObj.status === 'PRESENT' && (
                                     <>
                                     <i className="bi bi-circle-fill" style={{ color: '#79D7BE' }}></i>
-                                    <span className='historyCount'> 출석 {statusObj.count}</span>
+                                    <span className='historyCount'> 출석수 {statusObj.count}</span>
                                     </>
                                 )}
                                 {statusObj.status === 'LATE' && (
                                     <>
                                     <i className="bi bi-triangle-fill" style={{ color: '#FFB83C' }}></i>
-                                    <span className='historyCount'> 지각 {statusObj.count}</span>
+                                    <span className='historyCount'> 지각수 {statusObj.count}</span>
                                     </>
                                 )}
                                 {statusObj.status === 'ABSENT' && (
                                     <>
                                     <i className="bi bi-x-lg" style={{ color: '#D85858' }}></i>
-                                    <span className='historyCount'> 결석 {statusObj.count}</span>
+                                    <span className='historyCount'> 결석수 {statusObj.count}</span>
                                     </>
                                 )}
                                 </span>

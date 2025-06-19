@@ -93,7 +93,7 @@ public class AttendanceController {
     }
 
     // 출석한 학생 색상 변화 ==============================================================================================
-    @GetMapping("/th/{timetableAttendIdx}/student-color")
+    @GetMapping("/student/{timetableAttendIdx}/student-color")
     public List<StudentColorDto> getPresentStudents(@PathVariable int timetableAttendIdx) {
         return attendanceService.getPresentStudents(timetableAttendIdx);
     }
