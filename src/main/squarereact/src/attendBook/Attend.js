@@ -130,7 +130,7 @@ const Attend = () => {
         // 출석 활성 여부 확인
         axios.get('/student/attendance-active', { withCredentials: true })
         .then(res => {
-                console.log("출석 활성 여부:",res);
+                // console.log("출석 활성 여부:",res);
             if(res.data !== "") { // !== null이 아니었음...
                 setTimetableAttendIdx(res.data);
                 setAttending(true);
@@ -286,6 +286,24 @@ const Attend = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentClass]);
 
+     // 💚 출석한 학생 색상 변화 ===========================================================
+    const [presentStudents, setPresentStudents] = useState([]);
+    const presentUsernames = presentStudents.map((s) => s.username);
+
+    useEffect(() => {
+        if(!timetableAttendIdx) return;
+        const interval = setInterval(() => {
+            axios.get(`/student/${timetableAttendIdx}/student-color`)
+                .then((res) => {
+                    // console.log('🎯 API 응답 값:', res.data);
+                    setPresentStudents(res.data); 
+                })
+                .catch((err) => console.error(err));
+        }, 3000); // 3초마다 Polling
+
+        return () => clearInterval(interval);
+    }, [timetableAttendIdx]);
+
     return (
             <div className='attendContainer'>
                 
@@ -380,19 +398,27 @@ const Attend = () => {
                                 </div>
                             )}
 
-                            {/* 수강생 반복 출력 영역 =======================================*/}
-                            {students.map((student) => (
-                                <div className='studentList' key={student.username}>
-                                    {/* <div className='studentProfileCircle'>
-                                        {checkedStudents.includes(student.name) && (
-                                            <i className="bi bi-check-circle-fill checkIcon"></i>
-                                        )}
-                                    </div> */}
-                                    <hr style={{ border: '1px solid #7D8A8A' }} />
-                                    <span className='attenderTitle'>{student.name}</span>
-                                </div>
-                            ))}
-                            {/* ============================================================ */}
+                            {/* 💚 수강생 반복 출력 영역 =======================================================*/}
+                            {students.map((student) => {
+                                const isPresent = presentUsernames.includes(student.username);
+
+                                return (
+                                    <div className='studentList' 
+                                        key={student.username}
+                                        style={{border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A'}}
+                                    >
+                                        <div className='studentListHeader' style={{backgroundColor: isPresent ? '#79D7BE' : 'rgba(125, 138, 138, 0.25)'}}></div>
+                                        <hr style={{ border: isPresent ? '1px solid #79D7BE' : '1px solid #7D8A8A' }} />
+                                        <span
+                                            className='attenderTitle'
+                                            style={{ color: isPresent ? '#79D7BE' : '#7D8A8A' }}
+                                        >
+                                            {student.name}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                            {/* =============================================================================== */}
                         </div>
                     </div>
                 </div>

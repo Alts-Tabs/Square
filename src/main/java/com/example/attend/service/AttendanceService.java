@@ -2,6 +2,7 @@ package com.example.attend.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.example.attend.dto.StartAttendanceResponseDto;
+import com.example.attend.dto.StudentColorDto;
 import com.example.attend.entity.*;
 import com.example.attend.repository.*;
 import com.example.classes.jpa.ClassUsersRepository;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -243,6 +245,21 @@ public class AttendanceService {
         attendancesRepository.save(attendance);
 
         return true;
+    }
+
+    // 출석한 학생 색상 변화 ==============================================================================================
+    @Transactional(readOnly = true)
+    public List<StudentColorDto> getPresentStudents(int timetableAttendIdx) {
+        List<AttendancesEntity> presentList = attendancesRepository
+                .findAllByTimetableAttend_IdxAndStatus(timetableAttendIdx, AttendancesEntity.Status.PRESENT);
+
+        return presentList.stream()
+                .map(a -> new StudentColorDto(
+                        a.getStudent().getStudentId(),
+                        a.getStudent().getUser().getName(),
+                        a.getStudent().getUser().getUsername()
+                ))
+                .collect(Collectors.toList());
     }
 
 }

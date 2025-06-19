@@ -92,4 +92,10 @@ public class AttendanceController {
         return ResponseEntity.ok(dto);
     }
 
+    // 출석한 학생 색상 변화 ==============================================================================================
+    @GetMapping("/student/{timetableAttendIdx}/student-color")
+    public List<StudentColorDto> getPresentStudents(@PathVariable int timetableAttendIdx) {
+        return attendanceService.getPresentStudents(timetableAttendIdx);
+    }
+
 }
