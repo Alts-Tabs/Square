@@ -106,7 +106,7 @@ const JoinPage = () => {
         setIdCheck(true);
       }
     } catch(err) {
-      if(err.response && err.reponse.status === 409) {
+      if(err.response && err.response.status === 409) {
         // 아이디 중복
         setIdCheck(false);
       } else {
