@@ -128,7 +128,7 @@ public class Boardservice {
     public BoardEntity updateBoard(Long id, BoardRequestDto dto, String author, String role, List<String> fileNames) {
         BoardEntity board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        if (!board.getAuthor().equals(author) && !role.equals("ROLE_ADMIN")) {
+        if (!board.getAuthor().equals(author) && !role.equals("ADMIN") && !role.equals("DIRECTOR") && !role.equals("TEACHER")) {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
         board.setTitle(dto.getTitle());
@@ -162,7 +162,7 @@ public class Boardservice {
     public void deleteBoard(Long id, String author, String role) {
         BoardEntity board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        if (!board.getAuthor().equals(author) && !role.equals("ROLE_ADMIN")) {
+        if (!board.getAuthor().equals(author) && !role.equals("ADMIN") && !role.equals("DIRECTOR") && !role.equals("TEACHER")) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
         boardRepository.delete(board);
@@ -215,7 +215,7 @@ public class Boardservice {
         BoardCommentEntity comment = boardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
-        if (!comment.getAuthor().equals(author) && !role.equals("ROLE_ADMIN")) {
+        if (!comment.getAuthor().equals(author) && !role.equals("ADMIN") && !role.equals("DIRECTOR") && !role.equals("TEACHER")) {
             throw new RuntimeException("댓글 삭제 권한이 없습니다.");
         }
 
@@ -229,7 +229,7 @@ public class Boardservice {
         BoardCommentEntity comment = boardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
-        if (!comment.getAuthor().equals(author) && !role.equals("ROLE_ADMIN")) {
+        if (!comment.getAuthor().equals(author) && !role.equals("ADMIN") && !role.equals("DIRECTOR") && !role.equals("TEACHER")) {
             throw new RuntimeException("댓글 수정 권한이 없습니다.");
         }
 

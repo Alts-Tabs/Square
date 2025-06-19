@@ -41,7 +41,7 @@ const Comment = ({ comment, onUpdate, onDelete, userInfo }) => {
     }
   };
 
-  const canEditOrDelete = comment.author === userInfo.username || userInfo.role === '관리자';
+  const canEditOrDelete = comment.author === userInfo.username || ['ADMIN', 'DIRECTOR', 'TEACHER'].includes(userInfo.role);
 
   return (
     <div className="comment" key={comment.id}>
@@ -87,7 +87,8 @@ const Comment = ({ comment, onUpdate, onDelete, userInfo }) => {
 
 const BoardMainPostDetail = () => {
   const { postId } = useParams();
-  const userInfo = { username: '원장 테스트', role: '관리자' };
+  // userInfo.role은 'DIRECTOR' 또는 'TEACHER'로 설정 가능. 예: 'TEACHER'로 테스트하려면 아래를 'TEACHER'로 변경
+  const userInfo = { username: 'Site', role: 'DIRECTOR' };
   const navigate = useNavigate();
 
   const containerRef = useRef(null);
@@ -141,7 +142,10 @@ const BoardMainPostDetail = () => {
   const handleCommentDelete = async (commentId) => {
     if (window.confirm('댓글을 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/public/api/board/${postId}/comments/${commentId}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`/public/api/board/${postId}/comments/${commentId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setComments((prev) => prev.filter((c) => c.id !== commentId));
       } catch (error) {
         alert('댓글 삭제에 실패했습니다.');
@@ -188,7 +192,10 @@ const BoardMainPostDetail = () => {
     e.stopPropagation();
     if (window.confirm('정말로 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/public/api/board/${postId}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`/public/api/board/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         alert('게시글 삭제 성공');
         navigate('/main/board');
       } catch (error) {
@@ -240,7 +247,7 @@ const BoardMainPostDetail = () => {
                     <button className="dropdown-item" onClick={handleEdit}>수정하기</button>
                   )}
                   {((post.author && userInfo.username && post.author.trim() === userInfo.username.trim()) || 
-                    (userInfo.role && userInfo.role.trim() === '관리자')) && (
+                    (userInfo.role && ['ADMIN', 'DIRECTOR', 'TEACHER'].includes(userInfo.role))) && (
                     <button className="dropdown-item" onClick={handleDelete}>삭제하기</button>
                   )}
                 </div>
