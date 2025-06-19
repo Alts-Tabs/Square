@@ -68,13 +68,15 @@ const MobileAttendStu = () => {
     }, [passedUserInfo]);
 
     // 출석왕 분발왕 구하기
-    const [king, setKing] = useState(null);
+    const [needEffortKing, setNeedEffortKing] = useState(null);
+    const [attendanceKing, setAttendanceKing] = useState(null);
     const fetchAttendRanking = async () => {
         try {
             const timetableId = currentClass.timetableId;
             const res = await axios.get(`/student/${timetableId}/attendance-ranking`, {withCredentials: true});
             // console.log(res.data);
-            setKing(res.data);
+            setAttendanceKing(res.data.attendanceKing);
+            setNeedEffortKing(res.data.needEffortKing);
         } catch(err) {
             alert("랭킹 구하기 실패");
         }
@@ -282,11 +284,11 @@ const handleClickAttend = () => {
                     <div className="m-attenderWrapper">
                         <div className='m-attender'>
                             <span className='m-attenderTitle'> 이번 달 출석왕 </span><br />
-                            <span className='m-attenderName'> {king !== null ? king.attendanceKing.name : "출석왕"}  </span>
+                            <span className='m-attenderName'> {attendanceKing !== null ? attendanceKing.name : "출석왕"}  </span>
                         </div>
                         <div className='m-attender'>
                             <span className='m-attenderTitle'> 이번 달 분발왕 </span><br />
-                            <span className='m-attenderName'> {king !== null ? king.needEffortKing.name : "분발왕"} </span>
+                            <span className='m-attenderName'> {needEffortKing !== null ? needEffortKing.name : "분발왕"} </span>
                         </div>
                     </div>
                 </div>
