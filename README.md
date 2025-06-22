@@ -77,76 +77,77 @@
 
 ## 🌊 화면 구성
 
-<b> • 로그인 및 회원가입 </b>
+<b> • 로그인 및 회원가입 </b> <br />
 <img src="https://github.com/user-attachments/assets/a22ce2d5-9595-4f50-b994-9b1cbfd2d585" width="300" />
 <img src="https://github.com/user-attachments/assets/121bc14a-db23-4bf5-a044-e9b2a4d6be23" width="300" />
 <img src="https://github.com/user-attachments/assets/c1550cd4-ec9b-46ac-b071-252ef0c23d2f" width="400" />
 <p>&nbsp;</p>
 
 
-<b> • 클래스 및 학생 생성, 관리 </b>
+<b> • 클래스 및 학생 생성, 관리 </b> <br />
 <img src="https://github.com/user-attachments/assets/456403d9-a0ac-4032-b5ae-f2088c36f5fb" width="500" />
 <img src="https://github.com/user-attachments/assets/b1f39aab-2e79-4f38-938b-2d555ea19c09" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 종합 평가 </b>
+<b> • 종합 평가 </b> <br />
 <img src="https://github.com/user-attachments/assets/00d14624-9c25-41bd-8d68-adcfcccff53d" width="500" />
 <img src="https://github.com/user-attachments/assets/f970ff79-6f2f-4e4f-a3b5-e50ff622df96" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 출석 관리 </b>
-<img src="https://github.com/user-attachments/assets/6fe9d646-02fd-4293-85db-b90e43fa9c59" height="300" />
+<b> • 출석 관리 </b> <br />
+<img src="https://github.com/user-attachments/assets/6fe9d646-02fd-4293-85db-b90e43fa9c59" width="500" />
 <img src="https://github.com/user-attachments/assets/a5382b7e-3441-4d5d-b47e-5dcccf96f427" height="300" />
 <p>&nbsp;</p>
 
 
-<b> • 지난 출석 </b>
-<img src="https://github.com/user-attachments/assets/b9a432d0-01f7-4294-9b54-4c660807869d" width="800" />
+<b> • 지난 출석 </b> <br />
+<img src="https://github.com/user-attachments/assets/549c5dd2-5d04-4131-821f-65f3e94f9b7c" width="800" />
 <p>&nbsp;</p>
 
 
-<b> • 학원 게시판 </b>
+<b> • 학원 게시판 </b> <br />
 <img src="https://github.com/user-attachments/assets/d5a00cc1-2669-4f02-abe5-26031af9caaf" width="500" />
 <img src="https://github.com/user-attachments/assets/fe0ab489-31c4-40f2-bb39-d4766170be55" width="500" />
 <img src="https://github.com/user-attachments/assets/953a78ed-5c01-4775-9e38-34cb54dbaa8a" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 수강료, 미납 관리 </b>
+<b> • 수강료, 미납 관리 </b> <br />
 <img src="https://github.com/user-attachments/assets/b97c52ee-be77-4075-ac6d-046422728b79" width="500" />
 <img src="https://github.com/user-attachments/assets/6416c097-90d3-400f-864d-25a583f5c6fe" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 시간표 </b>
+<b> • 시간표 </b> <br />
 <img src="https://github.com/user-attachments/assets/5264b7bf-b34d-4909-bcca-ef8ffef76456" width="500" />
 <img src="https://github.com/user-attachments/assets/478496eb-4ed7-4358-8c06-0485c332c335" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 학원 캘린더 </b>
+<b> • 학원 캘린더 </b> <br />
 <img src="https://github.com/user-attachments/assets/93d1d15c-3696-40c9-a241-eb03e68aae0d" width="500" />
 <img src="https://github.com/user-attachments/assets/bf3eb096-2f80-430a-9068-7f461707053a" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 자료실 </b>
+<b> • 자료실 </b> <br />
 <img src="https://github.com/user-attachments/assets/8677c8fc-0e23-4f8f-a814-301bf6cc307c" width="500" />
 <img src="https://github.com/user-attachments/assets/07c6ccab-7dce-459a-a20a-81f557943e9b" width="500" />
 <img src="https://github.com/user-attachments/assets/7920016e-099b-4b99-9e80-69a7056dedf7" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 챗봇 </b>
+<b> • 챗봇 </b> <br />
 <img src="https://github.com/user-attachments/assets/b93a46b8-d7c1-48fd-9f4b-6e6d8f07e0da" width="500" />
 <img src="https://github.com/user-attachments/assets/8ba745ca-3a2a-417f-956e-eb90303d7a4a" width="500" />
 <p>&nbsp;</p>
 
 
-<b> • 마이페이지 </b>
-<img src="https://github.com/user-attachments/assets/49c08fb8-797c-4899-9ff3-6e98b6075187" width="500" height="300" />
+<b> • 마이페이지 </b> <br />
+<img src="https://github.com/user-attachments/assets/49c08fb8-797c-4899-9ff3-6e98b6075187" width="800" />
+<br />
 <img src="https://github.com/user-attachments/assets/bd1fcbc3-8cae-4c0f-992c-f44cce82cdfd" height="300" />
 <img src="https://github.com/user-attachments/assets/3cea2446-433a-4331-9ecf-eae5c487ad1b" height="300" />
 <p>&nbsp;</p>
