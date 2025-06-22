@@ -1,13 +1,27 @@
-> ## Square 프로젝트 설명
->
-> 
+![Logo](https://blog.kakaocdn.net/dna/5sOsI/btsOLeCFXa6/AAAAAAAAAAAAAAAAAAAAAGaT5LNfpwlkYyQlMdh0FPNrQVegvZ99TUNei6aRxoGw/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1750586399&allow_ip=&allow_referer=&signature=%2FmQD319AJ1O2RwLo9%2FDHmtMHIxs%3D)﻿
+> # Square 프로젝트 설명
+> <b> • 개발 기간 | 2025.05.07 ~ 2025.06.22</b> <br>
+> <b> • 배포 주소 | http://square.xn--h32bi4v.xn--3e0b707e/ </b> <br>
+> ### [효율적인 학원 운영을 위한 학원 관리 시스템]
+> <b> 원장, 강사, 학부모, 학생 모두를 위한 서비스를 제공합니다. </b>
+> 1.  코드를 통한 회원가입
+> 2.  클래스 지정으로 편리한 학생 관리
+> 3.  출석 코드 입력을 통한 빠른 출석 시스템
+> 4.  학생 종합 평가 작성 및 기록 기능 제공
+> 5.  소통을 위한 학원 게시판 기능
+> 6.  상담 예약 및 일정 확인을 위한 캘린더 제공
+> 7.  수강료 등록 및 납부, 조회 기능
+> 8.  학원 시간표 등록 및 조회 기능
+> 9.  수업 자료를 한 눈에 파악 가능한 자료실
+> 10. 상담 예약 기능을 제공하는 챗봇 서비스
 
-> ## 👥 Alts Tabs Member
+> ## 🐋 Alts+Tabs Member
 > ### **네이버 클라우드 네이티브 부트캠프 17기 Final Project**
 > | 역할     | 이름      |
 > |----------|-----------|
 > | 팀장     | **조진용** |
 > | 팀원     | 최은영 <br> 채원석 <br> 김녹엽 <br> 박수진 <br> 김동휘  |
+> <p>&nbsp;</p>
 
 ## 🛠️ Tech Stacks
 ### Environment
@@ -37,3 +51,28 @@
 [![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://ceyemong.notion.site/epimap?pvs=4)&nbsp;
 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/Fmuj7dXLIpYdzIlDtoVmSj/%EC%8B%A4%EC%8B%9C%EA%B0%84-%EA%B0%90%EC%97%BC%EB%B3%91-%EA%B0%80%EC%9A%A9%EB%B3%91%EC%83%81-%ED%99%95%EC%9D%B8-%EC%95%B1?node-id=33-780&t=ECBtiR99xoWwbGFS-1)&nbsp;
 [![Google Docs](https://img.shields.io/badge/Google%20Docs-4285F4?style=for-the-badge&logo=googledocs&logoColor=white)](https://docs.google.com/spreadsheets/d/1van1JKRC4Uk2Ln3flgZEPAa-xEQgy1IcU6o82DOehLU/edit)
+<p>&nbsp;</p>
+
+
+### 🔗 사용한 외부 API 및 서비스
+
+| API / 서비스                          | 활용 목적 및 기능                                       |
+|--------------------------------------|--------------------------------------------------------|
+| **NCP CLOVA Chatbot**                | 챗봇 구현 – 사용자와의 자연어 대화 처리                    |
+| **Toss payments**                    | 학부모 또는 학생이 온라인으로 간편하게 수강료 결제 |
+<p>&nbsp;</p>
+
+
+### 🔍 Description
+
+- **Java / Spring Boot** | 백엔드 로직과 RESTful API를 구현
+- **HTML, CSS, JS, jQuery, Bootstrap5** | UI 구성 및 사용자 인터랙션 처리
+- **JWT / Spring Security** | 사용자 인증 및 권한 제어
+- **MySQL** | 사용자 및 게시글 등 주요 데이터 저장
+- **NCP 서버** | Ubuntu 환경의 클라우드 서버를 통해 배포 및 운영
+- **CI/CD** | Docker 이미지를 통한 DooD 방식으로 Jenkins를 통해 자동 배포
+<p>&nbsp;</p>
+
+---
+
+## 🌊 화면 구성
